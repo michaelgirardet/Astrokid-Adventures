@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import Preloader from './scenes/PreLoader';
-import Game from './scenes/Game';
+import Preloader from './scenes/Preloader';
+import Game from './scenes/GameScene';
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -9,7 +9,7 @@ new Phaser.Game({
   pixelArt: true,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 500 }, debug: false }
+    arcade: { gravity: { y: 800 }, debug: true }
   },
   scene: [Preloader, Game]
 });
