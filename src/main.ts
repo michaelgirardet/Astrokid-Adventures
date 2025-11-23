@@ -4,8 +4,8 @@ import Game from './scenes/GameScene';
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 1920,
+  height: 1080,
   pixelArt: true,
   physics: {
     default: 'arcade',

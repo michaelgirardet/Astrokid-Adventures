@@ -3,64 +3,72 @@ import Player from '../entities/Player';
 import Star from '../entities/Star';
 import Bomb from '../entities/Bomb';
 import ScoreUI from '../ui/ScoreUI';
+import Enemy from '../entities/EnemyFly';
+import Coin from '../entities/Coin';
 
 export default class GameScene extends Phaser.Scene {
 
     private level!: Level;
     private player!: Player;
+    private enemy!: Enemy;
     private stars!: Phaser.Physics.Arcade.Group;
     private bombs!: Phaser.Physics.Arcade.Group;
     private scoreUI!: ScoreUI;
+    private coins: Coin;
 
     constructor() {
         super('Game');
     }
 
-    create() {
-        
+create() {
+
     this.level = new Level(this);
-    this.level.loadMap();
-        
-    const bg = this.add.image(0, 0, 'bg').setOrigin(0, 0);
-    bg.setDisplaySize(this.level.width, this.level.height);
-    bg.setScrollFactor(0); 
-    bg.setDepth(-1)
-        
-    this.anims.create({
-        key: 'walk',
-        frames: [
-            { key: 'player_walk_a' },
-            { key: 'player_walk_b' }
-        ],
-        frameRate: 4,
-        repeat: -1
-    });
+    this.level.load();
 
-    this.anims.create({
-        key: 'idle',
-        frames: [{ key: 'player_idle' }],
-        frameRate: 1,
-        repeat: -1
-    });
+    const spawn = this.level.map.findObject(
+    "Objects_Player",
+    obj => obj.name === "Player"
+)
+    this.player = new Player(this, spawn.x!, spawn.y!);
+    this.physics.add.overlap(
+    this.player,
+    this.level.flag,
+    this.endLevel,
+    undefined,
+    this
+);
 
-    this.anims.create({
-        key: 'jump',
-        frames: [{ key: 'player_jump' }],
-        frameRate: 2
-    });
+    this.physics.add.collider(this.player, this.level.groundLayer);
+    this.physics.add.collider(this.player, this.level.blocksLayer);
+    this.level.groundLayer.renderDebug(
+    this.add.graphics().setAlpha(0.75),
+    {
+        tileColor: null,
+        collidingTileColor: 0xff0000,
+    }
+);
 
-    this.physics.world.setBounds(0, 0, this.level.width, this.level.height);
+    this.cameras.main.setRoundPixels(true);
+    this.cameras.main.setZoom(1);
+    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+    this.cameras.main.setBounds(
+        0,
+        0,
+        this.level.map.widthInPixels,
+        this.level.map.heightInPixels
+    );
 
-    this.player = new Player(this, 100, this.level.height - 100);
-
-    this.physics.add.collider(this.player, this.level.platforms);
-
-    this.cameras.main.startFollow(this.player);
-    this.cameras.main.setBounds(0, 0, this.level.width, this.level.height);     
+    this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
+    this.physics.add.collider(this.player, this.level.enemies, this.hitEnemy, undefined, this);
+    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
 }
 
+    
+
+
+
     update() {
-        this.player.update();
+    this.player.update();
     }
 
     spawnStars() {
@@ -88,9 +96,21 @@ export default class GameScene extends Phaser.Scene {
         const bomb = new Bomb(this, x, 16);
         this.bombs.add(bomb);
 
-        this.physics.add.collider(bomb, this.level.platforms);
         this.physics.add.collider(this.player, this.bombs, () => {
-            console.log('GAME OVER');
+        console.log('GAME OVER');
         });
+    }
+
+    collectCoin(player: Player, coin: any) {
+    coin.destroy();
+    console.log("Coin collected !");
+}
+
+    hitEnemy(player: Player, enemy: any) {
+        console.log("Player hit by enemy !");
+    }
+
+    endLevel() {
+        console.log("LEVEL FINISHED !");
     }
 }
