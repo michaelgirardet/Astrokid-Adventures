@@ -18,7 +18,17 @@ export default class EnemyBlob extends Enemy {
 
         body.setAllowGravity(true);
         body.setCollideWorldBounds(true);
-        body.setVelocityX(this.speed);
+
+        // 👉 Nouvelle ligne : direction personnalisée
+        const dir = props.direction ?? "right";
+
+        if (dir === "left") {
+            body.setVelocityX(-this.speed);
+            this.flipX = true;
+        } else {
+            body.setVelocityX(this.speed);
+            this.flipX = false;
+        }
     }
 
     update(time: number, delta: number) {
@@ -44,4 +54,3 @@ export default class EnemyBlob extends Enemy {
         this.play("blob-walk", true);
     }
 }
-

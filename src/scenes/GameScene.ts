@@ -21,6 +21,11 @@ export default class GameScene extends Phaser.Scene {
     private starUI!: StarUI;
     private hud!: HUD;
     private gameMusic!: Phaser.Sound.BaseSound;
+    private hitSound!: Phaser.Sound.BaseSound;
+    private jumpSound!: Phaser.Sound.BaseSound;
+    private disappearSound!: Phaser.Sound.BaseSound;
+    private coinSound!: Phaser.Sound.BaseSound;
+    private starSound!: Phaser.Sound.BaseSound;
 
     constructor() {
         super('Game');
@@ -45,6 +50,14 @@ create() {
     loop: true
 });
     this.gameMusic.play();
+
+    this.hitSound = this.sound.add("hit_sound", { volume: 0.2 });
+    this.jumpSound = this.sound.add("jump_sound", { volume: 0.2 });
+    this.disappearSound = this.sound.add("disappear_sound", { volume: 0.2 });
+    this.coinSound = this.sound.add("coin_sound", { volume: 0.2 });
+    this.starSound = this.sound.add("star_sound", { volume: 0.2 });
+
+    
     
     // --- PLAYER SPAWN ---
     const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
@@ -112,8 +125,7 @@ create() {
     });
 
     // --- FLAG ---
-    const flagObj = this.level.map.findObject("Objects_Flag", obj => obj.name === "Flag");
-    // this.level.flag = this.physics.add.staticImage(flagObj.x!, flagObj.y!, "flag");
+    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
 
     // --- COLLISIONS ---
     this.physics.add.collider(this.player, this.level.groundLayer);
@@ -155,7 +167,8 @@ create() {
     collectStar(player: Player, star: Star) {
     star.disableBody(true, true);
 
-    this.starUI.addStar();
+        this.starUI.addStar();
+        this.starSound.play();
 
     this.scoreUI.add(1000);
 
@@ -180,6 +193,7 @@ create() {
     collectCoin(player: Player, coin: any) {
         coin.destroy();
         this.scoreUI.add(100);
+        this.coinSound.play();
 
     }
     
@@ -195,21 +209,20 @@ create() {
     
     hitEnemyFromAbove(player: Player, enemy: any) {
     // Tuer l'ennemi
-    enemy.destroy();
+        enemy.destroy();
+        this.disappearSound.play();
 
     // Rebond du joueur
     player.setVelocityY(-500);
-
-    // Bonus sonore / particules = possible
 }
 
 hitEnemy(player: Player, enemy: any) {
 
     // Si le joueur tombe sur l'ennemi → ne pas prendre de dégât
     if (player.body.velocity.y > 0) return;
-
-    // Si invincible → ignorer
     if (player.isInvincible) return;
+
+    this.hitSound.play();
 
     // Activer l'invincibilité
     player.isInvincible = true;
@@ -222,9 +235,9 @@ hitEnemy(player: Player, enemy: any) {
     if (this.heartUI.getHearts() <= 0) {
         console.log("GAME OVER");
         this.scene.restart();
+        this.gameMusic.stop();
     }
 }
-
     endLevel() {
         console.log("LEVEL FINISHED !");
         this.gameMusic.stop();
