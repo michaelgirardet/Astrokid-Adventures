@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
-import Preloader from './scenes/PreLoader';
-import Game from './scenes/Game';
+import Preloader from './scenes/Preloader';
+import Game from './scenes/GameScene';
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 1440,
+  height: 800,
   pixelArt: true,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 500 }, debug: false }
+    arcade: { fps: 30, gravity: { y: 800 }, debug: false }
   },
   scene: [Preloader, Game]
 });
