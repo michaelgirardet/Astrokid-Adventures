@@ -371,12 +371,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1050
+                         "value":1750
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":750
+                         "value":1250
                         }, 
                         {
                          "name":"speed",
@@ -408,12 +408,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1050
+                         "value":2460
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":750
+                         "value":2260
                         }, 
                         {
                          "name":"speed",
@@ -445,12 +445,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":750
+                         "value":2900
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":1050
+                         "value":2600
                         }, 
                         {
                          "name":"speed",
@@ -482,12 +482,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1610
+                         "value":1400
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":1460
+                         "value":1000
                         }, 
                         {
                          "name":"speed",
@@ -519,12 +519,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1610
+                         "value":1500
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":1460
+                         "value":1300
                         }, 
                         {
                          "name":"speed",
@@ -556,12 +556,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1610
+                         "value":2040
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":1460
+                         "value":1920
                         }, 
                         {
                          "name":"speed",
@@ -593,12 +593,12 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1460
+                         "value":2860
                         }, 
                         {
                          "name":"patrolMinX",
                          "type":"float",
-                         "value":1610
+                         "value":2440
                         }, 
                         {
                          "name":"speed",
@@ -923,12 +923,18 @@
         {
          "draworder":"topdown",
          "id":29,
-         "name":"End",
+         "name":"Objects_Flag",
          "objects":[
                 {
                  "height":63.9652,
                  "id":126,
-                 "name":"End",
+                 "name":"Flag",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"flag"
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
