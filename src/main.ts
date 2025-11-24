@@ -9,7 +9,7 @@ new Phaser.Game({
   pixelArt: true,
   physics: {
     default: 'arcade',
-    arcade: { gravity: { y: 800 }, debug: false }
+    arcade: { fps: 30, gravity: { y: 800 }, debug: false }
   },
   scene: [Preloader, Game]
 });

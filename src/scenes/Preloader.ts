@@ -4,18 +4,20 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("Background", "assets/tiles/background_fade_mushrooms.png");
-    this.load.image("Tiles", "assets/tiles/tiles.png");
-    this.load.image("Enemies", "assets/tiles/enemies.png");
-    this.load.image("Player", "assets/tiles/player.png");
+
+    
+    this.load.image("Background", "assets/tiles/background_fade_mushrooms.webp");
+    this.load.image("Tiles", "assets/tiles/tiles.webp");
+    this.load.image("Enemies", "assets/tiles/enemies.webp");
+    this.load.image("Player", "assets/tiles/player.webp");
 
     this.load.tilemapTiledJSON("level1", "assets/level1.json");
 
     this.load.image("heart_full", "assets/ui/heart_full.png");
     this.load.image("heart_empty", "assets/ui/heart_empty.png");
 
-    this.load.image("player_idle", "assets/player/character_pink_idle.png");
-    this.load.image("player_jump", "assets/player/character_pink_jump.png");
+    this.load.image("player_idle", "assets/player/character_pink_idle.webp");
+    this.load.image("player_jump", "assets/player/character_pink_jump.webp");
     this.load.image("player_walk_a", "assets/player/character_pink_walk_a.png");
     this.load.image("player_walk_b", "assets/player/character_pink_walk_b.png");
 
@@ -32,6 +34,8 @@ export default class Preloader extends Phaser.Scene {
 
     create() {
 
+
+      
       // --- PLAYER IDLE ---
       this.anims.create({
         key: "player-idle",

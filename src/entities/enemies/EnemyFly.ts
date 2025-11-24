@@ -18,6 +18,9 @@ export default class EnemyFly extends Enemy {
         body.allowGravity = false;
         body.setVelocityX(this.speed);
         body.setCollideWorldBounds(false);
+
+        body.setAllowGravity(false);
+        body.moves = true;   
     }
 
     update(time: number, delta: number) {

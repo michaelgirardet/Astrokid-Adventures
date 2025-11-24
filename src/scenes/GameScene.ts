@@ -28,6 +28,7 @@ create() {
     // --- LOAD LEVEL ---
     this.level = new Level(this);
     this.level.load();
+    this.physics.world.TILE_BIAS = 60;
 
     this.hud = new HUD(this);
 
@@ -67,15 +68,6 @@ create() {
     const type = props.type;
 
         let enemy;
-        
-        this.physics.add.overlap(
-    this.player,
-    this.level.enemies,
-    this.hitEnemyFromAbove,
-    this.checkIfAbove,
-    this
-        );
-        
 
     switch (type) {
         case "fly":
@@ -89,9 +81,16 @@ create() {
             return;
     }
 
-    this.level.enemies.add(enemy);
+        this.level.enemies.add(enemy);      
 });
 
+      this.physics.add.overlap(
+        this.player,
+        this.level.enemies,
+        this.hitEnemyFromAbove,
+        this.checkIfAbove,
+        this
+        );
 
 
     // --- STARS ---
@@ -114,12 +113,13 @@ create() {
     // --- ENEMY COLLISIONS ---
     this.physics.add.collider(this.level.enemies, this.level.groundLayer);
     this.physics.add.collider(this.level.enemies, this.level.blocksLayer);
-
+    
     // --- OVERLAPS ---
     this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
     this.physics.add.overlap(this.player, this.stars, this.collectStar, undefined, this);
     this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
 
+    
     // --- CAMERA ---
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
     this.cameras.main.setBounds(0, 0, this.level.map.widthInPixels, this.level.map.heightInPixels);
@@ -194,7 +194,7 @@ hitEnemy(player: Player, enemy: any) {
 
     // Activer l'invincibilité
     player.isInvincible = true;
-    player.invincibleTimer = 1000; // ms
+    player.invincibleTimer = 1000;
     player.setTint(0xff5555);
     player.setAlpha(0.5);
 

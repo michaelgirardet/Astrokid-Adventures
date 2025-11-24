@@ -46,16 +46,6 @@ export default class Level {
       });
     }
 
-    // === ENEMIES ===
-    // const enemiesLayer = this.map.getObjectLayer("Enemies");
-    // if (enemiesLayer) {
-    //   enemiesLayer.objects.forEach(obj => {
-    //     if (obj.type === "enemy") {
-    //       this.enemies.add(new EnemyFly(this.scene, obj.x!, obj.y!));
-    //     }
-    //   });
-    // }
-
     // === FLAG ===
 const endLayer = this.map.getObjectLayer("End");
 

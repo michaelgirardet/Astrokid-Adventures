@@ -12,6 +12,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setGravityY(300);
         this.setCollideWorldBounds(true);
 
+        (this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(400, 800);
+
         // Hitbox
         this.body!.setSize(this.width * 0.6, this.height * 0.9);
         this.body!.setOffset(this.width * 0.2, this.height * 0.1);
@@ -51,7 +53,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     // --------- SAUT ---------
     if (this.cursors.up.isDown && this.body!.blocked.down) {
-        this.setVelocityY(-800);
+       this.setVelocityY(-800);
     }
 
     // --------- ANIMATIONS ---------
