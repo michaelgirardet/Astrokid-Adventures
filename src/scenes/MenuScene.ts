@@ -51,10 +51,10 @@ export default class MenuScene extends Phaser.Scene {
         // --- TITRE PRINCIPAL ---
         const title = this.add.text(width / 2, height * 0.28, "ECHO JUMP", {
             fontSize: "72px",
-            fontFamily: "Arial Black, Arial",
+            fontFamily: "DynaPuff",
             color: "#00d4ff",
             stroke: "#0a0e27",
-            strokeThickness: 8
+            strokeThickness: 1
         }).setOrigin(0.5);
 
         // Animation du titre
@@ -91,7 +91,7 @@ export default class MenuScene extends Phaser.Scene {
 
         const playText = this.add.text(width / 2, menuY, "▶ JOUER", {
             fontSize: "42px",
-            fontFamily: "Arial Black, Arial",
+            fontFamily: "DynaPuff",
             color: "#0a0e27",
             stroke: "#00d4ff",
             strokeThickness: 2
@@ -143,7 +143,7 @@ export default class MenuScene extends Phaser.Scene {
             "Appuyez sur ENTRÉE pour commencer",
             {
                 fontSize: "20px",
-                fontFamily: "Arial",
+                fontFamily: "DynaPuff",
                 color: "#ffffff",
                 stroke: "#000000",
                 strokeThickness: 4

@@ -4,6 +4,15 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
+    const font = new FontFace(
+        "DynaPuff",
+        `url("fonts/DynaPuff.ttf")`
+    );
+
+    font.load().then(loaded => {
+        document.fonts.add(loaded);
+    });
+
     this.load.image("Background", "assets/tiles/background_fade_mushrooms.webp");
     this.load.image("Tiles", "assets/tiles/tiles.webp");
     this.load.image("Enemies", "assets/tiles/enemies.webp");
@@ -22,6 +31,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.audio("disappear_sound", "assets/sounds/effects/sfx_disappear.ogg");
     this.load.audio("coin_sound", "assets/sounds/effects/sfx_coin.ogg");
     this.load.audio("star_sound", "assets/sounds/effects/sfx_gem.ogg");
+    this.load.audio("level_clear", "assets/sounds/effects/sfx_victory.mp3");
 
     this.load.image("heart_full", "assets/ui/heart_full.png");
     this.load.image("heart_empty", "assets/ui/heart_empty.png");

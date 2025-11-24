@@ -6,6 +6,7 @@ export default class ScoreUI {
     constructor(scene: Phaser.Scene) {
        const width = scene.cameras.main.width;
         this.text = scene.add.text(width - 48, 16, "Score: 0", {
+            fontFamily: "DynaPuff",
             fontSize: "32px",
             color: "#fff",
             stroke: "#000",

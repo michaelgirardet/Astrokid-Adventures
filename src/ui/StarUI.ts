@@ -15,6 +15,7 @@ export default class StarUI {
 
         // Texte du compteur
         this.text = scene.add.text(45, 50, "0", {
+            fontFamily: "DynaPuff",
             fontSize: "28px",
             color: "#fff",
             stroke: "#000",

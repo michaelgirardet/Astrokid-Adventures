@@ -26,6 +26,8 @@ export default class GameScene extends Phaser.Scene {
     private disappearSound!: Phaser.Sound.BaseSound;
     private coinSound!: Phaser.Sound.BaseSound;
     private starSound!: Phaser.Sound.BaseSound;
+    private levelClear!: Phaser.Sound.BaseSound;
+    private levelEnding = false;
 
     constructor() {
         super('Game');
@@ -56,8 +58,12 @@ create() {
     this.disappearSound = this.sound.add("disappear_sound", { volume: 0.2 });
     this.coinSound = this.sound.add("coin_sound", { volume: 0.2 });
     this.starSound = this.sound.add("star_sound", { volume: 0.2 });
+    this.levelClear = this.sound.add("level_clear", { volume: 0.2 });
 
-    
+    this.input.keyboard.on("keydown-ESC", () => {
+    this.scene.launch("Pause");
+    this.scene.pause();
+});
     
     // --- PLAYER SPAWN ---
     const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
@@ -107,15 +113,6 @@ create() {
         this.level.enemies.add(enemy);      
 });
 
-      this.physics.add.overlap(
-        this.player,
-        this.level.enemies,
-        this.hitEnemyFromAbove,
-        this.checkIfAbove,
-        this
-        );
-
-
     // --- STARS ---
     this.stars = this.physics.add.group();
     const starObjects = this.level.map.getObjectLayer("Objects_Stars").objects;
@@ -124,23 +121,29 @@ create() {
         this.stars.add(star);
     });
 
-    // --- FLAG ---
-    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
-
     // --- COLLISIONS ---
     this.physics.add.collider(this.player, this.level.groundLayer);
     this.physics.add.collider(this.player, this.level.blocksLayer);
     this.physics.add.collider(this.player, this.level.enemies, this.hitEnemy, undefined, this);
-
+    
     // --- ENEMY COLLISIONS ---
     this.physics.add.collider(this.level.enemies, this.level.groundLayer);
     this.physics.add.collider(this.level.enemies, this.level.blocksLayer);
     
     // --- OVERLAPS ---
+    this.physics.add.overlap(
+        this.player,
+        this.level.enemies,
+        this.hitEnemyFromAbove,
+        this.checkIfAbove,
+        this
+    );
     this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
     this.physics.add.overlap(this.player, this.stars, this.collectStar, undefined, this);
     this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
-
+    
+    // --- FLAG ---
+    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
     
     // --- CAMERA ---
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -197,22 +200,28 @@ create() {
 
     }
     
-   checkIfAbove(player, enemy) {
-    const playerBottom = player.body.y + player.body.height;
-    const enemyTop = enemy.body.y;
+checkIfAbove(player, enemy) {
+    const bodyP = player.body;
+    const bodyE = enemy.body;
 
-    return (
-        player.body.velocity.y > 0 &&  // il tombe
-        playerBottom <= enemyTop + 10  // il vient par dessus (marge de sécurité)
-    );
+    const comingDownFast = bodyP.velocity.y > 100;
+
+    const playerBottom = bodyP.bottom;
+    const enemyTop = bodyE.top;
+
+    return comingDownFast && playerBottom < enemyTop + 20;
 }
     
-    hitEnemyFromAbove(player: Player, enemy: any) {
-    // Tuer l'ennemi
-        enemy.destroy();
-        this.disappearSound.play();
+  hitEnemyFromAbove(player, enemy) {
+    enemy.destroy();
+    this.disappearSound.play();
 
-    // Rebond du joueur
+    // Empêche un hit fantôme juste après la mort
+    player.body.checkCollision.none = true;
+    this.time.delayedCall(120, () => {
+        player.body.checkCollision.none = false;
+    });
+
     player.setVelocityY(-500);
 }
 
@@ -238,8 +247,47 @@ hitEnemy(player: Player, enemy: any) {
         this.gameMusic.stop();
     }
 }
-    endLevel() {
-        console.log("LEVEL FINISHED !");
-        this.gameMusic.stop();
-    }
+    
+    // Fin de niveau
+  endLevel(player: Player, flag: any) {
+    if (this.levelEnding) return; 
+    this.levelEnding = true;
+
+    // Bloquer les contrôles
+    player.setVelocity(0, 0);
+    (player.body as Phaser.Physics.Arcade.Body).allowGravity = false;
+    player.disableControls = true;
+
+    // Descente du drapeau
+    this.tweens.add({
+        targets: player,
+        y: flag.y + flag.height - player.height,
+        duration: 800,
+        ease: "Linear",
+        onComplete: () => {
+
+            // Remettre la gravité
+            (player.body as Phaser.Physics.Arcade.Body).allowGravity = true;
+            player.setFlipX(false);
+
+            // Marche automatique
+            this.time.delayedCall(200, () => {
+                player.setVelocityX(160);
+            });
+
+            // Fade-out
+            this.cameras.main.fadeOut(1200, 0, 0, 0);
+
+            this.time.delayedCall(1500, () => {
+                this.scene.start("Victory");
+            });
+        }
+    });
+
+    // Musique fin
+    this.gameMusic.stop();
+    this.sound.play("level_clear");
+}
+
+
 }

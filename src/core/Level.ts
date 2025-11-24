@@ -33,7 +33,9 @@ export default class Level {
     const endLayer = this.map.getObjectLayer("Objects_Flag");
 
     if (endLayer) {
-        const flagObj = endLayer.objects.find(obj => obj.type === "flag");
+        const flagObj = endLayer.objects.find(obj =>
+      obj.properties?.some(p => p.name === "type" && p.value === "flag")
+);
 
         if (flagObj) {
             const flag = this.scene.physics.add.sprite(

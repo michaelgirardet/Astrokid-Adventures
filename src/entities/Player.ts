@@ -26,7 +26,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     isInvincible = false;
     invincibleTimer = 0;
 
+    disableControls = false;
+
     update(time: number, delta: number) {
+         if (this.disableControls) return;
 
     // Invincibilité ---------------------------------
     if (this.isInvincible) {
