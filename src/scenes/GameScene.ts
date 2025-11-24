@@ -8,6 +8,7 @@ import EnemyFly from '../entities/enemies/EnemyFly';
 import EnemyBlob from '../entities/enemies/EnemyBlob';
 import HeartUI from '../ui/HeartUI';
 import HUD from '../ui/HUD';
+import StarUI from '../ui/StarUI';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -17,7 +18,14 @@ export default class GameScene extends Phaser.Scene {
     private bombs!: Phaser.Physics.Arcade.Group;
     private scoreUI!: ScoreUI;
     private heartUI!: HeartUI;
+    private starUI!: StarUI;
     private hud!: HUD;
+    private gameMusic!: Phaser.Sound.BaseSound;
+    private hitSound!: Phaser.Sound.BaseSound;
+    private jumpSound!: Phaser.Sound.BaseSound;
+    private disappearSound!: Phaser.Sound.BaseSound;
+    private coinSound!: Phaser.Sound.BaseSound;
+    private starSound!: Phaser.Sound.BaseSound;
 
     constructor() {
         super('Game');
@@ -32,9 +40,24 @@ create() {
 
     this.hud = new HUD(this);
 
+    this.starUI = this.hud.getStars();
     this.heartUI = this.hud.getHearts();
     this.scoreUI = this.hud.getScore();
 
+    // Musique
+    this.gameMusic = this.sound.add("game_music", {
+    volume: 0.2,
+    loop: true
+});
+    this.gameMusic.play();
+
+    this.hitSound = this.sound.add("hit_sound", { volume: 0.2 });
+    this.jumpSound = this.sound.add("jump_sound", { volume: 0.2 });
+    this.disappearSound = this.sound.add("disappear_sound", { volume: 0.2 });
+    this.coinSound = this.sound.add("coin_sound", { volume: 0.2 });
+    this.starSound = this.sound.add("star_sound", { volume: 0.2 });
+
+    
     
     // --- PLAYER SPAWN ---
     const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
@@ -102,8 +125,7 @@ create() {
     });
 
     // --- FLAG ---
-    const flagObj = this.level.map.findObject("Objects_Flag", obj => obj.name === "Flag");
-    // this.level.flag = this.physics.add.staticImage(flagObj.x!, flagObj.y!, "flag");
+    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
 
     // --- COLLISIONS ---
     this.physics.add.collider(this.player, this.level.groundLayer);
@@ -143,14 +165,17 @@ create() {
     }
 
     collectStar(player: Player, star: Star) {
-        star.disableBody(true, true);
-        this.scoreUI.add(100);
+    star.disableBody(true, true);
 
-        if (this.stars.countActive(true) === 0) {
-            this.spawnStars();
-            this.spawnBomb();
-        }
+        this.starUI.addStar();
+        this.starSound.play();
+
+    this.scoreUI.add(1000);
+
+    if (this.stars.countActive(true) === 0) {
+        this.spawnBomb();
     }
+}
 
     spawnBomb() {
         const x = (this.player.x < 400)
@@ -166,31 +191,38 @@ create() {
     }
 
     collectCoin(player: Player, coin: any) {
-    coin.destroy();
-    console.log("Coin collected !");
+        coin.destroy();
+        this.scoreUI.add(100);
+        this.coinSound.play();
+
     }
     
-    checkIfAbove(player: Player, enemy: Phaser.Physics.Arcade.Sprite) {
-    return player.body.velocity.y > 0;  // joueur est en train de tomber
-    }
+   checkIfAbove(player, enemy) {
+    const playerBottom = player.body.y + player.body.height;
+    const enemyTop = enemy.body.y;
+
+    return (
+        player.body.velocity.y > 0 &&  // il tombe
+        playerBottom <= enemyTop + 10  // il vient par dessus (marge de sécurité)
+    );
+}
     
     hitEnemyFromAbove(player: Player, enemy: any) {
     // Tuer l'ennemi
-    enemy.destroy();
+        enemy.destroy();
+        this.disappearSound.play();
 
     // Rebond du joueur
     player.setVelocityY(-500);
-
-    // Bonus sonore / particules = possible
 }
 
 hitEnemy(player: Player, enemy: any) {
 
     // Si le joueur tombe sur l'ennemi → ne pas prendre de dégât
     if (player.body.velocity.y > 0) return;
-
-    // Si invincible → ignorer
     if (player.isInvincible) return;
+
+    this.hitSound.play();
 
     // Activer l'invincibilité
     player.isInvincible = true;
@@ -203,10 +235,11 @@ hitEnemy(player: Player, enemy: any) {
     if (this.heartUI.getHearts() <= 0) {
         console.log("GAME OVER");
         this.scene.restart();
+        this.gameMusic.stop();
     }
 }
-
     endLevel() {
         console.log("LEVEL FINISHED !");
+        this.gameMusic.stop();
     }
 }

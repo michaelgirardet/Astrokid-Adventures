@@ -4,14 +4,24 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-
-    
     this.load.image("Background", "assets/tiles/background_fade_mushrooms.webp");
     this.load.image("Tiles", "assets/tiles/tiles.webp");
     this.load.image("Enemies", "assets/tiles/enemies.webp");
     this.load.image("Player", "assets/tiles/player.webp");
 
     this.load.tilemapTiledJSON("level1", "assets/level1.json");
+    this.load.image("menu_bg", "assets/ui/background_echo_jump.png");
+
+    // Musics
+    this.load.audio("menu_music", "assets/sounds/music/menu.mp3");
+    this.load.audio("game_music", "assets/sounds/music/level1.mp3");
+
+    //Sounds
+    this.load.audio("hit_sound", "assets/sounds/effects/sfx_hurt.ogg");
+    this.load.audio("jump_sound", "assets/sounds/effects/sfx_jump.ogg");
+    this.load.audio("disappear_sound", "assets/sounds/effects/sfx_disappear.ogg");
+    this.load.audio("coin_sound", "assets/sounds/effects/sfx_coin.ogg");
+    this.load.audio("star_sound", "assets/sounds/effects/sfx_gem.ogg");
 
     this.load.image("heart_full", "assets/ui/heart_full.png");
     this.load.image("heart_empty", "assets/ui/heart_empty.png");
@@ -25,6 +35,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.image("blob_idle", "assets/enemies/blob/slime_normal_rest.png");
     this.load.image("blob_walk_a", "assets/enemies/blob/slime_normal_walk_a.png");
     this.load.image("blob_walk_b", "assets/enemies/blob/slime_normal_walk_b.png");
+
+    this.load.image("flag", "assets/flag_red_a.png");
+
 
     this.load.image("Ground", "assets/ground.png");
     this.load.image("Block", "assets/block.png");
@@ -81,6 +94,6 @@ export default class Preloader extends Phaser.Scene {
       });
 
       // Démarrer le jeu
-      this.scene.start("Game");
+      this.scene.start("Menu");
     }
   }

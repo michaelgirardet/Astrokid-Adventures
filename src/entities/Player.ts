@@ -19,6 +19,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.body!.setOffset(this.width * 0.2, this.height * 0.1);
 
         this.cursors = scene.input.keyboard.createCursorKeys();
+
+        (this.scene as any).jumpSound.play();
     }
 
     isInvincible = false;
@@ -59,9 +61,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     // --------- ANIMATIONS ---------
     
     // En l’air → JUMP
-    if (!this.body!.blocked.down) {
-        this.play("player-jump", true);
-        return;
+    // --------- SAUT ---------
+    if (this.cursors.up.isDown && this.body!.blocked.down) {
+        this.setVelocityY(-800);
+
+        // 🔊 SON DE SAUT
+        if ((this.scene as any).jumpSound) {
+            (this.scene as any).jumpSound.play();
+        }
     }
 
     // Au sol → WALK

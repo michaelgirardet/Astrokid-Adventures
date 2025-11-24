@@ -359,24 +359,29 @@
          "name":"Objects_Enemies",
          "objects":[
                 {
-                 "height":54.5504136739704,
+                 "height":54.5504,
                  "id":146,
                  "name":"Fly",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1050
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":750
                         }, 
                         {
                          "name":"speed",
                          "type":"float",
-                         "value":50
+                         "value":60
                         }, 
                         {
                          "name":"type",
@@ -386,24 +391,29 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":63.6421492862987,
-                 "x":1535.59414492227,
-                 "y":294.57223383944
+                 "width":63.6421,
+                 "x":1535.59,
+                 "y":294.572
                 }, 
                 {
-                 "height":50.0045458678061,
+                 "height":50.0045,
                  "id":147,
                  "name":"Fly",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1050
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":750
                         }, 
                         {
                          "name":"speed",
@@ -418,29 +428,34 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":63.6421492862987,
-                 "x":2367.48795345031,
-                 "y":457.314301300118
+                 "width":63.6421,
+                 "x":2367.49,
+                 "y":457.314
                 }, 
                 {
-                 "height":50.0045458678061,
+                 "height":50.0045,
                  "id":148,
                  "name":"Fly",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"right"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":750
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":1050
                         }, 
                         {
                          "name":"speed",
                          "type":"float",
-                         "value":50
+                         "value":80
                         }, 
                         {
                          "name":"type",
@@ -450,29 +465,34 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":64.5513228475315,
-                 "x":2719.33812164742,
-                 "y":457.314301300118
+                 "width":64.5513,
+                 "x":2719.34,
+                 "y":457.314
                 }, 
                 {
-                 "height":44.0214158239144,
+                 "height":44.0214,
                  "id":149,
                  "name":"Blob",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1610
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":1460
                         }, 
                         {
                          "name":"speed",
                          "type":"float",
-                         "value":40
+                         "value":60
                         }, 
                         {
                          "name":"type",
@@ -482,29 +502,34 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":66.6270077334918,
-                 "x":1181.43961927424,
-                 "y":787.626412849494
+                 "width":66.627,
+                 "x":1181.44,
+                 "y":787.626
                 }, 
                 {
-                 "height":45.2111838191553,
+                 "height":45.2112,
                  "id":150,
                  "name":"Blob",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"right"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1610
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":1460
                         }, 
                         {
                          "name":"speed",
                          "type":"float",
-                         "value":40
+                         "value":60
                         }, 
                         {
                          "name":"type",
@@ -514,29 +539,34 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":63.057703747769,
-                 "x":1312.31409875074,
-                 "y":790.005948839976
+                 "width":63.0577,
+                 "x":1312.31,
+                 "y":790.006
                 }, 
                 {
-                 "height":44.0214158239144,
+                 "height":44.0214,
                  "id":151,
                  "name":"Blob",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1610
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":1460
                         }, 
                         {
                          "name":"speed",
                          "type":"int",
-                         "value":40
+                         "value":60
                         }, 
                         {
                          "name":"type",
@@ -546,29 +576,34 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":65.437239738251,
-                 "x":1983.34324806663,
-                 "y":787.626412849494
+                 "width":65.4372,
+                 "x":1983.34,
+                 "y":787.626
                 }, 
                 {
-                 "height":45.2111838191553,
-                 "id":152,
+                 "height":55.597045888308,
+                 "id":154,
                  "name":"Blob",
                  "properties":[
                         {
-                         "name":"patrolEndX",
-                         "type":"float",
-                         "value":400
+                         "name":"direction",
+                         "type":"string",
+                         "value":"right"
                         }, 
                         {
-                         "name":"patrolStartX",
+                         "name":"patrolMaxX",
                          "type":"float",
-                         "value":200
+                         "value":1460
+                        }, 
+                        {
+                         "name":"patrolMinX",
+                         "type":"float",
+                         "value":1610
                         }, 
                         {
                          "name":"speed",
                          "type":"float",
-                         "value":40
+                         "value":60
                         }, 
                         {
                          "name":"type",
@@ -577,10 +612,10 @@
                         }],
                  "rotation":0,
                  "type":"",
-                 "visible":false,
-                 "width":58.2986317668056,
-                 "x":2628.19750148721,
-                 "y":788.816180844735
+                 "visible":true,
+                 "width":64.724919093851,
+                 "x":2623.84864326612,
+                 "y":775.869222471164
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -759,125 +794,125 @@
          "name":"Objects_Coins",
          "objects":[
                 {
-                 "height":43.8107967624563,
+                 "height":43.8108,
                  "id":135,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":50.4937996584243,
-                 "x":293.309571545259,
-                 "y":778.198559441598
+                 "width":50.4938,
+                 "x":293.31,
+                 "y":778.199
                 }, 
                 {
-                 "height":46.0384643944457,
+                 "height":46.0385,
                  "id":136,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":51.9789114130838,
-                 "x":388.356723843469,
-                 "y":777.456003564268
+                 "width":51.9789,
+                 "x":388.357,
+                 "y":777.456
                 }, 
                 {
-                 "height":46.7810202717754,
+                 "height":46.781,
                  "id":137,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":51.2363555357541,
-                 "x":484.888987896339,
-                 "y":776.713447686938
+                 "width":51.2364,
+                 "x":484.889,
+                 "y":776.713
                 }, 
                 {
-                 "height":46.0384643944457,
+                 "height":46.0385,
                  "id":138,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":46.0384643944457,
-                 "x":584.391475458528,
-                 "y":778.941115318928
+                 "width":46.0385,
+                 "x":584.391,
+                 "y":778.941
                 }, 
                 {
-                 "height":48.266132026435,
+                 "height":48.2661,
                  "id":139,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":50.4937996584242,
-                 "x":773.00066830029,
-                 "y":647.508725031559
+                 "width":50.4938,
+                 "x":773.001,
+                 "y":647.509
                 }, 
                 {
-                 "height":44.4717067934366,
+                 "height":44.4717,
                  "id":140,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":49.0722281858611,
-                 "x":1094.92409139702,
-                 "y":392.577825486889
+                 "width":49.0722,
+                 "x":1094.92,
+                 "y":392.578
                 }, 
                 {
-                 "height":44.4717067934366,
+                 "height":44.4717,
                  "id":141,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":46.0052139242448,
-                 "x":1097.99110565864,
-                 "y":775.954608188928
+                 "width":46.0052,
+                 "x":1097.99,
+                 "y":775.955
                 }, 
                 {
-                 "height":47.5387210550529,
+                 "height":47.5387,
                  "id":142,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":49.0722281858609,
-                 "x":1413.89357460512,
-                 "y":775.954608188928
+                 "width":49.0722,
+                 "x":1413.89,
+                 "y":775.955
                 }, 
                 {
-                 "height":44.4717067934365,
+                 "height":44.4717,
                  "id":143,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":52.1392424474775,
-                 "x":1732.86305781322,
-                 "y":521.392424474774
+                 "width":52.1392,
+                 "x":1732.86,
+                 "y":521.392
                 }, 
                 {
-                 "height":49.0722281858611,
+                 "height":49.0722,
                  "id":144,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":62.8737923631343,
-                 "x":2495.01610182487,
-                 "y":262.229719368195
+                 "width":62.8738,
+                 "x":2495.02,
+                 "y":262.23
                 }, 
                 {
-                 "height":52.1392424474774,
+                 "height":52.1392,
                  "id":145,
                  "name":"Coin",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":53.6727495782857,
-                 "x":2596.22757245821,
-                 "y":133.41512038031
+                 "width":53.6727,
+                 "x":2596.23,
+                 "y":133.415
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -888,12 +923,12 @@
         {
          "draworder":"topdown",
          "id":29,
-         "name":"Objects_Flag",
+         "name":"End",
          "objects":[
                 {
                  "height":63.9652,
                  "id":126,
-                 "name":"Flag",
+                 "name":"End",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -935,15 +970,15 @@
                  "y":137.951
                 }, 
                 {
-                 "height":58.8431220162096,
+                 "height":58.8431,
                  "id":134,
                  "name":"Star",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":61.0636171866327,
-                 "x":1985.12268235817,
-                 "y":675.030531808593
+                 "width":61.0636,
+                 "x":1985.12,
+                 "y":675.031
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -974,7 +1009,7 @@
          "y":0
         }],
  "nextlayerid":36,
- "nextobjectid":154,
+ "nextobjectid":155,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
@@ -983,7 +1018,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"tiles\/background_fade_mushrooms.png",
+         "image":"tiles\/background_fade_mushrooms.webp",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -996,7 +1031,7 @@
         {
          "columns":36,
          "firstgid":257,
-         "image":"tiles\/tiles.png",
+         "image":"tiles\/tiles.webp",
          "imageheight":1152,
          "imagewidth":1152,
          "margin":0,
