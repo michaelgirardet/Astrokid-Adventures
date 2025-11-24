@@ -10,11 +10,9 @@ export default class GameScene extends Phaser.Scene {
 
     private level!: Level;
     private player!: Player;
-    private enemy!: Enemy;
     private stars!: Phaser.Physics.Arcade.Group;
     private bombs!: Phaser.Physics.Arcade.Group;
     private scoreUI!: ScoreUI;
-    private coins: Coin;
 
     constructor() {
         super('Game');
@@ -22,46 +20,67 @@ export default class GameScene extends Phaser.Scene {
 
 create() {
 
+    // --- LOAD LEVEL ---
     this.level = new Level(this);
     this.level.load();
 
-    const spawn = this.level.map.findObject(
-    "Objects_Player",
-    obj => obj.name === "Player"
-)
+    
+    // --- PLAYER SPAWN ---
+    const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
     this.player = new Player(this, spawn.x!, spawn.y!);
-    this.physics.add.overlap(
-    this.player,
-    this.level.flag,
-    this.endLevel,
-    undefined,
-    this
-);
+    
+    this.scoreUI = new ScoreUI(this)
+    
+    // --- BOMBS GROUP ---
+    this.bombs = this.physics.add.group();
 
+    // --- COINS ---
+    this.level.coins = this.physics.add.group();
+    const coinObjects = this.level.map.getObjectLayer("Objects_Coins").objects;
+    coinObjects.forEach(obj => {
+        const coin = new Coin(this, obj.x!, obj.y!);
+        this.level.coins.add(coin);
+    });
+
+    // --- ENEMIES ---
+    this.level.enemies = this.physics.add.group();
+    const enemyObjects = this.level.map.getObjectLayer("Objects_Enemies").objects;
+    enemyObjects.forEach(obj => {
+        const enemy = new Enemy(this, obj.x!, obj.y!);
+        this.level.enemies.add(enemy);
+    });
+
+    // --- STARS ---
+    this.stars = this.physics.add.group();
+    const starObjects = this.level.map.getObjectLayer("Objects_Stars").objects;
+    starObjects.forEach(obj => {
+        const star = new Star(this, obj.x!, obj.y!);
+        this.stars.add(star);
+    });
+
+    // --- FLAG ---
+    const flagObj = this.level.map.findObject("Objects_Flag", obj => obj.name === "Flag");
+    // this.level.flag = this.physics.add.staticImage(flagObj.x!, flagObj.y!, "flag");
+
+    // --- COLLISIONS ---
     this.physics.add.collider(this.player, this.level.groundLayer);
     this.physics.add.collider(this.player, this.level.blocksLayer);
-    this.level.groundLayer.renderDebug(
-    this.add.graphics().setAlpha(0.75),
-    {
-        tileColor: null,
-        collidingTileColor: 0xff0000,
-    }
-);
-
-    this.cameras.main.setRoundPixels(true);
-    this.cameras.main.setZoom(1);
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
-    this.cameras.main.setBounds(
-        0,
-        0,
-        this.level.map.widthInPixels,
-        this.level.map.heightInPixels
-    );
-
-    this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
     this.physics.add.collider(this.player, this.level.enemies, this.hitEnemy, undefined, this);
+
+    // --- OVERLAPS ---
+    this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
+    this.physics.add.overlap(this.player, this.stars, this.collectStar, undefined, this);
     this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
+
+    this.physics.add.collider(this.level.coins, this.level.groundLayer);
+    this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
+
+
+    // --- CAMERA ---
+    this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+    this.cameras.main.setBounds(0, 0, this.level.map.widthInPixels, this.level.map.heightInPixels);
 }
+
 
     
 

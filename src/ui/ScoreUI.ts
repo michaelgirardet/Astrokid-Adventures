@@ -9,10 +9,12 @@ export default class ScoreUI {
             stroke: '#000',
             strokeThickness: 4
         });
+
+        this.text.setScrollFactor(0); 
     }
 
     add(points: number) {
         this.score += points;
-        this.text.setText('Score: ' + this.score);
+        this.text.setText("Score: " + this.score);
     }
 }

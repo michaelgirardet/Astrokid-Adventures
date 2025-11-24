@@ -10,7 +10,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.setGravityY(300);
         this.setCollideWorldBounds(true);
+
+        // Hitbox un peu réduite
         this.body!.setSize(this.width * 0.6, this.height * 0.9);
+        this.body!.setOffset(this.width * 0.2, this.height * 0.1);
 
         this.cursors = scene.input.keyboard.createCursorKeys();
     }
@@ -19,12 +22,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         const speed = 200;
 
-        // -- SAUT --
+        // --- SAUT ---
         if (this.cursors.up.isDown && this.body!.blocked.down) {
             this.setVelocityY(-800);
         }
 
-        // -- MOUVEMENT --
+        // --- MOUVEMENT ---
         if (this.cursors.left.isDown) {
             this.setVelocityX(-speed);
             this.setFlipX(true);
@@ -34,22 +37,26 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.setFlipX(false);
         }
         else {
-            // On ne bloque que si on est au sol
             if (this.body!.blocked.down) {
                 this.setVelocityX(0);
             }
         }
 
-        // -- ANIMATIONS --
+        // --- ANIMATIONS ---
+
+        // En l'air → ANIM JUMP
         if (!this.body!.blocked.down) {
-            this.play("jump", true);
-            return;  
+            this.play("player-jump", true); // ⚠️ corrigé !
+            return;
         }
 
+        // Au sol et on bouge → ANIM WALK
         if (this.cursors.left.isDown || this.cursors.right.isDown) {
-            this.play("walk", true);
-        } else {
-            this.play("idle", true);
+            this.play("player-walk", true);
+        }
+        else {
+            // Debout immobile → ANIM IDLE
+            this.play("player-idle", true);
         }
     }
 }
