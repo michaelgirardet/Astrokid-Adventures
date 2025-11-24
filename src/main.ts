@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import Preloader from './scenes/Preloader';
 import Game from './scenes/GameScene';
+import MenuScene from './scenes/MenuScene';
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -11,5 +12,5 @@ new Phaser.Game({
     default: 'arcade',
     arcade: { fps: 30, gravity: { y: 800 }, debug: false }
   },
-  scene: [Preloader, Game]
+  scene: [Preloader, Game, MenuScene]
 });

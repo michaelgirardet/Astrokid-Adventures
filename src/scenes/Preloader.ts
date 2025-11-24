@@ -4,14 +4,16 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-
-    
     this.load.image("Background", "assets/tiles/background_fade_mushrooms.webp");
     this.load.image("Tiles", "assets/tiles/tiles.webp");
     this.load.image("Enemies", "assets/tiles/enemies.webp");
     this.load.image("Player", "assets/tiles/player.webp");
 
     this.load.tilemapTiledJSON("level1", "assets/level1.json");
+    this.load.image("menu_bg", "assets/ui/background_echo_jump.png");
+
+    this.load.audio("menu_music", "assets/sounds/music/menu.mp3");
+    this.load.audio("game_music", "assets/sounds/music/level1.mp3");
 
     this.load.image("heart_full", "assets/ui/heart_full.png");
     this.load.image("heart_empty", "assets/ui/heart_empty.png");
@@ -81,6 +83,6 @@ export default class Preloader extends Phaser.Scene {
       });
 
       // Démarrer le jeu
-      this.scene.start("Game");
+      this.scene.start("Menu");
     }
   }

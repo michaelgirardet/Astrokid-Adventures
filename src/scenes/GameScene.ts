@@ -8,6 +8,7 @@ import EnemyFly from '../entities/enemies/EnemyFly';
 import EnemyBlob from '../entities/enemies/EnemyBlob';
 import HeartUI from '../ui/HeartUI';
 import HUD from '../ui/HUD';
+import StarUI from '../ui/StarUI';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -17,7 +18,9 @@ export default class GameScene extends Phaser.Scene {
     private bombs!: Phaser.Physics.Arcade.Group;
     private scoreUI!: ScoreUI;
     private heartUI!: HeartUI;
+    private starUI!: StarUI;
     private hud!: HUD;
+    private gameMusic!: Phaser.Sound.BaseSound;
 
     constructor() {
         super('Game');
@@ -32,9 +35,16 @@ create() {
 
     this.hud = new HUD(this);
 
+    this.starUI = this.hud.getStars();
     this.heartUI = this.hud.getHearts();
     this.scoreUI = this.hud.getScore();
 
+    // Musique
+    this.gameMusic = this.sound.add("game_music", {
+    volume: 0.2,
+    loop: true
+});
+    this.gameMusic.play();
     
     // --- PLAYER SPAWN ---
     const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
@@ -143,14 +153,16 @@ create() {
     }
 
     collectStar(player: Player, star: Star) {
-        star.disableBody(true, true);
-        this.scoreUI.add(100);
+    star.disableBody(true, true);
 
-        if (this.stars.countActive(true) === 0) {
-            this.spawnStars();
-            this.spawnBomb();
-        }
+    this.starUI.addStar();
+
+    this.scoreUI.add(1000);
+
+    if (this.stars.countActive(true) === 0) {
+        this.spawnBomb();
     }
+}
 
     spawnBomb() {
         const x = (this.player.x < 400)
@@ -166,13 +178,20 @@ create() {
     }
 
     collectCoin(player: Player, coin: any) {
-    coin.destroy();
-    console.log("Coin collected !");
+        coin.destroy();
+        this.scoreUI.add(100);
+
     }
     
-    checkIfAbove(player: Player, enemy: Phaser.Physics.Arcade.Sprite) {
-    return player.body.velocity.y > 0;  // joueur est en train de tomber
-    }
+   checkIfAbove(player, enemy) {
+    const playerBottom = player.body.y + player.body.height;
+    const enemyTop = enemy.body.y;
+
+    return (
+        player.body.velocity.y > 0 &&  // il tombe
+        playerBottom <= enemyTop + 10  // il vient par dessus (marge de sécurité)
+    );
+}
     
     hitEnemyFromAbove(player: Player, enemy: any) {
     // Tuer l'ennemi
@@ -208,5 +227,6 @@ hitEnemy(player: Player, enemy: any) {
 
     endLevel() {
         console.log("LEVEL FINISHED !");
+        this.gameMusic.stop();
     }
 }
