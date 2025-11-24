@@ -1,5 +1,5 @@
 import Coin from "../entities/Coin";
-import EnemyFly from "../entities/EnemyFly";
+import EnemyFly from "../entities/enemies/EnemyFly";
 
 export default class Level {
 
@@ -47,14 +47,14 @@ export default class Level {
     }
 
     // === ENEMIES ===
-    const enemiesLayer = this.map.getObjectLayer("Enemies");
-    if (enemiesLayer) {
-      enemiesLayer.objects.forEach(obj => {
-        if (obj.type === "enemy") {
-          this.enemies.add(new EnemyFly(this.scene, obj.x!, obj.y!));
-        }
-      });
-    }
+    // const enemiesLayer = this.map.getObjectLayer("Enemies");
+    // if (enemiesLayer) {
+    //   enemiesLayer.objects.forEach(obj => {
+    //     if (obj.type === "enemy") {
+    //       this.enemies.add(new EnemyFly(this.scene, obj.x!, obj.y!));
+    //     }
+    //   });
+    // }
 
     // === FLAG ===
 const endLayer = this.map.getObjectLayer("End");

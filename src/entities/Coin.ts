@@ -5,9 +5,11 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        
+        // Désactive les mouvements physiques
+        (this.body as Phaser.Physics.Arcade.Body).moves = false;
 
-        this.setImmovable(true);
         this.setCircle(10); 
-        this.setOffset(6, 6); // centre la hitbox
+        this.setOffset(6, 6);
     }
 }
