@@ -4,8 +4,7 @@ export default class Star extends Phaser.Physics.Arcade.Sprite {
 
       scene.add.existing(this);
       scene.physics.add.existing(this);
-
-      // Typage typescripts
+      
       (this.body as Phaser.Physics.Arcade.Body).moves = false;
 
       scene.tweens.add({

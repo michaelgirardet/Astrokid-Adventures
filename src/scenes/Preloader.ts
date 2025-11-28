@@ -59,7 +59,7 @@ export default class Preloader extends Phaser.Scene {
 
 
       
-      // --- PLAYER IDLE ---
+      // Player Idle
       this.anims.create({
         key: "player-idle",
         frames: [{ key: "player_idle" }],
@@ -67,7 +67,7 @@ export default class Preloader extends Phaser.Scene {
         repeat: -1
       });
 
-      // --- PLAYER WALKING ---
+      // Player Walking
       this.anims.create({
         key: "player-walk",
         frames: [
@@ -77,7 +77,7 @@ export default class Preloader extends Phaser.Scene {
         frameRate: 8,
       });
 
-      // --- PLAYER JUMP ---
+      // Player Jump
       this.anims.create({
         key: "player-jump",
         frames: [{ key: "player_jump" }],
@@ -85,7 +85,7 @@ export default class Preloader extends Phaser.Scene {
         repeat: -1
       });
 
-      // --- ENEMY ---
+      // Enemies
       this.anims.create({
         key: "enemy-idle",
         frames: [{ key: "enemy_idle" }],
