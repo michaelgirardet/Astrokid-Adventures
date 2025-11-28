@@ -4,7 +4,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'player_idle');
-        
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -31,7 +30,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     update(time: number, delta: number) {
          if (this.disableControls) return;
 
-    // Invincibilité ---------------------------------
+    // Invincibilité temportaire après hit
     if (this.isInvincible) {
         this.invincibleTimer -= delta;
         if (this.invincibleTimer <= 0) {
@@ -43,7 +42,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     const speed = 200;
 
-    // --------- MOUVEMENT ---------
+    // Move
     if (this.cursors.left.isDown) {
         this.setVelocityX(-speed);
         this.setFlipX(true);
@@ -56,32 +55,24 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(0);
     }
 
-    // --------- SAUT ---------
-    if (this.cursors.up.isDown && this.body!.blocked.down) {
+    if (this.cursors.up.isDown && this.body!.blocked.down) { // Saut
        this.setVelocityY(-800);
     }
-
-    // --------- ANIMATIONS ---------
     
-    // En l’air → JUMP
-    // --------- SAUT ---------
-    if (this.cursors.up.isDown && this.body!.blocked.down) {
+    if (this.cursors.up.isDown && this.body!.blocked.down) { // Saut en l'air
         this.setVelocityY(-800);
 
-        // 🔊 SON DE SAUT
         if ((this.scene as any).jumpSound) {
             (this.scene as any).jumpSound.play();
         }
     }
 
-    // Au sol → WALK
-    if (this.cursors.left.isDown || this.cursors.right.isDown) {
+    if (this.cursors.left.isDown || this.cursors.right.isDown) { // Walk au sol
         this.play("player-walk", true);
         return;
     }
 
-    // Sinon → IDLE
-    this.play("player-idle", true);
+    this.play("player-idle", true); // Sinon idle
 }
 
 }

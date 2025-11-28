@@ -1,7 +1,6 @@
 import Level from '../core/Level';
 import Player from '../entities/Player';
 import Star from '../entities/Star';
-import Bomb from '../entities/Bomb';
 import ScoreUI from '../ui/ScoreUI';
 import Coin from '../entities/Coin';
 import EnemyFly from '../entities/enemies/EnemyFly';
@@ -33,9 +32,10 @@ export default class GameScene extends Phaser.Scene {
         super('Game');
     }
 
-create() {
+    create() {
 
-    // --- LOAD LEVEL ---
+    this.levelEnding = false;
+
     this.level = new Level(this);
     this.level.load();
     this.physics.world.TILE_BIAS = 60;
@@ -46,11 +46,11 @@ create() {
     this.heartUI = this.hud.getHearts();
     this.scoreUI = this.hud.getScore();
 
-    // Musique
+    // --- MUSIQUE ---
     this.gameMusic = this.sound.add("game_music", {
-    volume: 0.2,
-    loop: true
-});
+        volume: 0.0,
+        loop: true
+    });
     this.gameMusic.play();
 
     this.hitSound = this.sound.add("hit_sound", { volume: 0.2 });
@@ -60,96 +60,83 @@ create() {
     this.starSound = this.sound.add("star_sound", { volume: 0.2 });
     this.levelClear = this.sound.add("level_clear", { volume: 0.2 });
 
+    // --- PAUSE ---
     this.input.keyboard.on("keydown-ESC", () => {
-    this.scene.launch("Pause");
-    this.scene.pause();
-});
-    
-    // --- PLAYER SPAWN ---
+        this.scene.launch("Pause");
+        this.scene.pause();
+    });
+
+    // --- PLAYER ---
     const spawn = this.level.map.findObject("Objects_Player", obj => obj.name === "Player");
-    this.player = new Player(this, spawn.x!, spawn.y!);
-    
-    // --- BOMBS GROUP ---
-    this.bombs = this.physics.add.group();
+        this.player = new Player(this, spawn.x!, spawn.y!);
+        
+        // --- VOID ZONES (les "trous")
+    this.level.voidZones.forEach(zone => {
+        this.physics.add.overlap(
+        this.player,
+        zone,
+        this.fallToDeath,
+        undefined,
+        this
+    );
+});
 
     // --- COINS ---
     this.level.coins = this.physics.add.group();
     const coinObjects = this.level.map.getObjectLayer("Objects_Coins").objects;
     coinObjects.forEach(obj => {
-        const coin = new Coin(this, obj.x!, obj.y!);
-        this.level.coins.add(coin);
+        this.level.coins.add(new Coin(this, obj.x!, obj.y!));
     });
 
     // --- ENEMIES ---
-   const enemyObjects = this.level.map.getObjectLayer("Objects_Enemies").objects;
+    const enemyObjects = this.level.map.getObjectLayer("Objects_Enemies").objects;
 
     enemyObjects.forEach(obj => {
 
-    const x = obj.x!;
-    const y = obj.y! - (obj.height || 32);
+        const x = obj.x!;
+        const y = obj.y! - (obj.height || 32);
 
-    // Lire TOUTES les custom props
-    const props: any = {};
-    obj.properties?.forEach((p: any) => {
-        props[p.name] = p.value;
-    });
-
-    const type = props.type;
+        const props: any = {};
+        obj.properties?.forEach((p: any) => props[p.name] = p.value);
 
         let enemy;
 
-    switch (type) {
-        case "fly":
-            enemy = new EnemyFly(this, x, y, props);
-            break;
-        case "blob":
-            enemy = new EnemyBlob(this, x, y, props);
-            break;
-        default:
-            console.warn("Unknown enemy type:", type);
-            return;
-    }
+        switch (props.type) {
+            case "fly":  enemy = new EnemyFly(this, x, y, props); break;
+            case "blob": enemy = new EnemyBlob(this, x, y, props); break;
+            default: console.warn("Unknown enemy type:", props.type);
+        }
 
-        this.level.enemies.add(enemy);      
-});
+        this.level.enemies.add(enemy);
+    });
 
     // --- STARS ---
     this.stars = this.physics.add.group();
     const starObjects = this.level.map.getObjectLayer("Objects_Stars").objects;
     starObjects.forEach(obj => {
-        const star = new Star(this, obj.x!, obj.y!);
-        this.stars.add(star);
+        this.stars.add(new Star(this, obj.x!, obj.y!));
     });
 
-    // --- COLLISIONS ---
+    // --- COLLISIONS & OVERLAPS ---
     this.physics.add.collider(this.player, this.level.groundLayer);
     this.physics.add.collider(this.player, this.level.blocksLayer);
     this.physics.add.collider(this.player, this.level.enemies, this.hitEnemy, undefined, this);
-    
-    // --- ENEMY COLLISIONS ---
+
     this.physics.add.collider(this.level.enemies, this.level.groundLayer);
     this.physics.add.collider(this.level.enemies, this.level.blocksLayer);
-    
-    // --- OVERLAPS ---
-    this.physics.add.overlap(
-        this.player,
-        this.level.enemies,
-        this.hitEnemyFromAbove,
-        this.checkIfAbove,
-        this
-    );
+
+    this.physics.add.overlap(this.player, this.level.enemies, this.hitEnemyFromAbove, this.checkIfAbove, this);
     this.physics.add.overlap(this.player, this.level.coins, this.collectCoin, undefined, this);
     this.physics.add.overlap(this.player, this.stars, this.collectStar, undefined, this);
-    this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
-    
+
     // --- FLAG ---
     this.physics.add.overlap(this.player, this.level.flag, this.endLevel, undefined, this);
-    
+
     // --- CAMERA ---
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
     this.cameras.main.setBounds(0, 0, this.level.map.widthInPixels, this.level.map.heightInPixels);
 }
-    
+
    update(time: number, delta: number) {
     this.player.update(time, delta);
 
@@ -166,32 +153,12 @@ create() {
             this.stars.add(star);
         }
     }
-
     collectStar(player: Player, star: Star) {
     star.disableBody(true, true);
-
         this.starUI.addStar();
         this.starSound.play();
-
-    this.scoreUI.add(1000);
-
-    if (this.stars.countActive(true) === 0) {
-        this.spawnBomb();
-    }
+        this.scoreUI.add(1000);
 }
-
-    spawnBomb() {
-        const x = (this.player.x < 400)
-            ? Phaser.Math.Between(400, 800)
-            : Phaser.Math.Between(0, 400);
-
-        const bomb = new Bomb(this, x, 16);
-        this.bombs.add(bomb);
-
-        this.physics.add.collider(this.player, this.bombs, () => {
-        console.log('GAME OVER');
-        });
-    }
 
     collectCoin(player: Player, coin: any) {
         coin.destroy();
@@ -247,6 +214,33 @@ hitEnemy(player: Player, enemy: any) {
         this.gameMusic.stop();
     }
 }
+    
+fallToDeath() {
+    if (this.levelEnding) return;
+    this.levelEnding = true;
+
+    // Désactiver les contrôles
+    this.player.disableControls = true;
+
+    // Faire disparaître le joueur
+    this.tweens.add({
+        targets: this.player,
+        alpha: 0,
+        duration: 300
+    });
+
+    // Enlever toutes les vies
+    this.heartUI.setHearts(0);
+
+    // Stop musique
+    this.gameMusic.stop();
+
+    // Restart du niveau après un petit délai
+    this.time.delayedCall(500, () => {
+        this.scene.restart();
+    });
+}
+
     
     // Fin de niveau
   endLevel(player: Player, flag: any) {

@@ -7,7 +7,6 @@ export default class StarUI {
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         
-
         // Petite icône d'étoile dans le HUD
         this.starIcon = scene.add.image(20, 60, "Star")
             .setScale(0.7)

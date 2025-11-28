@@ -5,12 +5,9 @@ export default class VictoryScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
-
-        // --- Fond sombre ---
         this.add.rectangle(0, 0, width, height, 0x000000, 0.55)
             .setOrigin(0);
 
-        // --- Panneau central ---
         const panel = this.add.rectangle(
             width / 2,
             height / 2,
@@ -65,16 +62,11 @@ export default class VictoryScene extends Phaser.Scene {
             () => this.goToMenu()
         );
 
-        // --- Particules décoratives ---
         this.createParticles();
 
         // Fade-in
         this.cameras.main.fadeIn(400, 0, 0, 0);
     }
-
-    // --------------------------------------------------------------
-    // Bouton arrondi réutilisable
-    // --------------------------------------------------------------
     createButton(x: number, y: number, label: string, callback: Function) {
         const radius = 16;
         const width = 280;
@@ -111,9 +103,6 @@ export default class VictoryScene extends Phaser.Scene {
         button.on("pointerdown", () => callback());
     }
 
-    // --------------------------------------------------------------
-    // Particules décoratives (échos bleus)
-    // --------------------------------------------------------------
     createParticles() {
         const { width, height } = this.scale;
 
@@ -136,9 +125,6 @@ export default class VictoryScene extends Phaser.Scene {
         }
     }
 
-    // --------------------------------------------------------------
-    // Transition vers le menu
-    // --------------------------------------------------------------
     goToMenu() {
         this.cameras.main.fadeOut(500, 0, 0, 0);
         this.time.delayedCall(500, () => {

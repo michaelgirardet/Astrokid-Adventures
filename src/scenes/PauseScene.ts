@@ -8,10 +8,10 @@ export default class PauseScene extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
-        // --- FOND TRANSPARENT ---
+        // Transparent background
         this.add.rectangle(0, 0, width, height, 0x000000, 0.55).setOrigin(0);
 
-        // --- PANNEAU CENTRAL ---
+        // Menu
         const panel = this.add.rectangle(
             width / 2,
             height / 2,
@@ -31,7 +31,7 @@ export default class PauseScene extends Phaser.Scene {
             ease: "Back.easeOut"
         });
 
-        // --- TITRE ---
+        // Title
         this.add.text(width / 2, height / 2 - 115, "PAUSE", {
             fontSize: "54px",
             fontFamily: "DynaPuff",
@@ -40,7 +40,7 @@ export default class PauseScene extends Phaser.Scene {
             strokeThickness: 8
         }).setOrigin(0.5);
 
-        // --- BOUTONS ---
+        // Buttons
         this.createRoundedButton(
             width / 2, height / 2 - 20,
             "REPRENDRE",
@@ -65,15 +65,12 @@ export default class PauseScene extends Phaser.Scene {
         this.cameras.main.fadeIn(200, 0, 0, 0);
     }
 
-    // ===========================================================
-    // 🔵 Bouton Arrondi
-    // ===========================================================
+    // Buttons
     createRoundedButton(x: number, y: number, label: string, callback: Function) {
         const radius = 18;
         const width = 300;
         const height = 60;
 
-        // --- Dessin du bouton arrondi en Graphics ---
         const graphics = this.add.graphics();
         graphics.fillStyle(0x00d4ff, 1);
         graphics.fillRoundedRect(0, 0, width, height, radius);
@@ -115,10 +112,6 @@ export default class PauseScene extends Phaser.Scene {
 
         button.on("pointerdown", () => callback());
     }
-
-    // ===========================================================
-    // Actions
-    // ===========================================================
 
     resumeGame() {
         this.cameras.main.fadeOut(200);

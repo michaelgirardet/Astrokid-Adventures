@@ -8,78 +8,26 @@ export default class MenuScene extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
-
-        // --- FOND D'ÉCRAN ---
         const bg = this.add.image(0, 0, "menu_bg")
             .setOrigin(0)
             .setDisplaySize(width, height);
         
         // Musique
           this.music = this.sound.add("menu_music", {
-            volume: 0.2,
+            volume: 0,
             loop: true
         });
-
         this.music.play();
 
 
-        // Overlay sombre pour améliorer la lisibilité
-        this.add.rectangle(0, 0, width, height, 0x000000, 0.4)
+        // Overlay sombre
+        this.add.rectangle(0, 0, width, height, 0x000000, 0)
             .setOrigin(0);
 
-        // --- CONTENEUR TITRE avec glassmorphism ---
-        const titlePanel = this.add.rectangle(
-            width / 2,
-            height * 0.28,
-            600,
-            140,
-            0x1a1a2e,
-            0.7
-        )
-        .setOrigin(0.5)
-        .setStrokeStyle(3, 0x00d4ff, 0.8);
-
-        // Effet de glow sur le panel
-        titlePanel.setScale(0.8);
-        this.tweens.add({
-            targets: titlePanel,
-            scale: 1,
-            duration: 800,
-            ease: 'Back.easeOut'
-        });
-
-        // --- TITRE PRINCIPAL ---
-        const title = this.add.text(width / 2, height * 0.28, "ECHO JUMP", {
-            fontSize: "72px",
-            fontFamily: "DynaPuff",
-            color: "#00d4ff",
-            stroke: "#0a0e27",
-            strokeThickness: 1
-        }).setOrigin(0.5);
-
-        // Animation du titre
-        title.setAlpha(0);
-        this.tweens.add({
-            targets: title,
-            alpha: 1,
-            duration: 1000,
-            ease: 'Power2'
-        });
-
-        // Effet de pulsation subtile
-        this.tweens.add({
-            targets: title,
-            scale: { from: 1, to: 1.05 },
-            duration: 2000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        // --- CONTENEUR MENU ---
+        // Menu container
         const menuY = height * 0.6;
 
-        // --- BOUTON JOUER ---
+        // Play button
         const playButton = this.add.rectangle(
             width / 2,
             menuY,
@@ -89,8 +37,8 @@ export default class MenuScene extends Phaser.Scene {
             1
         ).setOrigin(0.5);
 
-        const playText = this.add.text(width / 2, menuY, "▶ JOUER", {
-            fontSize: "42px",
+        const playText = this.add.text(width / 2, menuY, "▶ Commencer", {
+            fontSize: "38px",
             fontFamily: "DynaPuff",
             color: "#0a0e27",
             stroke: "#00d4ff",
@@ -136,7 +84,7 @@ export default class MenuScene extends Phaser.Scene {
             ease: 'Back.easeOut'
         });
 
-        // --- INSTRUCTIONS ---
+        // Instructions
         const instructions = this.add.text(
             width / 2,
             height * 0.85,
@@ -159,14 +107,12 @@ export default class MenuScene extends Phaser.Scene {
             repeat: -1,
             ease: 'Sine.easeInOut'
         });
-
-        // --- PARTICULES DÉCORATIVES ---
         this.createParticles();
 
-        // --- START AVEC LE CLAVIER ---
+        // Press start
         this.startKey = this.input.keyboard.addKey("ENTER");
 
-        // --- FADE IN ---
+        // Fade in
         this.cameras.main.fadeIn(800, 0, 0, 0);
     }
 
