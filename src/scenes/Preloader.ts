@@ -1,4 +1,4 @@
-export default class Preloader extends Phaser.Scene {
+export class Preloader extends Phaser.Scene {
 	constructor() {
 		super("Preloader");
 	}
@@ -23,7 +23,7 @@ export default class Preloader extends Phaser.Scene {
 
 		// Musics
 		this.load.audio("menu_music", "assets/sounds/music/menu.mp3");
-		this.load.audio("game_music", "assets/sounds/music/level1.mp3");
+		this.load.audio("game_music", "assets/sounds/music/mario.mp3");
 
 		//Sounds
 		this.load.audio("hit_sound", "assets/sounds/effects/sfx_hurt.ogg");
@@ -62,37 +62,33 @@ export default class Preloader extends Phaser.Scene {
 		this.load.image("fly_rest", "assets/enemies/fly/fly_rest.png");
 
 		this.load.image("flag", "assets/items/flag_yellow_a.png");
+		this.load.image("brick", "assets/items/brick.png");
 
 		this.load.image("Ground", "assets/ground.png");
 		this.load.image("Block", "assets/block.png");
-		this.load.image("Coin", "assets/coin.png");
+		this.load.image("Coin", "assets/items/gem_green.png");
 		this.load.image("Star", "assets/items/star.png");
 	}
 
+	// Animations
 	create() {
-		// Player Idle
 		this.anims.create({
 			key: "player-idle",
 			frames: [{ key: "player_idle" }],
 			frameRate: 1,
 			repeat: -1,
 		});
-
-		// Player Walking
 		this.anims.create({
 			key: "player-walk",
 			frames: [{ key: "player_walk_a" }, { key: "player_walk_b" }],
 			frameRate: 8,
 		});
-
-		// Player Jump
 		this.anims.create({
 			key: "player-jump",
 			frames: [{ key: "player_jump" }],
 			frameRate: 1,
 			repeat: -1,
 		});
-
 		this.anims.create({
 			key: "player-hit",
 			frames: [{ key: "player_hit" }],
@@ -100,28 +96,24 @@ export default class Preloader extends Phaser.Scene {
 			repeat: -1,
 		});
 
-		// Enemies
 		this.anims.create({
 			key: "enemy-idle",
 			frames: [{ key: "enemy_idle" }],
 			frameRate: 1,
 			repeat: -1,
 		});
-
 		this.anims.create({
 			key: "blob-walk",
 			frames: [{ key: "blob_walk_a" }, { key: "blob_walk_b" }],
 			frameRate: 4,
 			repeat: -1,
 		});
-
 		this.anims.create({
 			key: "fly-walk",
 			frames: [{ key: "fly_a" }, { key: "fly_b" }],
 			frameRate: 6,
 			repeat: -1,
 		});
-
 		this.anims.create({
 			key: "fly-rest",
 			frames: [{ key: "fly_rest" }],
@@ -129,7 +121,6 @@ export default class Preloader extends Phaser.Scene {
 			repeat: -1,
 		});
 
-		// Démarrer le jeu
 		this.scene.start("Menu");
 	}
 }

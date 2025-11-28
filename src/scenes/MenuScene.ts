@@ -12,6 +12,7 @@ export default class MenuScene extends Phaser.Scene {
 			.image(0, 0, "menu_bg")
 			.setOrigin(0)
 			.setDisplaySize(width, height);
+		console.log(bg);
 
 		// Musique
 		this.music = this.sound.add("menu_music", {

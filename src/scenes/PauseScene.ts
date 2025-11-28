@@ -54,7 +54,12 @@ export default class PauseScene extends Phaser.Scene {
 	}
 
 	// Buttons
-	createRoundedButton(x: number, y: number, label: string, callback: Function) {
+	createRoundedButton(
+		x: number,
+		y: number,
+		label: string,
+		callback: () => void,
+	) {
 		const radius = 18;
 		const width = 300;
 		const height = 60;
