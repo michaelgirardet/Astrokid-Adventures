@@ -1,78 +1,97 @@
 export default class Player extends Phaser.Physics.Arcade.Sprite {
+	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+	private runKey!: Phaser.Input.Keyboard.Key;
 
-    private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+	isInvincible = false;
+	invincibleTimer = 0;
+	disableControls = false;
+	isHit = false;
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'player_idle');
+	constructor(scene: Phaser.Scene, x: number, y: number) {
+		super(scene, x, y, "player_idle");
 
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+		scene.add.existing(this);
+		scene.physics.add.existing(this);
 
-        this.setGravityY(300);
-        this.setCollideWorldBounds(true);
+		this.setGravityY(300);
+		this.setCollideWorldBounds(true);
 
-        (this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(400, 800);
+		(this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(350, 900);
 
-        // Hitbox
-        this.body!.setSize(this.width * 0.6, this.height * 0.9);
-        this.body!.setOffset(this.width * 0.2, this.height * 0.1);
+		// Hitbox
+		this.body!.setSize(this.width * 0.6, this.height * 0.9);
+		this.body!.setOffset(this.width * 0.2, this.height * 0.1);
 
-        this.cursors = scene.input.keyboard.createCursorKeys();
+		// Controls
+		this.cursors = scene.input.keyboard.createCursorKeys();
+		this.runKey = scene.input.keyboard.addKey(
+			Phaser.Input.Keyboard.KeyCodes.SHIFT,
+		);
+	}
 
-        (this.scene as any).jumpSound.play();
-    }
+	update(time: number, delta: number) {
+		if (this.disableControls) return;
 
-    isInvincible = false;
-    invincibleTimer = 0;
+		if (this.isHit) {
+			this.play("player-hit", true);
+			return;
+		}
 
-    disableControls = false;
+		// --- INVINCIBILITÉ ---
+		if (this.isInvincible) {
+			this.invincibleTimer -= delta;
+			if (this.invincibleTimer <= 0) {
+				this.isInvincible = false;
+				this.clearTint();
+				this.setAlpha(1);
+			}
+		}
 
-    update(time: number, delta: number) {
-         if (this.disableControls) return;
+		// --- SPEED ---
+		const baseSpeed = 200;
+		const runSpeed = 350;
+		const speed = this.runKey.isDown ? runSpeed : baseSpeed;
 
-    // Invincibilité temportaire après hit
-    if (this.isInvincible) {
-        this.invincibleTimer -= delta;
-        if (this.invincibleTimer <= 0) {
-            this.isInvincible = false;
-            this.clearTint();
-            this.setAlpha(1);
-        }
-    }
+		// --- MOVE ---
+		if (this.cursors.left.isDown) {
+			this.setVelocityX(-speed);
+			this.setFlipX(true);
+		} else if (this.cursors.right.isDown) {
+			this.setVelocityX(speed);
+			this.setFlipX(false);
+		} else {
+			this.setVelocityX(0);
+		}
 
-    const speed = 200;
+		// --- JUMP ---
+		if (
+			Phaser.Input.Keyboard.JustDown(this.cursors.up) &&
+			this.body!.blocked.down
+		) {
+			this.setVelocityY(-800);
 
-    // Move
-    if (this.cursors.left.isDown) {
-        this.setVelocityX(-speed);
-        this.setFlipX(true);
-    }
-    else if (this.cursors.right.isDown) {
-        this.setVelocityX(speed);
-        this.setFlipX(false);
-    }
-    else {
-        this.setVelocityX(0);
-    }
+			if ((this.scene as any).jumpSound) {
+				(this.scene as any).jumpSound.play();
+			}
+		}
 
-    if (this.cursors.up.isDown && this.body!.blocked.down) { // Saut
-       this.setVelocityY(-800);
-    }
-    
-    if (this.cursors.up.isDown && this.body!.blocked.down) { // Saut en l'air
-        this.setVelocityY(-800);
+		// --- ANIMATIONS ---
+		if (!this.body!.blocked.down) {
+			this.play("player-jump", true);
+			return;
+		}
 
-        if ((this.scene as any).jumpSound) {
-            (this.scene as any).jumpSound.play();
-        }
-    }
+		// Animation RUN si tu veux l’ajouter plus tard
+		// if (this.runKey.isDown && (this.cursors.left.isDown || this.cursors.right.isDown)) {
+		//     this.play("player-run", true);
+		//     return;
+		// }
 
-    if (this.cursors.left.isDown || this.cursors.right.isDown) { // Walk au sol
-        this.play("player-walk", true);
-        return;
-    }
+		if (this.cursors.left.isDown || this.cursors.right.isDown) {
+			this.play("player-walk", true);
+			return;
+		}
 
-    this.play("player-idle", true); // Sinon idle
-}
-
+		this.play("player-idle", true);
+	}
 }

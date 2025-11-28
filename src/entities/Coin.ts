@@ -10,6 +10,6 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
         (this.body as Phaser.Physics.Arcade.Body).moves = false;
 
         this.setCircle(10); 
-        this.setOffset(6, 6);
+        this.setOrigin(0.5, 0.5);
     }
 }
