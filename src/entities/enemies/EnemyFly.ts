@@ -1,38 +1,41 @@
 import Enemy from "../Enemy";
 
 export default class EnemyFly extends Enemy {
+	private speed: number;
+	private minX: number;
+	private maxX: number;
 
-    private speed: number;
-    private minX: number;
-    private maxX: number;
+	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+		super(scene, x, y, "fly_a");
+		this.speed = props.speed ?? 100;
+		this.minX = props.patrolMinX ?? x - 50;
+		this.maxX = props.patrolMaxX ?? x + 50;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
-        super(scene, x, y, "enemy_idle");
+		const body = this.body as Phaser.Physics.Arcade.Body;
 
-        this.speed = props.speed ?? 100;
-        this.minX = props.patrolMinX ?? x - 50;
-        this.maxX = props.patrolMaxX ?? x + 50;
+		body.allowGravity = false;
+		body.setVelocityX(this.speed);
+		body.setCollideWorldBounds(false);
 
-        const body = this.body as Phaser.Physics.Arcade.Body;
+		body.moves = true;
+		this.anims.play("fly-walk");
+	}
 
-        body.allowGravity = false;
-        body.setVelocityX(this.speed);
-        body.setCollideWorldBounds(false);
+	update(time: number, delta: number) {
+		const body = this.body as Phaser.Physics.Arcade.Body;
 
-        body.setAllowGravity(false);
-        body.moves = true;   
-    }
-
-    update(time: number, delta: number) {
-        const body = this.body as Phaser.Physics.Arcade.Body;
-
-        if (this.x <= this.minX) {
-            body.setVelocityX(this.speed);
-            this.flipX = false;
-        }
-        else if (this.x >= this.maxX) {
-            body.setVelocityX(-this.speed);
-            this.flipX = true;
-        }
-    }
+		// Patrol
+		if (this.x <= this.minX) {
+			body.setVelocityX(this.speed);
+			this.flipX = true;
+		} else if (this.x >= this.maxX) {
+			body.setVelocityX(-this.speed);
+			this.flipX = false;
+		}
+	}
+	die() {
+		this.anims.play("fly-rest");
+		this.body.enable = false;
+		this.setVelocity(0, 0);
+	}
 }
