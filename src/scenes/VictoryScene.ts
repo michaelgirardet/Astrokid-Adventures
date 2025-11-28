@@ -60,7 +60,7 @@ export default class VictoryScene extends Phaser.Scene {
 		// Fade-in
 		this.cameras.main.fadeIn(400, 0, 0, 0);
 	}
-	createButton(x: number, y: number, label: string, callback: Function) {
+	createButton(x: number, y: number, label: string, callback: () => void) {
 		const radius = 16;
 		const width = 280;
 		const height = 60;

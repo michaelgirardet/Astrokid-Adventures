@@ -1,6 +1,8 @@
 export default class Player extends Phaser.Physics.Arcade.Sprite {
 	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
 	private runKey!: Phaser.Input.Keyboard.Key;
+	heldBrick?: Phaser.Physics.Arcade.Sprite;
+	throwKey!: Phaser.Input.Keyboard.Key;
 
 	isInvincible = false;
 	invincibleTimer = 0;
@@ -26,6 +28,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.cursors = scene.input.keyboard.createCursorKeys();
 		this.runKey = scene.input.keyboard.addKey(
 			Phaser.Input.Keyboard.KeyCodes.SHIFT,
+		);
+		this.throwKey = scene.input.keyboard.addKey(
+			Phaser.Input.Keyboard.KeyCodes.SPACE,
 		);
 	}
 
@@ -75,17 +80,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 		}
 
-		// --- ANIMATIONS ---
+		if (this.heldBrick) {
+			this.heldBrick.setPosition(this.x, this.y - 40);
+		}
+
+		if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.heldBrick) {
+			this.heldBrick.throw(this.flipX ? -1 : 1);
+			this.heldBrick = undefined;
+			console.log("BRIQUE LANCÉE !");
+		}
+
 		if (!this.body!.blocked.down) {
 			this.play("player-jump", true);
 			return;
 		}
-
-		// Animation RUN si tu veux l’ajouter plus tard
-		// if (this.runKey.isDown && (this.cursors.left.isDown || this.cursors.right.isDown)) {
-		//     this.play("player-run", true);
-		//     return;
-		// }
 
 		if (this.cursors.left.isDown || this.cursors.right.isDown) {
 			this.play("player-walk", true);

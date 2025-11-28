@@ -1,5 +1,6 @@
 export default class PauseScene extends Phaser.Scene {
 	private resumeKey!: Phaser.Input.Keyboard.Key;
+	private gameMusic!: Phaser.Sound.BaseSound;
 
 	constructor() {
 		super("Pause");
@@ -54,7 +55,12 @@ export default class PauseScene extends Phaser.Scene {
 	}
 
 	// Buttons
-	createRoundedButton(x: number, y: number, label: string, callback: Function) {
+	createRoundedButton(
+		x: number,
+		y: number,
+		label: string,
+		callback: () => void,
+	) {
 		const radius = 18;
 		const width = 300;
 		const height = 60;
@@ -119,6 +125,7 @@ export default class PauseScene extends Phaser.Scene {
 	quitToMenu() {
 		this.scene.stop("Game");
 		this.scene.start("Menu");
+		this.gameMusic.stop();
 	}
 
 	update() {

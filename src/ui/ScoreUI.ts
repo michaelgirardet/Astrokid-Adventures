@@ -20,6 +20,6 @@ export default class ScoreUI {
 
 	add(points: number) {
 		this.score += points;
-		this.text.setText("Score: " + this.score);
+		this.text.setText(`Score: ${this.score}`);
 	}
 }

@@ -1,8 +1,8 @@
-import Phaser from "phaser";
-import Preloader from "./scenes/Preloader";
 import Game from "./scenes/GameScene";
 import MenuScene from "./scenes/MenuScene";
 import PauseScene from "./scenes/PauseScene";
+import Phaser from "phaser";
+import { Preloader } from "./scenes/Preloader";
 import VictoryScene from "./scenes/VictoryScene";
 
 new Phaser.Game({
@@ -12,7 +12,7 @@ new Phaser.Game({
 	pixelArt: true,
 	physics: {
 		default: "arcade",
-		arcade: { fps: 60, gravity: { y: 800 }, debug: false },
+		arcade: { fps: 60, gravity: { y: 600 }, debug: false },
 	},
 	scene: [Preloader, Game, MenuScene, PauseScene, VictoryScene],
 });

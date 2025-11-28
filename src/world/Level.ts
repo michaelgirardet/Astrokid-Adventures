@@ -1,3 +1,4 @@
+import Brick from "../entities/Bricks";
 import Coin from "../entities/Coin";
 
 export class Level {
@@ -10,6 +11,7 @@ export class Level {
 	public map!: Phaser.Tilemaps.Tilemap;
 	public voidZones: (Phaser.GameObjects.Rectangle &
 		Phaser.Types.Physics.Arcade.GameObjectWithBody)[] = [];
+	public bricks!: Phaser.Physics.Arcade.Group;
 
 	constructor(private scene: Phaser.Scene) {}
 
@@ -22,8 +24,31 @@ export class Level {
 		this.blocksLayer = this.map.createLayer("Blocks", tiles, 0, 0);
 		this.groundLayer.setCollisionByProperty({ collides: true });
 		this.blocksLayer.setCollisionByProperty({ collides: true });
+		this.bricks = this.scene.physics.add.group();
 
-		// --- FLAG ---
+		// Briques
+		const brickLayer = this.map.getObjectLayer("Bricks");
+		this.bricks = this.scene.physics.add.group();
+
+		if (brickLayer) {
+			brickLayer.objects.forEach((obj) => {
+				const isBrick =
+					obj.type === "brick" ||
+					(Array.isArray(brickLayer.properties) &&
+						brickLayer.properties.some(
+							(p) => p.name === "type" && p.value === "brick",
+						));
+				if (!isBrick) return;
+
+				const x = obj.x + (obj.width ?? 32) / 2;
+				const y = obj.y + (obj.height ?? 32) / 2;
+
+				const brick = new Brick(this.scene, x, y);
+				this.bricks.add(brick);
+			});
+		}
+
+		// Drapeau
 		const endLayer = this.map.getObjectLayer("Flag");
 		if (endLayer) {
 			const flagObj = endLayer.objects.find((obj) =>
@@ -36,8 +61,6 @@ export class Level {
 					flagObj.y,
 					"flag",
 				);
-
-				// ✔ Origine en bas-centre (ce que tu veux visuellement)
 				flag.setOrigin(0.5, 1);
 
 				flag.body.setAllowGravity(false);
@@ -49,20 +72,17 @@ export class Level {
 
 		this.enemies = this.scene.add.group();
 
-		// --- COINS ---
+		// Gemmes
 		this.coins = this.scene.physics.add.group();
 		const coinsLayer = this.map.getObjectLayer("Coins");
 		if (coinsLayer) {
 			coinsLayer.objects.forEach((obj) => {
-				// Conversion Tiled → Phaser
-				const x = obj.x! + (obj.width ?? 32) / 2;
-				const y = obj.y! - (obj.height ?? 32) / 2;
+				const x = obj.x + (obj.width ?? 32) / 2;
+				const y = obj.y - (obj.height ?? 32) / 2;
 
 				const coin = new Coin(this.scene, x, y);
 				this.coins.add(coin);
 			});
-		} else {
-			console.warn("⚠️ Layer 'Coins' introuvable dans la map !");
 		}
 
 		const voidLayer = this.map.getObjectLayer("Void");
@@ -74,7 +94,7 @@ export class Level {
 
 				if (isVoid) {
 					const zone = this.scene.add
-						.rectangle(obj.x!, obj.y!, obj.width!, obj.height!, 0xff0000, 0)
+						.rectangle(obj.x, obj.y, obj.width, obj.height, 0xff0000, 0)
 						.setOrigin(0, 0);
 
 					// physics body
