@@ -22,8 +22,8 @@ export class Preloader extends Phaser.Scene {
 		this.load.image("menu_bg", "assets/ui/background_echo_jump.png");
 
 		// Musics
-		this.load.audio("menu_music", "assets/sounds/music/menu.mp3");
-		this.load.audio("game_music", "assets/sounds/music/mario.mp3");
+		this.load.audio("menu_music", "assets/sounds/music/menu-audio.wav");
+		this.load.audio("game_music", "assets/sounds/music/level1.mp3");
 
 		//Sounds
 		this.load.audio("hit_sound", "assets/sounds/effects/sfx_hurt.ogg");

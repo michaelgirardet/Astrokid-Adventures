@@ -8,6 +8,7 @@ import type HeartUI from "../ui/HeartUI";
 import HUD from "../ui/HUD";
 import type StarUI from "../ui/StarUI";
 import type Brick from "../entities/Bricks";
+import type Enemy from "../entities/Enemy";
 
 export default class GameScene extends Phaser.Scene {
 	private level!: Level;
@@ -64,7 +65,7 @@ export default class GameScene extends Phaser.Scene {
 			"Objects_Player",
 			(obj) => obj.name === "Player",
 		);
-		this.player = new Player(this, spawn.x!, spawn.y!);
+		this.player = new Player(this, spawn.x, spawn.y);
 
 		// Zones vides
 		this.level.voidZones.forEach((zone) => {
@@ -79,11 +80,11 @@ export default class GameScene extends Phaser.Scene {
 
 		// Ennemis
 		const enemyObjects =
-			this.level.map.getObjectLayer("Objects_Enemies").objects;
+			this.level.map.getObjectLayer("Enemies").objects;
 
 		enemyObjects.forEach((obj) => {
-			const x = obj.x!;
-			const y = obj.y! - (obj.height || 32);
+			const x = obj.x;
+			const y = obj.y - (obj.height || 32);
 
 			const props: any = {};
 			obj.properties?.forEach((p: any) => {
@@ -110,7 +111,7 @@ export default class GameScene extends Phaser.Scene {
 		this.stars = this.physics.add.group();
 		const starObjects = this.level.map.getObjectLayer("Stars").objects;
 		starObjects.forEach((obj) => {
-			this.stars.add(new Star(this, obj.x!, obj.y!));
+			this.stars.add(new Star(this, obj.x, obj.y));
 		});
 
 		// Collisions et Overlaps
@@ -243,7 +244,7 @@ export default class GameScene extends Phaser.Scene {
 		player.setVelocityY(-500);
 	}
 
-	hitEnemy(player: Player, enemy: any) {
+	hitEnemy(player: Player, enemy: Enemy) {
 		if (player.body.velocity.y > 0) return;
 		if (player.isInvincible) return;
 

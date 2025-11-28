@@ -1,5 +1,6 @@
 export default class PauseScene extends Phaser.Scene {
 	private resumeKey!: Phaser.Input.Keyboard.Key;
+	private gameMusic!: Phaser.Sound.BaseSound;
 
 	constructor() {
 		super("Pause");
@@ -124,6 +125,7 @@ export default class PauseScene extends Phaser.Scene {
 	quitToMenu() {
 		this.scene.stop("Game");
 		this.scene.start("Menu");
+		this.gameMusic.stop();
 	}
 
 	update() {

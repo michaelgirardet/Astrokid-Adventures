@@ -2,7 +2,7 @@ import Phaser from "phaser";
 
 export default class Brick extends Phaser.Physics.Arcade.Sprite {
 	public isHeld = false; // portée par le joueur ?
-	public holder: any = null;
+	public holder: Phaser.Physics.Arcade.Sprite | null = null;
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, "brick");
