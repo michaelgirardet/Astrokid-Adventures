@@ -1201,7 +1201,6 @@
         {
          "draworder":"topdown",
          "id":25,
-         "locked":true,
          "name":"Stars",
          "objects":[
                 {
@@ -1225,6 +1224,17 @@
                  "width":61.0636,
                  "x":1985.12,
                  "y":675.031
+                }, 
+                {
+                 "height":62.2425629290618,
+                 "id":208,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":62.2425629290615,
+                 "x":2720.36613272311,
+                 "y":65.9038901601831
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -1256,7 +1266,7 @@
          "y":0
         }],
  "nextlayerid":45,
- "nextobjectid":207,
+ "nextobjectid":209,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",

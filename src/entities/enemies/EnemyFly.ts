@@ -38,8 +38,17 @@ export default class EnemyFly extends Enemy {
 		}
 	}
 	die() {
-		this.anims.play("fly-rest");
-		this.body.enable = false;
-		this.setVelocity(0, 0);
+		const body = this.body as Phaser.Physics.Arcade.Body;
+
+		this.anims.play("fly-rest", true);
+
+		// Stoppe immédiatement les interactions physiques
+		body.stop();
+		body.setVelocity(0, 0);
+		body.setAllowGravity(false);
+		body.enable = false;
+
+		// Facultatif : désactiver X movement
+		this.speed = 0;
 	}
 }

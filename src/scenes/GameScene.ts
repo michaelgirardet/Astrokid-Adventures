@@ -229,15 +229,14 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	checkIfAbove(player, enemy) {
-		const bodyP = player.body;
-		const bodyE = enemy.body;
+		const pb = player.body;
+		const eb = enemy.body;
 
-		const comingDownFast = bodyP.velocity.y > 100;
-
-		const playerBottom = bodyP.bottom;
-		const enemyTop = bodyE.top;
-
-		return comingDownFast && playerBottom < enemyTop + 20;
+		return (
+			pb.velocity.y > 0 && // le joueur tombe
+			pb.bottom > eb.top && // les box se touchent ou se chevauchent
+			pb.bottom - pb.velocity.y <= eb.top // frame précédente le joueur était au-dessus
+		);
 	}
 
 	hitEnemyFromAbove(player: Player, enemy: Enemy) {
@@ -255,7 +254,7 @@ export default class GameScene extends Phaser.Scene {
 			player.body.checkCollision.none = false;
 		});
 
-		player.setVelocityY(-500);
+		player.setVelocityY(-350);
 	}
 
 	hitEnemy(_player: Player, _enemy: Enemy) {
