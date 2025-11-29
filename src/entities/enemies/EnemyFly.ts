@@ -5,20 +5,24 @@ export default class EnemyFly extends Enemy {
 	private minX: number;
 	private maxX: number;
 
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(scene, x, y, props) {
 		super(scene, x, y, "fly_a");
+
 		this.speed = props.speed ?? 100;
 		this.minX = props.patrolMinX ?? x - 50;
 		this.maxX = props.patrolMaxX ?? x + 50;
 
-		const body = this.body as Phaser.Physics.Arcade.Body;
+		scene.events.once("update", () => {
+			const body = this.body as Phaser.Physics.Arcade.Body;
+			body.setAllowGravity(false);
+			body.setCollideWorldBounds(false);
+			body.moves = true;
 
-		body.allowGravity = false;
-		body.setVelocityX(this.speed);
-		body.setCollideWorldBounds(false);
+			body.setVelocityX(this.speed);
 
-		body.moves = true;
-		this.anims.play("fly-walk");
+			this.anims.play("fly-walk", true);
+			this.setDepth(1000);
+		});
 	}
 
 	update(time: number, delta: number) {

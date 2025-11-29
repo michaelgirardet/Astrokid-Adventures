@@ -28,6 +28,8 @@ export default class GameScene extends Phaser.Scene {
 	private coinSound!: Phaser.Sound.BaseSound;
 	private starSound!: Phaser.Sound.BaseSound;
 	private levelClear!: Phaser.Sound.BaseSound;
+	private brickPickupOverlap!: Phaser.Physics.Arcade.Collider;
+	// private playerBrickCollider!: Phaser.Physics.Arcade.Collider;
 	private levelEnding = false;
 
 	constructor() {
@@ -84,26 +86,23 @@ export default class GameScene extends Phaser.Scene {
 		const enemyObjects = this.level.map.getObjectLayer("Enemies").objects;
 
 		enemyObjects.forEach((obj) => {
-			const x = obj.x;
-			const y = obj.y - (obj.height || 32);
-
 			const props: any = {};
 			obj.properties?.forEach((p: any) => {
 				props[p.name] = p.value;
 			});
 
-			let enemy: Phaser.GameObjects.GameObject;
+			let enemy: Enemy;
 
-			switch (props.type) {
-				case "fly":
-					enemy = new EnemyFly(this, x, y, props);
-					break;
-				case "blob":
-					enemy = new EnemyBlob(this, x, y, props);
-					break;
-				default:
-					console.warn("Unknown enemy type:", props.type);
+			if (props.type === "fly") {
+				enemy = new EnemyFly(this, obj.x, obj.y, props);
+			} else if (props.type === "blob") {
+				enemy = new EnemyBlob(this, obj.x, obj.y - (obj.height || 32), props);
+			} else {
+				console.warn("Unknown enemy type:", props.type);
+				return;
 			}
+
+			enemy.setDepth(10);
 
 			this.level.enemies.add(enemy);
 		});
@@ -125,8 +124,16 @@ export default class GameScene extends Phaser.Scene {
 			undefined,
 			this,
 		);
-		this.physics.add.collider(this.level.enemies, this.level.groundLayer);
-		this.physics.add.collider(this.level.enemies, this.level.blocksLayer);
+		// Only blobs collide with ground / blocks
+		this.physics.add.collider(
+			this.level.enemies.getChildren().filter((e) => e instanceof EnemyBlob),
+			this.level.groundLayer,
+		);
+
+		this.physics.add.collider(
+			this.level.enemies.getChildren().filter((e) => e instanceof EnemyBlob),
+			this.level.blocksLayer,
+		);
 		this.physics.add.overlap(
 			this.player,
 			this.level.enemies,
@@ -158,8 +165,13 @@ export default class GameScene extends Phaser.Scene {
 			this,
 		);
 
+		// this.playerBrickCollider = this.physics.add.collider(
+		// 	this.player,
+		// 	this.level.bricks,
+		// );
+
 		// Ramasser une brique
-		this.physics.add.overlap(
+		this.brickPickupOverlap = this.physics.add.overlap(
 			this.player,
 			this.level.bricks,
 			this.pickBrick,
@@ -228,9 +240,10 @@ export default class GameScene extends Phaser.Scene {
 		return comingDownFast && playerBottom < enemyTop + 20;
 	}
 
-	hitEnemyFromAbove(player, enemy) {
-		if (enemy.squash) {
-			enemy.squash();
+	hitEnemyFromAbove(player: Player, enemy: Enemy) {
+		const enemyAny = enemy as any;
+		if (typeof enemyAny.squash === "function") {
+			enemyAny.squash();
 		} else {
 			enemy.destroy();
 		}
@@ -275,30 +288,86 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	pickBrick(player: Player, brick: Brick) {
-		if (brick.isHeld) return; // éviter spam
+		console.log("🤏 pickBrick CALLED");
+
+		// 🔹 1. Le joueur a déjà une brique
+		if (player.heldBrick) {
+			console.warn("⚠️ Player already holding a brick.");
+			return;
+		}
+
+		// 🔹 2. La brique vient d’être lancée → on ignore
+		if (!brick.canBePicked) {
+			console.warn("⏳ Brick not pickable yet.");
+			return;
+		}
+
+		// 🔹 3. La brique est déjà marquée comme tenue
+		if (brick.isHeld) {
+			console.warn("⚠️ Brick already held.");
+			return;
+		}
 
 		brick.isHeld = true;
 		brick.holder = player;
-
-		brick.body.enable = false;
-
 		player.heldBrick = brick;
 
-		console.log("Brique ramassée !");
+		const body = brick.body as Phaser.Physics.Arcade.Body;
+		body.setAllowGravity(false);
+		body.setVelocity(0, 0);
+		body.checkCollision.none = true;
+		brick.setImmovable(true);
+
+		console.log("📦 Brick picked!");
 	}
 
-	brickHitEnemy(brick: Brick, enemy: EnemyBlob) {
-		// Protéger le cas où le joueur porte la brique
-		if (brick.isHeld) return;
+	brickHitEnemy(
+		brickObj: Phaser.GameObjects.GameObject,
+		enemyObj: Phaser.GameObjects.GameObject,
+	) {
+		const brick = brickObj as Brick;
+		const enemy = enemyObj as Enemy;
 
-		// Détruire l’ennemi
-		if (enemy.squash) enemy.squash();
-		else enemy.destroy();
+		console.log("💥 brickHitEnemy CALLED");
 
-		// Casser la brique
-		brick.destroy();
+		// Garde-fou : vérifier que c'est bien un Brick avec la méthode hit
+		if (typeof (brick as any).hit !== "function") {
+			console.warn("❌ brick.hit is not a function, skipping collision");
+			return;
+		}
 
-		console.log("Un ennemi a été touché par une brique !");
+		if (brick.isHeld) {
+			console.warn("❌ Brick is still held → ignoring collision");
+			return;
+		}
+
+		const body = brick.body as Phaser.Physics.Arcade.Body;
+		const speed = Math.abs(body.velocity.x) + Math.abs(body.velocity.y);
+
+		console.log("🧱 Brick speed =", speed);
+
+		if (speed < 80) {
+			console.warn("⚠️ Speed too low, no damage");
+			return;
+		}
+
+		console.log("🔥 Brick should DAMAGE enemy now");
+
+		const enemyAny = enemy as any;
+
+		if (typeof enemyAny.squash === "function") {
+			console.log("🪓 Enemy has squash(), calling it…");
+			enemyAny.squash();
+		} else {
+			console.log("💀 Enemy destroyed()");
+			enemy.destroy();
+		}
+
+		brick.hit();
+		this.disappearSound.play();
+		this.scoreUI.add(200);
+
+		console.log("🧱 Brick lifespan now:", brick.lifespan);
 	}
 
 	fallToDeath() {

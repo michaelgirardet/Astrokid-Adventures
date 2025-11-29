@@ -88,6 +88,7 @@ export class Preloader extends Phaser.Scene {
 			key: "player-walk",
 			frames: [{ key: "player_walk_a" }, { key: "player_walk_b" }],
 			frameRate: 8,
+			repeat: -1,
 		});
 		this.anims.create({
 			key: "player-duck",
@@ -105,14 +106,14 @@ export class Preloader extends Phaser.Scene {
 			key: "player-hit",
 			frames: [{ key: "player_hit" }],
 			frameRate: 1,
-			repeat: -1,
+			repeat: 0,
 		});
 
 		this.anims.create({
 			key: "enemy-idle",
 			frames: [{ key: "enemy_idle" }],
 			frameRate: 1,
-			repeat: -1,
+			repeat: 0,
 		});
 		this.anims.create({
 			key: "blob-walk",

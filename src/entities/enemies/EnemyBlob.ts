@@ -6,26 +6,26 @@ export default class EnemyBlob extends Enemy {
 	private maxX: number;
 	private jumpTimer = 0;
 
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(scene, x, y, props) {
 		super(scene, x, y, "blob_idle");
 
 		this.speed = props.speed ?? 40;
 		this.minX = props.patrolMinX ?? x - 50;
 		this.maxX = props.patrolMaxX ?? x + 50;
 
-		const body = this.body as Phaser.Physics.Arcade.Body;
+		scene.events.once("update", () => {
+			const body = this.body as Phaser.Physics.Arcade.Body;
+			body.setAllowGravity(true);
+			body.setCollideWorldBounds(true);
 
-		body.setAllowGravity(true);
-		body.setCollideWorldBounds(true);
-
-		const dir = props.direction ?? "right";
-		if (dir === "left") {
-			body.setVelocityX(-this.speed);
-			this.flipX = true;
-		} else {
-			body.setVelocityX(this.speed);
-			this.flipX = false;
-		}
+			if (props.direction === "left") {
+				body.setVelocityX(-this.speed);
+				this.flipX = true;
+			} else {
+				body.setVelocityX(this.speed);
+				this.flipX = false;
+			}
+		});
 	}
 
 	update(time: number, delta: number) {
