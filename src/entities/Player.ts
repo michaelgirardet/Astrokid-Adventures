@@ -100,7 +100,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 		}
 
-		// --- THROW BRICK ---
+		// Lancer brique
 		if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.heldBrick) {
 			this.heldBrick.throw(this.flipX ? -1 : 1);
 			this.heldBrick = undefined;

@@ -11,4 +11,12 @@ export default abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	abstract update(time: number, delta: number): void;
+
+	die() {
+		this.destroy();
+	}
+
+	squash() {
+		this.destroy();
+	}
 }

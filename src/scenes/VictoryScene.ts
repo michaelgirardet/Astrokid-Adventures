@@ -20,7 +20,7 @@ export default class VictoryScene extends Phaser.Scene {
 			ease: "Back.easeOut",
 		});
 
-		// --- Texte principal ---
+		// Texte principal
 		const title = this.add
 			.text(width / 2, height / 2 - 80, "NIVEAU TERMINÉ !", {
 				fontSize: "60px",

@@ -67,6 +67,21 @@ export class Preloader extends Phaser.Scene {
 		this.load.image("fly_b", "assets/enemies/fly/fly_b.png");
 		this.load.image("fly_rest", "assets/enemies/fly/fly_rest.png");
 
+		this.load.image("worm_idle", "assets/enemies/worm/worm_normal_rest.png");
+		this.load.image(
+			"worm_walk_a",
+			"assets/enemies/worm/worm_normal_move_a.png",
+		);
+		this.load.image(
+			"worm_walk_b",
+			"assets/enemies/worm/worm_normal_move_b.png",
+		);
+		this.load.image("worm_flat", "assets/enemies/worm/worm_normal_rest.png");
+
+		this.load.image("bee_a", "assets/enemies/bee/bee_a.png");
+		this.load.image("bee_b", "assets/enemies/bee/bee_b.png");
+		this.load.image("bee_rest", "assets/enemies/bee/bee_rest.png");
+
 		this.load.image("flag", "assets/items/flag_yellow_a.png");
 		this.load.image("brick", "assets/items/brick.png");
 
@@ -130,6 +145,42 @@ export class Preloader extends Phaser.Scene {
 		this.anims.create({
 			key: "fly-rest",
 			frames: [{ key: "fly_rest" }],
+			frameRate: 1,
+			repeat: -1,
+		});
+
+		//Worm
+		this.anims.create({
+			key: "worm-idle",
+			frames: [{ key: "worm_idle" }],
+			frameRate: 1,
+			repeat: -1,
+		});
+
+		this.anims.create({
+			key: "worm-walk",
+			frames: [{ key: "worm_walk_a" }, { key: "worm_walk_b" }],
+			frameRate: 4,
+			repeat: -1,
+		});
+
+		this.anims.create({
+			key: "worm-flat",
+			frames: [{ key: "worm_flat" }],
+			frameRate: 1,
+			repeat: 0,
+		});
+
+		this.anims.create({
+			key: "bee-fly",
+			frames: [{ key: "bee_a" }, { key: "bee_b" }],
+			frameRate: 8,
+			repeat: -1,
+		});
+
+		this.anims.create({
+			key: "bee-rest",
+			frames: [{ key: "bee_rest" }],
 			frameRate: 1,
 			repeat: -1,
 		});

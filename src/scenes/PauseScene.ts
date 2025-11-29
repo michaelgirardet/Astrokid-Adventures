@@ -48,7 +48,6 @@ export default class PauseScene extends Phaser.Scene {
 			this.quitToMenu(),
 		);
 
-		// --- Keybind Resume ---
 		this.resumeKey = this.input.keyboard.addKey("ESC");
 
 		this.cameras.main.fadeIn(200, 0, 0, 0);
@@ -71,7 +70,6 @@ export default class PauseScene extends Phaser.Scene {
 		graphics.generateTexture("rounded-btn", width, height);
 		graphics.destroy();
 
-		// --- Sprite bouton ---
 		const button = this.add.image(x, y, "rounded-btn").setOrigin(0.5);
 
 		// --- Texte ---
