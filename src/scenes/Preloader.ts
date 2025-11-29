@@ -5,7 +5,6 @@ export class Preloader extends Phaser.Scene {
 
 	preload() {
 		const font = new FontFace("DynaPuff", `url("fonts/DynaPuff.ttf")`);
-
 		font.load().then((loaded) => {
 			document.fonts.add(loaded);
 		});
@@ -39,11 +38,18 @@ export class Preloader extends Phaser.Scene {
 		this.load.image("heart_full", "assets/ui/heart_full.png");
 		this.load.image("heart_empty", "assets/ui/heart_empty.png");
 
-		this.load.image("player_idle", "assets/player/character_pink_idle.webp");
-		this.load.image("player_jump", "assets/player/character_pink_jump.webp");
-		this.load.image("player_walk_a", "assets/player/character_pink_walk_a.png");
-		this.load.image("player_walk_b", "assets/player/character_pink_walk_b.png");
-		this.load.image("player_hit", "assets/player/character_pink_hit.png");
+		this.load.image("player_idle", "assets/player/character_yellow_idle.png");
+		this.load.image("player_jump", "assets/player/character_yellow_jump.png");
+		this.load.image(
+			"player_walk_a",
+			"assets/player/character_yellow_walk_a.png",
+		);
+		this.load.image(
+			"player_walk_b",
+			"assets/player/character_yellow_walk_b.png",
+		);
+		this.load.image("player_hit", "assets/player/character_yellow_hit.png");
+		this.load.image("player_duck", "assets/player/character_yellow_duck.png");
 
 		this.load.image("enemy_idle", "assets/enemy_idle.png");
 		this.load.image("blob_idle", "assets/enemies/blob/slime_normal_rest.png");
@@ -84,10 +90,16 @@ export class Preloader extends Phaser.Scene {
 			frameRate: 8,
 		});
 		this.anims.create({
+			key: "player-duck",
+			frames: [{ key: "player_duck" }],
+			frameRate: 1,
+			repeat: -1,
+		});
+		this.anims.create({
 			key: "player-jump",
 			frames: [{ key: "player_jump" }],
 			frameRate: 1,
-			repeat: -1,
+			repeat: 0,
 		});
 		this.anims.create({
 			key: "player-hit",

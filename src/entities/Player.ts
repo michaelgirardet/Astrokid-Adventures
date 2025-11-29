@@ -8,6 +8,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	invincibleTimer = 0;
 	disableControls = false;
 	isHit = false;
+	isDucking = false;
 
 	constructor(scene: Phaser.Scene, x: number, y: number) {
 		super(scene, x, y, "player_idle");
@@ -20,9 +21,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 		(this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(350, 900);
 
-		// Hitbox
-		this.body!.setSize(this.width * 0.6, this.height * 0.9);
-		this.body!.setOffset(this.width * 0.2, this.height * 0.1);
+		// Hitbox standard
+		this.body.setSize(this.width * 0.6, this.height * 0.9);
+		this.body.setOffset(this.width * 0.2, this.height * 0.1);
 
 		// Controls
 		this.cursors = scene.input.keyboard.createCursorKeys();
@@ -34,7 +35,25 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		);
 	}
 
-	update(time: number, delta: number) {
+	// --------------------------
+	//  DUCK HANDLERS
+	// --------------------------
+	enterDuck() {
+		this.setVelocityX(0);
+		this.play("player-duck", true);
+
+		// Hitbox réduite
+		this.body.setSize(this.width * 0.6, this.height * 0.5);
+		this.body.setOffset(this.width * 0.2, this.height * 0.45);
+	}
+
+	exitDuck() {
+		// Reset hitbox
+		this.body.setSize(this.width * 0.6, this.height * 0.9);
+		this.body.setOffset(this.width * 0.2, this.height * 0.1);
+	}
+
+	update(_time: number, delta: number) {
 		if (this.disableControls) return;
 
 		if (this.isHit) {
@@ -52,7 +71,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			}
 		}
 
-		// --- SPEED ---
+		// --- DUCK ---
+		if (this.cursors.down.isDown && this.body.blocked.down && !this.isDucking) {
+			this.isDucking = true;
+			this.enterDuck();
+		}
+
+		if (!this.cursors.down.isDown && this.isDucking) {
+			this.isDucking = false;
+			this.exitDuck();
+		}
+
+		// Si on est accroupi → rien d'autre ne doit se produire
+		if (this.isDucking) {
+			return;
+		}
+
+		// --- RUN SPEED ---
 		const baseSpeed = 200;
 		const runSpeed = 350;
 		const speed = this.runKey.isDown ? runSpeed : baseSpeed;
@@ -71,15 +106,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		// --- JUMP ---
 		if (
 			Phaser.Input.Keyboard.JustDown(this.cursors.up) &&
-			this.body!.blocked.down
+			this.body.blocked.down
 		) {
 			this.setVelocityY(-800);
-
-			if ((this.scene as any).jumpSound) {
-				(this.scene as any).jumpSound.play();
-			}
+			const sc = this.scene as Phaser.Scene & {
+				jumpSound?: { play: () => void };
+			};
+			if (sc.jumpSound) sc.jumpSound.play();
 		}
 
+		// --- HELD BRICK ---
 		if (this.heldBrick) {
 			this.heldBrick.setPosition(this.x, this.y - 40);
 		}
@@ -90,7 +126,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			console.log("BRIQUE LANCÉE !");
 		}
 
-		if (!this.body!.blocked.down) {
+		// --- ANIMATIONS ---
+		if (!this.body.blocked.down) {
 			this.play("player-jump", true);
 			return;
 		}

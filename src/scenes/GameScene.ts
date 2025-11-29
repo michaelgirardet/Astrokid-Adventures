@@ -9,6 +9,8 @@ import HUD from "../ui/HUD";
 import type StarUI from "../ui/StarUI";
 import type Brick from "../entities/Bricks";
 import type Enemy from "../entities/Enemy";
+import type Coin from "../entities/Coin";
+import type Flag from "../entities/Flag";
 
 export default class GameScene extends Phaser.Scene {
 	private level!: Level;
@@ -42,7 +44,7 @@ export default class GameScene extends Phaser.Scene {
 		this.heartUI = this.hud.getHearts();
 		this.scoreUI = this.hud.getScore();
 		this.gameMusic = this.sound.add("game_music", {
-			volume: 0.2,
+			volume: 0,
 			loop: true,
 		});
 		this.gameMusic.play();
@@ -79,8 +81,7 @@ export default class GameScene extends Phaser.Scene {
 		});
 
 		// Ennemis
-		const enemyObjects =
-			this.level.map.getObjectLayer("Enemies").objects;
+		const enemyObjects = this.level.map.getObjectLayer("Enemies").objects;
 
 		enemyObjects.forEach((obj) => {
 			const x = obj.x;
@@ -189,7 +190,7 @@ export default class GameScene extends Phaser.Scene {
 	update(time: number, delta: number) {
 		this.player.update(time, delta);
 
-		this.level.enemies.children.each((enemy: any) => {
+		this.level.enemies.children.each((enemy: Enemy) => {
 			if (enemy.update) {
 				enemy.update(time, delta);
 			}
@@ -202,14 +203,14 @@ export default class GameScene extends Phaser.Scene {
 			this.stars.add(star);
 		}
 	}
-	collectStar(player: Player, star: Star) {
+	collectStar(_player: Player, star: Star) {
 		star.disableBody(true, true);
 		this.starUI.addStar();
 		this.starSound.play();
 		this.scoreUI.add(1000);
 	}
 
-	collectCoin(player: Player, coin: any) {
+	collectCoin(_player: Player, coin: Coin) {
 		coin.destroy();
 		this.scoreUI.add(100);
 		this.coinSound.play();
@@ -244,26 +245,26 @@ export default class GameScene extends Phaser.Scene {
 		player.setVelocityY(-500);
 	}
 
-	hitEnemy(player: Player, enemy: Enemy) {
-		if (player.body.velocity.y > 0) return;
-		if (player.isInvincible) return;
+	hitEnemy(_player: Player, _enemy: Enemy) {
+		if (this.player.body.velocity.y > 0) return;
+		if (this.player.isInvincible) return;
 
 		this.hitSound.play();
 
-		player.isHit = true;
-		player.play("player-hit");
+		this.player.isHit = true;
+		this.player.play("player-hit");
 
 		// Invincibilité
-		player.isInvincible = true;
-		player.invincibleTimer = 1000;
-		player.setTint(0xff5555);
-		player.setAlpha(0.5);
+		this.player.isInvincible = true;
+		this.player.invincibleTimer = 1000;
+		this.player.setTint(0xff5555);
+		this.player.setAlpha(0.5);
 
 		this.heartUI.loseHeart();
 
 		// Reset HIT state après 250 ms
 		this.time.delayedCall(250, () => {
-			player.isHit = false;
+			this.player.isHit = false;
 		});
 
 		if (this.heartUI.getHearts() <= 0) {
@@ -286,7 +287,7 @@ export default class GameScene extends Phaser.Scene {
 		console.log("Brique ramassée !");
 	}
 
-	brickHitEnemy(brick: any, enemy: any) {
+	brickHitEnemy(brick: Brick, enemy: EnemyBlob) {
 		// Protéger le cas où le joueur porte la brique
 		if (brick.isHeld) return;
 
@@ -327,7 +328,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	// Fin de niveau
-	endLevel(player: Player, flag: any) {
+	endLevel(player: Player, flag: Flag) {
 		if (this.levelEnding) return;
 		this.levelEnding = true;
 
