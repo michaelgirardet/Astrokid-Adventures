@@ -24,27 +24,33 @@ export class Level {
 		this.blocksLayer = this.map.createLayer("Blocks", tiles, 0, 0);
 		this.groundLayer.setCollisionByProperty({ collides: true });
 		this.blocksLayer.setCollisionByProperty({ collides: true });
-		this.bricks = this.scene.physics.add.group();
+		this.bricks = this.scene.physics.add.group({
+			classType: Brick,
+			runChildUpdate: true,
+		});
 
 		// Briques
 		const brickLayer = this.map.getObjectLayer("Bricks");
-		this.bricks = this.scene.physics.add.group();
 
 		if (brickLayer) {
 			brickLayer.objects.forEach((obj) => {
-				const isBrick =
-					obj.type === "brick" ||
-					(Array.isArray(brickLayer.properties) &&
-						brickLayer.properties.some(
-							(p) => p.name === "type" && p.value === "brick",
-						));
-				if (!isBrick) return;
-
 				const x = obj.x + (obj.width ?? 32) / 2;
 				const y = obj.y + (obj.height ?? 32) / 2;
 
-				const brick = new Brick(this.scene, x, y);
+				const props: Record<string, any> = {};
+				obj.properties?.forEach((p) => {
+					props[p.name] = p.value;
+				});
+
+				const color = props.color === "grey" ? "grey" : "brown";
+
+				// ✔ Création réelle de la brique via le constructeur
+				const brick = new Brick(this.scene, x, y, color);
+
+				// ✔ Ajout au groupe
 				this.bricks.add(brick);
+
+				// les props custom sont déjà dans ton constructeur
 			});
 		}
 
@@ -65,12 +71,12 @@ export class Level {
 
 				flag.body.setAllowGravity(false);
 				flag.body.setImmovable(true);
-
 				this.flag = flag;
 			}
 		}
-
-		this.enemies = this.scene.add.group();
+		this.enemies = this.scene.physics.add.group({
+			runChildUpdate: true,
+		});
 
 		// Gemmes
 		this.coins = this.scene.physics.add.group();
