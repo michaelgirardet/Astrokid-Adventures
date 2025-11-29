@@ -11,6 +11,8 @@ import type Brick from "../entities/Bricks";
 import type Enemy from "../entities/Enemy";
 import type Coin from "../entities/Coin";
 import type Flag from "../entities/Flag";
+import EnemyWorm from "../entities/enemies/EnemyWorm";
+import EnemyBee from "../entities/enemies/EnemyBee";
 
 export default class GameScene extends Phaser.Scene {
 	private level!: Level;
@@ -29,7 +31,6 @@ export default class GameScene extends Phaser.Scene {
 	private starSound!: Phaser.Sound.BaseSound;
 	private levelClear!: Phaser.Sound.BaseSound;
 	private brickPickupOverlap!: Phaser.Physics.Arcade.Collider;
-	// private playerBrickCollider!: Phaser.Physics.Arcade.Collider;
 	private levelEnding = false;
 
 	constructor() {
@@ -97,6 +98,10 @@ export default class GameScene extends Phaser.Scene {
 				enemy = new EnemyFly(this, obj.x, obj.y, props);
 			} else if (props.type === "blob") {
 				enemy = new EnemyBlob(this, obj.x, obj.y - (obj.height || 32), props);
+			} else if (props.type === "worm") {
+				enemy = new EnemyWorm(this, obj.x, obj.y - (obj.height || 16), props);
+			} else if (props.type === "bee") {
+				enemy = new EnemyBee(this, obj.x, obj.y, props);
 			} else {
 				console.warn("Unknown enemy type:", props.type);
 				return;
@@ -124,7 +129,8 @@ export default class GameScene extends Phaser.Scene {
 			undefined,
 			this,
 		);
-		// Only blobs collide with ground / blocks
+
+		// Collisions ennemis -> environnement
 		this.physics.add.collider(
 			this.level.enemies.getChildren().filter((e) => e instanceof EnemyBlob),
 			this.level.groundLayer,
@@ -134,6 +140,27 @@ export default class GameScene extends Phaser.Scene {
 			this.level.enemies.getChildren().filter((e) => e instanceof EnemyBlob),
 			this.level.blocksLayer,
 		);
+
+		this.physics.add.collider(
+			this.level.enemies.getChildren().filter((e) => e instanceof EnemyWorm),
+			this.level.groundLayer,
+		);
+
+		this.physics.add.collider(
+			this.level.enemies.getChildren().filter((e) => e instanceof EnemyWorm),
+			this.level.blocksLayer,
+		);
+
+		this.level.voidZones.forEach((zone) => {
+			this.physics.add.overlap(
+				zone,
+				this.level.enemies,
+				this.enemyFallToDeath,
+				undefined,
+				this,
+			);
+		});
+
 		this.physics.add.overlap(
 			this.player,
 			this.level.enemies,
@@ -164,11 +191,6 @@ export default class GameScene extends Phaser.Scene {
 			undefined,
 			this,
 		);
-
-		// this.playerBrickCollider = this.physics.add.collider(
-		// 	this.player,
-		// 	this.level.bricks,
-		// );
 
 		// Ramasser une brique
 		this.brickPickupOverlap = this.physics.add.overlap(
@@ -233,9 +255,9 @@ export default class GameScene extends Phaser.Scene {
 		const eb = enemy.body;
 
 		return (
-			pb.velocity.y > 0 && // le joueur tombe
-			pb.bottom > eb.top && // les box se touchent ou se chevauchent
-			pb.bottom - pb.velocity.y <= eb.top // frame précédente le joueur était au-dessus
+			pb.velocity.y > 0 &&
+			pb.bottom > eb.top &&
+			pb.bottom - pb.velocity.y <= eb.top
 		);
 	}
 
@@ -257,51 +279,63 @@ export default class GameScene extends Phaser.Scene {
 		player.setVelocityY(-350);
 	}
 
-	hitEnemy(_player: Player, _enemy: Enemy) {
-		if (this.player.body.velocity.y > 0) return;
-		if (this.player.isInvincible) return;
+	hitEnemy(player: Player, enemy: any) {
+		const bodyP = player.body as Phaser.Physics.Arcade.Body;
+		const bodyE = enemy.body as Phaser.Physics.Arcade.Body;
+
+		const playerBottom = bodyP.bottom;
+		const enemyTop = bodyE.top;
+		const comingDownFast = bodyP.velocity.y > 150;
+
+		const isAbove = playerBottom < enemyTop + 10 && comingDownFast;
+
+		// -------- Si on vient d'au-dessus → stomp --------
+		if (isAbove) {
+			if (enemy.squash) enemy.squash();
+			else enemy.destroy();
+
+			this.disappearSound.play();
+			player.setVelocityY(-500);
+			return;
+		}
+
+		// -------- Sinon → dégâts pour le joueur --------
+		if (player.isInvincible) return;
 
 		this.hitSound.play();
 
-		this.player.isHit = true;
-		this.player.play("player-hit");
+		player.isHit = true;
+		player.play("player-hit");
 
 		// Invincibilité
-		this.player.isInvincible = true;
-		this.player.invincibleTimer = 1000;
-		this.player.setTint(0xff5555);
-		this.player.setAlpha(0.5);
+		player.isInvincible = true;
+		player.invincibleTimer = 1000;
+		player.setTint(0xff5555);
+		player.setAlpha(0.5);
 
 		this.heartUI.loseHeart();
 
-		// Reset HIT state après 250 ms
 		this.time.delayedCall(250, () => {
-			this.player.isHit = false;
+			player.isHit = false;
 		});
 
 		if (this.heartUI.getHearts() <= 0) {
-			console.log("GAME OVER");
 			this.scene.restart();
 			this.gameMusic.stop();
 		}
 	}
 
 	pickBrick(player: Player, brick: Brick) {
-		console.log("🤏 pickBrick CALLED");
-
-		// 🔹 1. Le joueur a déjà une brique
 		if (player.heldBrick) {
 			console.warn("⚠️ Player already holding a brick.");
 			return;
 		}
 
-		// 🔹 2. La brique vient d’être lancée → on ignore
 		if (!brick.canBePicked) {
 			console.warn("⏳ Brick not pickable yet.");
 			return;
 		}
 
-		// 🔹 3. La brique est déjà marquée comme tenue
 		if (brick.isHeld) {
 			console.warn("⚠️ Brick already held.");
 			return;
@@ -327,72 +361,81 @@ export default class GameScene extends Phaser.Scene {
 		const brick = brickObj as Brick;
 		const enemy = enemyObj as Enemy;
 
-		console.log("💥 brickHitEnemy CALLED");
-
-		// Garde-fou : vérifier que c'est bien un Brick avec la méthode hit
 		if (typeof (brick as any).hit !== "function") {
-			console.warn("❌ brick.hit is not a function, skipping collision");
 			return;
 		}
-
 		if (brick.isHeld) {
-			console.warn("❌ Brick is still held → ignoring collision");
 			return;
 		}
 
 		const body = brick.body as Phaser.Physics.Arcade.Body;
 		const speed = Math.abs(body.velocity.x) + Math.abs(body.velocity.y);
 
-		console.log("🧱 Brick speed =", speed);
-
 		if (speed < 80) {
-			console.warn("⚠️ Speed too low, no damage");
 			return;
 		}
-
-		console.log("🔥 Brick should DAMAGE enemy now");
 
 		const enemyAny = enemy as any;
 
 		if (typeof enemyAny.squash === "function") {
-			console.log("🪓 Enemy has squash(), calling it…");
 			enemyAny.squash();
 		} else {
-			console.log("💀 Enemy destroyed()");
 			enemy.destroy();
 		}
 
 		brick.hit();
 		this.disappearSound.play();
 		this.scoreUI.add(200);
-
-		console.log("🧱 Brick lifespan now:", brick.lifespan);
 	}
 
 	fallToDeath() {
 		if (this.levelEnding) return;
 		this.levelEnding = true;
 
-		// Désactiver les contrôles
-		this.player.disableControls = true;
+		const player = this.player;
+		const body = player.body as Phaser.Physics.Arcade.Body;
 
-		// Faire disparaître le joueur
+		player.disableControls = true;
+		body.setVelocity(0, 0);
+		body.allowGravity = false;
 		this.tweens.add({
-			targets: this.player,
+			targets: player,
+			y: player.y - 30,
+			duration: 180,
+			ease: "Quad.easeOut",
+			onComplete: () => {
+				body.allowGravity = true;
+				body.setVelocityY(450);
+			},
+		});
+		this.tweens.add({
+			targets: player,
+			angle: 90,
+			duration: 600,
+			ease: "Cubic.easeIn",
+		});
+
+		this.tweens.add({
+			targets: player,
 			alpha: 0,
-			duration: 300,
+			delay: 150,
+			duration: 900,
+			ease: "Linear",
 		});
 
-		// Enlever toutes les vies
-		this.heartUI.setHearts(0);
+		this.disappearSound.play();
 
-		// Stop musique
-		this.gameMusic.stop();
-
-		// Restart du niveau après un petit délai
-		this.time.delayedCall(500, () => {
+		this.time.delayedCall(1500, () => {
 			this.scene.restart();
+			this.gameMusic.stop();
 		});
+	}
+	enemyFallToDeath(_zone, enemy: Enemy) {
+		if (enemy.die) {
+			enemy.squash();
+		} else {
+			enemy.destroy();
+		}
 	}
 
 	// Fin de niveau

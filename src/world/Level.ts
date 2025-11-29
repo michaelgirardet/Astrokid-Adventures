@@ -43,14 +43,8 @@ export class Level {
 				});
 
 				const color = props.color === "grey" ? "grey" : "brown";
-
-				// ✔ Création réelle de la brique via le constructeur
 				const brick = new Brick(this.scene, x, y, color);
-
-				// ✔ Ajout au groupe
 				this.bricks.add(brick);
-
-				// les props custom sont déjà dans ton constructeur
 			});
 		}
 

@@ -28,7 +28,7 @@ export default class EnemyBlob extends Enemy {
 		});
 	}
 
-	update(time: number, delta: number) {
+	update(_time: number, delta: number) {
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
 		if (this.x <= this.minX) {
@@ -40,8 +40,12 @@ export default class EnemyBlob extends Enemy {
 		}
 
 		this.jumpTimer += delta;
-		if (this.jumpTimer > 2000 && body.blocked.down) {
-			body.setVelocityY(-50);
+
+		// Bond entre 800 ms et 1600 ms
+		const jumpInterval = Phaser.Math.Between(800, 1600);
+
+		if (this.jumpTimer > jumpInterval && body.blocked.down) {
+			body.setVelocityY(-80);
 			this.jumpTimer = 0;
 		}
 
@@ -60,5 +64,8 @@ export default class EnemyBlob extends Enemy {
 		this.scene.time.delayedCall(250, () => {
 			this.destroy();
 		});
+	}
+	die() {
+		this.squash();
 	}
 }

@@ -35,14 +35,11 @@ export default class Brick extends Phaser.Physics.Arcade.Sprite {
 	}
 
 	throw(direction: number) {
-		console.log("💨 Brick thrown");
-
 		this.isHeld = false;
 		this.holder = null;
 
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
-		// La brique est en vol → pas ramassable tout de suite
 		this.canBePicked = false;
 
 		body.enable = true;
@@ -58,12 +55,8 @@ export default class Brick extends Phaser.Physics.Arcade.Sprite {
 
 		body.setVelocity(600 * direction, -200);
 
-		console.log("📌 Brick velocity after throw:", body.velocity);
-
-		// 🔹 On réautorise le pickup après un petit délai
 		this.scene.time.delayedCall(250, () => {
 			this.canBePicked = true;
-			console.log("✅ Brick can be picked again");
 		});
 	}
 
