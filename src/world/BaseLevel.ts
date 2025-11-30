@@ -16,19 +16,15 @@ export abstract class BaseLevel {
 	constructor(public scene: Phaser.Scene) {}
 
 	abstract getMapKey(): string;
-
-	/** Chaque monde doit indiquer son tileset et background */
 	abstract getTileset(): { tiles: string; background: string };
 
 	load() {
-		// 1. Charger la MAP
 		this.map = this.scene.make.tilemap({ key: this.getMapKey() });
 
 		const { tiles, background } = this.getTileset();
 		const bg = this.map.addTilesetImage(background, background);
 		const tl = this.map.addTilesetImage(tiles, tiles);
 
-		// 2. Layers
 		this.backgroundLayer = this.map.createLayer("Background", bg, 0, 0);
 		this.groundLayer = this.map.createLayer("Ground", tl, 0, 0);
 		this.blocksLayer = this.map.createLayer("Blocks", tl, 0, 0);
@@ -36,7 +32,6 @@ export abstract class BaseLevel {
 		this.groundLayer.setCollisionByProperty({ collides: true });
 		this.blocksLayer.setCollisionByProperty({ collides: true });
 
-		// 3. Briques
 		this.bricks = this.scene.physics.add.group({
 			classType: Brick,
 			runChildUpdate: true,
@@ -54,7 +49,6 @@ export abstract class BaseLevel {
 			});
 		}
 
-		// 4. Flag
 		const endLayer = this.map.getObjectLayer("Flag");
 
 		if (endLayer) {
@@ -64,7 +58,7 @@ export abstract class BaseLevel {
 
 			if (obj) {
 				const x = obj.x;
-				const y = obj.y + obj.height; // ALIGNER LE BAS AVEC TILED
+				const y = obj.y + obj.height;
 
 				const flag = this.scene.physics.add.sprite(x, y, "flag");
 				flag.setOrigin(0.5, 1);
@@ -76,10 +70,8 @@ export abstract class BaseLevel {
 			}
 		}
 
-		// 5. Ennemis
 		this.enemies = this.scene.physics.add.group({ runChildUpdate: true });
 
-		// 6. Coins
 		this.coins = this.scene.physics.add.group();
 		const coinsLayer = this.map.getObjectLayer("Coins");
 		if (coinsLayer) {
@@ -90,7 +82,6 @@ export abstract class BaseLevel {
 			});
 		}
 
-		// 7. Void zones
 		const voidLayer = this.map.getObjectLayer("Void");
 		if (voidLayer) {
 			voidLayer.objects.forEach((obj) => {
@@ -106,7 +97,6 @@ export abstract class BaseLevel {
 			});
 		}
 
-		// 8. World bounds
 		this.scene.physics.world.setBounds(
 			0,
 			0,

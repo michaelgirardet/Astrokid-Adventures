@@ -12,7 +12,6 @@ export default class CharacterSelectScene extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
-		// Exemple : 1 seul personnage pour l'instant
 		const astro = this.add
 			.image(400, 250, "player_icon")
 			.setScale(2)
@@ -21,8 +20,6 @@ export default class CharacterSelectScene extends Phaser.Scene {
 		astro.on("pointerdown", () => {
 			// Enregistrer le personnage sélectionné
 			this.registry.set("selected_character", "yellow");
-
-			// Lancer la GameScene
 			this.scene.start("Game");
 		});
 

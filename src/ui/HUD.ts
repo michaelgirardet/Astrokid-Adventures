@@ -1,4 +1,5 @@
 import HeartUI from "./HeartUI";
+import HintUI from "./HintUI";
 import PlayerIconUI from "./PlayerIconUI";
 import ScoreUI from "./ScoreUI";
 import StarUI from "./StarUI";
@@ -8,25 +9,25 @@ export default class HUD {
 	private scoreUI: ScoreUI;
 	private starUI: StarUI;
 	private playerIcon: PlayerIconUI;
+	private hint: HintUI;
 
 	constructor(scene: Phaser.Scene) {
 		this.playerIcon = new PlayerIconUI(scene);
 		this.heartUI = new HeartUI(scene, 3);
 		this.scoreUI = new ScoreUI(scene);
 		this.starUI = new StarUI(scene);
+		this.hint = new HintUI(scene);
 
-		// Position HUD
 		const iconX = 60;
 		const iconY = 60;
 
-		// Place l’icône du joueur
 		this.playerIcon.setPosition(iconX, iconY);
-
-		// Place les cœurs juste à droite de l'icône
 		this.heartUI.setPosition(iconX + 80, iconY);
-
-		// Place les étoiles SOUS l'icône et les cœurs
 		this.starUI.setPosition(iconX, iconY + 80);
+	}
+
+	getHint() {
+		return this.hint;
 	}
 
 	getHearts() {

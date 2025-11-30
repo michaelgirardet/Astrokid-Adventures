@@ -43,7 +43,7 @@ export default class EnemyBlob extends Enemy {
 		const jumpInterval = Phaser.Math.Between(800, 1600); // Delay entre les sauts
 
 		if (this.jumpTimer > jumpInterval && body.blocked.down) {
-			body.setVelocityY(-100); // Hauteur des sauts
+			body.setVelocityY(-200); // Hauteur des sauts
 			this.jumpTimer = 0;
 		}
 

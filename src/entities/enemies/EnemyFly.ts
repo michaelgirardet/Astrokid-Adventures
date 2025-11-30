@@ -25,7 +25,7 @@ export default class EnemyFly extends Enemy {
 		});
 	}
 
-	update(time: number, delta: number) {
+	update(_time: number, _delta: number) {
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
 		// Patrol
