@@ -50,7 +50,6 @@ export default class VictoryScene extends Phaser.Scene {
 			ease: "Sine.easeInOut",
 		});
 
-		// --- Bouton retour menu ---
 		this.createButton(width / 2, height / 2 + 40, "▶ CONTINUER", () =>
 			this.goToMenu(),
 		);

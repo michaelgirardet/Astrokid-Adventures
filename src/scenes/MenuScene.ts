@@ -14,7 +14,6 @@ export default class MenuScene extends Phaser.Scene {
 			.setDisplaySize(width, height);
 		console.log(bg);
 
-		// Musique
 		this.music = this.sound.add("menu_music", {
 			volume: 0,
 			loop: true,
@@ -27,7 +26,6 @@ export default class MenuScene extends Phaser.Scene {
 		// Menu container
 		const menuY = height * 0.6;
 
-		// Play button
 		const playButton = this.add
 			.rectangle(width / 2, menuY, 320, 80, 0x00d4ff, 1)
 			.setOrigin(0.5);
@@ -42,10 +40,8 @@ export default class MenuScene extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
-		// Rendre le bouton interactif
 		playButton.setInteractive({ useHandCursor: true });
 
-		// Animations hover
 		playButton.on("pointerover", () => {
 			this.tweens.add({
 				targets: [playButton, playText],
@@ -81,7 +77,6 @@ export default class MenuScene extends Phaser.Scene {
 			ease: "Back.easeOut",
 		});
 
-		// Instructions
 		const instructions = this.add
 			.text(width / 2, height * 0.85, "Appuyez sur ENTRÉE pour commencer", {
 				fontSize: "20px",
@@ -104,17 +99,14 @@ export default class MenuScene extends Phaser.Scene {
 		});
 		this.createParticles();
 
-		// Press start
 		this.startKey = this.input.keyboard.addKey("ENTER");
 
-		// Fade in
 		this.cameras.main.fadeIn(800, 0, 0, 0);
 	}
 
 	createParticles() {
 		const { width, height } = this.scale;
 
-		// Créer des particules flottantes pour l'ambiance
 		for (let i = 0; i < 15; i++) {
 			const x = Phaser.Math.Between(0, width);
 			const y = Phaser.Math.Between(0, height);

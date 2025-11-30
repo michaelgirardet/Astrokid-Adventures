@@ -58,5 +58,5 @@ export function loadAssets(scene: Phaser.Scene) {
 
 	load.audio("coin_sound", "assets/sounds/effects/sfx_coin.ogg");
 	load.audio("star_sound", "assets/sounds/effects/sfx_gem.ogg");
-	load.audio("level_clear", "assets/sounds/effects/sfx_gem.ogg");
+	load.audio("level_clear", "assets/sounds/effects/sfx_victory.mp3");
 }

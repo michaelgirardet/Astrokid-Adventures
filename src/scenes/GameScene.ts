@@ -353,6 +353,8 @@ export default class GameScene extends Phaser.Scene {
 		brick.setImmovable(true);
 
 		console.log("📦 Brick picked!");
+
+		this.hud.getHint().show("Appuyez sur ESPACE pour lancer la brique");
 	}
 
 	brickHitEnemy(
@@ -440,17 +442,39 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	// Fin de niveau
-	endLevel(player: Player, flag: Flag) {
+	endLevel(player: Player, _flag: Flag) {
 		if (this.levelEnding) return;
 		this.levelEnding = true;
 
-		// Bloquer les contrôles
+		// Bloquer le joueur
 		player.setVelocity(0, 0);
 		(player.body as Phaser.Physics.Arcade.Body).allowGravity = false;
 		player.disableControls = true;
 
-		// Musique fin
+		// Stop musique + jouer jingle
 		this.gameMusic.stop();
 		this.sound.play("level_clear");
+
+		// Petite animation vers le haut
+		this.tweens.add({
+			targets: player,
+			y: player.y - 100,
+			duration: 800,
+			ease: "Sine.easeOut",
+		});
+
+		// Fade-out du joueur
+		this.tweens.add({
+			targets: player,
+			alpha: 0,
+			duration: 900,
+			delay: 400,
+			ease: "Quad.easeIn",
+		});
+
+		// Transition à la scène de victoire
+		this.time.delayedCall(1400, () => {
+			this.scene.start("Victory");
+		});
 	}
 }
