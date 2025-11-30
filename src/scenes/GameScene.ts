@@ -58,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
 		this.disappearSound = this.sound.add("disappear_sound", { volume: 0.2 });
 		this.coinSound = this.sound.add("coin_sound", { volume: 0.2 });
 		this.starSound = this.sound.add("star_sound", { volume: 0.2 });
-		this.levelClear = this.sound.add("level_clear", { volume: 0.2 });
+		this.levelClear = this.sound.add("level_clear", { volume: 0.05 });
 
 		// Pause
 		this.input.keyboard.on("keydown-ESC", () => {
