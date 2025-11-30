@@ -47,8 +47,8 @@ export default class GameScene extends Phaser.Scene {
 		this.starUI = this.hud.getStars();
 		this.heartUI = this.hud.getHearts();
 		this.scoreUI = this.hud.getScore();
-		this.gameMusic = this.sound.add("menu_music", {
-			volume: 0,
+		this.gameMusic = this.sound.add("forest_music", {
+			volume: 0.05,
 			loop: true,
 		});
 		this.gameMusic.play();

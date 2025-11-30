@@ -44,7 +44,7 @@ export function loadAssets(scene: Phaser.Scene) {
 	load.image("bee_rest", "assets/enemies/bee/bee_rest.png");
 
 	// Items
-	load.image("Coin", "assets/items/gem_yellow.png");
+	load.image("Coin", "assets/items/gem_red.png");
 	load.image("Star", "assets/items/star.png");
 	load.image("brick", "assets/items/brick.png");
 	load.image("flag", "assets/items/flag_red_a.png");
@@ -55,6 +55,7 @@ export function loadAssets(scene: Phaser.Scene) {
 	load.audio("disappear_sound", "assets/sounds/effects/sfx_disappear.ogg");
 
 	load.audio("menu_music", "assets/sounds/music/menu-audio.mp3");
+	load.audio("forest_music", "assets/sounds/music/forest-level.mp3");
 
 	load.audio("coin_sound", "assets/sounds/effects/sfx_coin.ogg");
 	load.audio("star_sound", "assets/sounds/effects/sfx_gem.ogg");
