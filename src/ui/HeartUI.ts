@@ -13,8 +13,8 @@ export default class HeartUI {
 	}
 
 	createHearts() {
-		const startX = 20;
-		const startY = 20;
+		const startX = 80; // déplacé pour laisser la place à l'icône du joueur
+		const startY = 40;
 
 		for (let i = 0; i < this.maxHearts; i++) {
 			const heart = this.scene.add.image(startX + i * 48, startY, "heart_full");
@@ -24,6 +24,14 @@ export default class HeartUI {
 		}
 	}
 
+	/** 🔥 Permet au HUD de repositionner tous les cœurs */
+	setPosition(x: number, y: number) {
+		this.hearts.forEach((heart, i) => {
+			heart.setPosition(x + i * 48, y);
+		});
+	}
+
+	/** 🔥 Remplace plein ↔ vide */
 	setHearts(value: number) {
 		this.currentHearts = value;
 
@@ -32,6 +40,7 @@ export default class HeartUI {
 		}
 	}
 
+	/** 🔥 Baisse la vie d’un cœur */
 	loseHeart() {
 		this.setHearts(this.currentHearts - 1);
 	}

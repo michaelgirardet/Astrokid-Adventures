@@ -7,8 +7,8 @@ export default class ScoreUI {
 		this.text = scene.add.text(width - 48, 16, "Score: 0", {
 			fontFamily: "DynaPuff",
 			fontSize: "32px",
-			color: "#fff",
-			stroke: "#000",
+			color: "#FF1D15",
+			stroke: "#fff",
 			strokeThickness: 4,
 		});
 

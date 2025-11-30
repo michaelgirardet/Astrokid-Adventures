@@ -1,4 +1,4 @@
-import { Level } from "../world/Level";
+import type { BaseLevel } from "../world/BaseLevel";
 import Player from "../entities/Player";
 import Star from "../entities/Star";
 import type ScoreUI from "../ui/ScoreUI";
@@ -13,9 +13,10 @@ import type Coin from "../entities/Coin";
 import type Flag from "../entities/Flag";
 import EnemyWorm from "../entities/enemies/EnemyWorm";
 import EnemyBee from "../entities/enemies/EnemyBee";
+import Forest from "../world/Forest";
 
 export default class GameScene extends Phaser.Scene {
-	private level!: Level;
+	private level!: BaseLevel;
 	private player!: Player;
 	private stars!: Phaser.Physics.Arcade.Group;
 	private bombs!: Phaser.Physics.Arcade.Group;
@@ -39,14 +40,14 @@ export default class GameScene extends Phaser.Scene {
 
 	create() {
 		this.levelEnding = false;
-		this.level = new Level(this);
+		this.level = new Forest(this);
 		this.level.load();
 		this.physics.world.TILE_BIAS = 60;
 		this.hud = new HUD(this);
 		this.starUI = this.hud.getStars();
 		this.heartUI = this.hud.getHearts();
 		this.scoreUI = this.hud.getScore();
-		this.gameMusic = this.sound.add("game_music", {
+		this.gameMusic = this.sound.add("menu_music", {
 			volume: 0,
 			loop: true,
 		});
@@ -67,7 +68,7 @@ export default class GameScene extends Phaser.Scene {
 
 		// Player
 		const spawn = this.level.map.findObject(
-			"Objects_Player",
+			"Player",
 			(obj) => obj.name === "Player",
 		);
 		this.player = new Player(this, spawn.x, spawn.y);
@@ -447,31 +448,6 @@ export default class GameScene extends Phaser.Scene {
 		player.setVelocity(0, 0);
 		(player.body as Phaser.Physics.Arcade.Body).allowGravity = false;
 		player.disableControls = true;
-
-		// Descente du drapeau
-		this.tweens.add({
-			targets: player,
-			y: flag.y + flag.height - player.height,
-			duration: 800,
-			ease: "Linear",
-			onComplete: () => {
-				// Remettre la gravité
-				(player.body as Phaser.Physics.Arcade.Body).allowGravity = true;
-				player.setFlipX(false);
-
-				// Marche automatique
-				this.time.delayedCall(200, () => {
-					player.setVelocityX(160);
-				});
-
-				// Fade-out
-				this.cameras.main.fadeOut(1200, 0, 0, 0);
-
-				this.time.delayedCall(1500, () => {
-					this.scene.start("Victory");
-				});
-			},
-		});
 
 		// Musique fin
 		this.gameMusic.stop();

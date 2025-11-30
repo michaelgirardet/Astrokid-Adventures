@@ -1,36 +1,51 @@
 export default class StarUI {
 	private scene: Phaser.Scene;
-	private starIcon: Phaser.GameObjects.Image;
+	private icon: Phaser.GameObjects.Image;
 	private text: Phaser.GameObjects.Text;
+
 	private count: number = 0;
 
 	constructor(scene: Phaser.Scene) {
 		this.scene = scene;
 
-		// Petite icône d'étoile dans le HUD
-		this.starIcon = scene.add
-			.image(20, 60, "Star")
-			.setScale(0.7)
-			.setScrollFactor(0);
+		// Icône de la star dans le HUD
+		this.icon = scene.add.image(160, 40, "Star");
+		this.icon.setScrollFactor(0);
+		this.icon.setScale(1);
+		this.icon.setDepth(1000);
 
-		// Texte du compteur
-		this.text = scene.add
-			.text(45, 50, "0", {
-				fontFamily: "DynaPuff",
-				fontSize: "28px",
-				color: "#fff",
-				stroke: "#000",
-				strokeThickness: 4,
-			})
-			.setScrollFactor(0);
+		// Texte du nombre d'étoiles
+		this.text = scene.add.text(190, 28, "0", {
+			fontFamily: "DynaPuff",
+			fontSize: "32px",
+			color: "#ffffff",
+			stroke: "#000000",
+			strokeThickness: 6,
+		});
+		this.text.setScrollFactor(0);
+		this.text.setDepth(1000);
 	}
 
+	/** 🔥 Appelé lorsque le joueur ramasse une étoile */
 	addStar() {
-		this.count++;
+		this.count += 1;
 		this.text.setText(this.count.toString());
 	}
 
-	getCount() {
+	/** 🔥 Utilisé par le HUD pour repositionner l’UI */
+	setPosition(x: number, y: number) {
+		// Position du groupe (centre)
+		const baseX = x;
+		const baseY = y;
+
+		// Icône étoile
+		this.icon.setPosition(baseX, baseY);
+
+		// Texte du nombre
+		this.text.setPosition(baseX + 32, baseY - 12);
+	}
+
+	getStars() {
 		return this.count;
 	}
 }

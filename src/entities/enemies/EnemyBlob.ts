@@ -40,12 +40,10 @@ export default class EnemyBlob extends Enemy {
 		}
 
 		this.jumpTimer += delta;
-
-		// Bond entre 800 ms et 1600 ms
-		const jumpInterval = Phaser.Math.Between(800, 1600);
+		const jumpInterval = Phaser.Math.Between(800, 1600); // Delay entre les sauts
 
 		if (this.jumpTimer > jumpInterval && body.blocked.down) {
-			body.setVelocityY(-80);
+			body.setVelocityY(-100); // Hauteur des sauts
 			this.jumpTimer = 0;
 		}
 
