@@ -15,7 +15,7 @@ export default class MenuScene extends Phaser.Scene {
 		console.log(bg);
 
 		this.music = this.sound.add("menu_music", {
-			volume: 0,
+			volume: 0.05,
 			loop: true,
 		});
 		this.music.play();
