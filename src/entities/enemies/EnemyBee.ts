@@ -32,10 +32,10 @@ export default class EnemyBee extends Enemy {
 		// Patrouille
 		if (this.x <= this.minX) {
 			body.setVelocityX(this.speed);
-			this.flipX = false;
+			this.flipX = true;
 		} else if (this.x >= this.maxX) {
 			body.setVelocityX(-this.speed);
-			this.flipX = true;
+			this.flipX = false;
 		}
 
 		// Effet "Buzz"

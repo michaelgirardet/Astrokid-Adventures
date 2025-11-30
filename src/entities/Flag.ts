@@ -11,5 +11,8 @@ export default class Flag extends Phaser.Physics.Arcade.Sprite {
 
 		// Hitbox un peu plus large (optionnel)
 		body.setSize(this.width, this.height);
+
+		this.setOrigin(0, 1);
+		this.setPosition(x, y);
 	}
 }

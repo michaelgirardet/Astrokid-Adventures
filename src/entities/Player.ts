@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import type Brick from "./Bricks";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
