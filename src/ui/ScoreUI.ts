@@ -22,4 +22,8 @@ export default class ScoreUI {
 		this.score += points;
 		this.text.setText(`Score: ${this.score}`);
 	}
+
+	getScore() {
+		return this.score;
+	}
 }

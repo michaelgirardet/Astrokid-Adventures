@@ -19,7 +19,7 @@ export default class StarUI {
 			fontFamily: "DynaPuff",
 			fontSize: "32px",
 			color: "#ffffff",
-			stroke: "#000000",
+			stroke: "#162028",
 			strokeThickness: 6,
 		});
 		this.text.setScrollFactor(0);

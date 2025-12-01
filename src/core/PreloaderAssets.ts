@@ -16,13 +16,22 @@ export function loadAssets(scene: Phaser.Scene) {
 	load.image("heart_empty", "assets/ui/heart_empty.png");
 
 	// Player
-	load.image("player_idle", "assets/player/character_yellow_idle.png");
-	load.image("player_jump", "assets/player/character_yellow_jump.png");
-	load.image("player_walk_a", "assets/player/character_yellow_walk_a.png");
-	load.image("player_walk_b", "assets/player/character_yellow_walk_b.png");
-	load.image("player_hit", "assets/player/character_yellow_hit.png");
-	load.image("player_duck", "assets/player/character_yellow_duck.png");
-	load.image("player_icon", "assets/player/hud_player_helmet_yellow.png");
+	load.image("player_idle", "assets/player/yellow/character_yellow_idle.png");
+	load.image("player_jump", "assets/player/yellow/character_yellow_jump.png");
+	load.image(
+		"player_walk_a",
+		"assets/player/yellow/character_yellow_walk_a.png",
+	);
+	load.image(
+		"player_walk_b",
+		"assets/player/yellow/character_yellow_walk_b.png",
+	);
+	load.image("player_hit", "assets/player/yellow/character_yellow_hit.png");
+	load.image("player_duck", "assets/player/yellow/character_yellow_duck.png");
+	load.image(
+		"player_icon",
+		"assets/player/yellow/hud_player_helmet_yellow.png",
+	);
 
 	// Enemies
 	load.image("blob_idle", "assets/enemies/blob/slime_normal_rest.png");
@@ -54,8 +63,8 @@ export function loadAssets(scene: Phaser.Scene) {
 	load.audio("hit_sound", "assets/sounds/effects/sfx_hurt.ogg");
 	load.audio("disappear_sound", "assets/sounds/effects/sfx_disappear.ogg");
 
-	load.audio("menu_music", "assets/sounds/music/menu-audio.mp3");
-	load.audio("forest_music", "assets/sounds/music/forest-level.mp3");
+	load.audio("menu_music", "assets/sounds/music/mainTheme.mp3");
+	load.audio("level1", "assets/sounds/music/level1.mp3");
 
 	load.audio("coin_sound", "assets/sounds/effects/sfx_coin.ogg");
 	load.audio("star_sound", "assets/sounds/effects/sfx_gem.ogg");

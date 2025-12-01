@@ -1,33 +1,33 @@
+import "./global.css";
 import GameScene from "./scenes/GameScene";
 import MenuScene from "./scenes/MenuScene";
 import PauseScene from "./scenes/PauseScene";
 import { Preloader } from "./scenes/Preloader";
 import VictoryScene from "./scenes/VictoryScene";
 
-new Phaser.Game({
-	type: Phaser.AUTO,
-	width: 1440,
-	height: 800,
-	pixelArt: true,
+if (window.innerWidth < 768) {
+	document.getElementById("mobile-warning").style.display = "block";
+} else {
+	new Phaser.Game({
+		type: Phaser.AUTO,
+		width: 1440,
+		height: 800,
+		pixelArt: true,
+		backgroundColor: "#1a1a1a",
 
-	scale: {
-		mode: Phaser.Scale.FIT, // s'adapte automatiquement
-		autoCenter: Phaser.Scale.CENTER_BOTH, // centre le jeu
-		min: {
-			width: 1024,
-			height: 576,
+		scale: {
+			mode: Phaser.Scale.FIT,
+			autoCenter: Phaser.Scale.CENTER_BOTH,
+			min: { width: 1024, height: 576 },
+			max: { width: 1920, height: 1080 },
+			fullscreenTarget: "body",
 		},
-		max: {
-			width: 1920,
-			height: 1080,
+
+		physics: {
+			default: "arcade",
+			arcade: { fps: 60, gravity: { y: 600 }, debug: false },
 		},
-		fullscreenTarget: "body",
-	},
 
-	physics: {
-		default: "arcade",
-		arcade: { fps: 60, gravity: { y: 600 }, debug: false },
-	},
-
-	scene: [Preloader, GameScene, MenuScene, PauseScene, VictoryScene],
-});
+		scene: [Preloader, GameScene, MenuScene, PauseScene, VictoryScene],
+	});
+}

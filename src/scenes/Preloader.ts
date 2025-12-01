@@ -12,6 +12,7 @@ export class Preloader extends Phaser.Scene {
 
 	create() {
 		createAnimations(this);
+		this.registry.set("soundMuted", false);
 		this.scene.start("Menu");
 	}
 }

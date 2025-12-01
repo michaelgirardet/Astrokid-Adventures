@@ -21,21 +21,21 @@ export default class MenuScene extends Phaser.Scene {
 		this.music.play();
 
 		// Overlay sombre
-		this.add.rectangle(0, 0, width, height, 0x000000, 0).setOrigin(0);
+		// this.add.rectangle(0, 0, width, height, 0x000444, 0).setOrigin(0);
 
 		// Menu container
 		const menuY = height * 0.6;
 
 		const playButton = this.add
-			.rectangle(width / 2, menuY, 320, 80, 0x00d4ff, 1)
+			.rectangle(width / 2, menuY, 320, 80, 0x446daa, 1)
 			.setOrigin(0.5);
 
 		const playText = this.add
 			.text(width / 2, menuY, "▶ Commencer", {
 				fontSize: "38px",
 				fontFamily: "DynaPuff",
-				color: "#0a0e27",
-				stroke: "#00d4ff",
+				color: "#ffffff",
+				stroke: "#ffffff",
 				strokeThickness: 2,
 			})
 			.setOrigin(0.5);
@@ -49,7 +49,6 @@ export default class MenuScene extends Phaser.Scene {
 				duration: 200,
 				ease: "Power2",
 			});
-			playButton.setFillStyle(0x00ffff);
 		});
 
 		playButton.on("pointerout", () => {
@@ -59,7 +58,6 @@ export default class MenuScene extends Phaser.Scene {
 				duration: 200,
 				ease: "Power2",
 			});
-			playButton.setFillStyle(0x00d4ff);
 		});
 
 		playButton.on("pointerdown", () => this.startGame());
@@ -82,7 +80,7 @@ export default class MenuScene extends Phaser.Scene {
 				fontSize: "20px",
 				fontFamily: "DynaPuff",
 				color: "#ffffff",
-				stroke: "#000000",
+				stroke: "#162028",
 				strokeThickness: 4,
 			})
 			.setOrigin(0.5)
@@ -97,33 +95,10 @@ export default class MenuScene extends Phaser.Scene {
 			repeat: -1,
 			ease: "Sine.easeInOut",
 		});
-		this.createParticles();
 
 		this.startKey = this.input.keyboard.addKey("ENTER");
 
 		this.cameras.main.fadeIn(800, 0, 0, 0);
-	}
-
-	createParticles() {
-		const { width, height } = this.scale;
-
-		for (let i = 0; i < 15; i++) {
-			const x = Phaser.Math.Between(0, width);
-			const y = Phaser.Math.Between(0, height);
-			const size = Phaser.Math.Between(2, 6);
-
-			const particle = this.add.circle(x, y, size, 0x00d4ff, 0.3);
-
-			this.tweens.add({
-				targets: particle,
-				y: y - Phaser.Math.Between(100, 300),
-				alpha: { from: 0.3, to: 0 },
-				duration: Phaser.Math.Between(3000, 6000),
-				delay: Phaser.Math.Between(0, 2000),
-				repeat: -1,
-				ease: "Sine.easeInOut",
-			});
-		}
 	}
 
 	update() {

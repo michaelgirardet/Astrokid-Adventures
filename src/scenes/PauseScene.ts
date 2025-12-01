@@ -10,7 +10,6 @@ export default class PauseScene extends Phaser.Scene {
 		const { width, height } = this.scale;
 		this.add.rectangle(0, 0, width, height, 0x000000, 0.55).setOrigin(0);
 
-		// Menu
 		const panel = this.add
 			.rectangle(width / 2, height / 2, 450, 450, 0x1a1a2e, 0.75)
 			.setOrigin(0.5)
@@ -52,8 +51,6 @@ export default class PauseScene extends Phaser.Scene {
 
 		this.cameras.main.fadeIn(200, 0, 0, 0);
 	}
-
-	// Buttons
 	createRoundedButton(
 		x: number,
 		y: number,
@@ -72,7 +69,6 @@ export default class PauseScene extends Phaser.Scene {
 
 		const button = this.add.image(x, y, "rounded-btn").setOrigin(0.5);
 
-		// --- Texte ---
 		const text = this.add
 			.text(x, y, label, {
 				fontSize: "26px",
@@ -83,7 +79,6 @@ export default class PauseScene extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
-		// --- Interaction ---
 		button.setInteractive({ useHandCursor: true });
 
 		button.on("pointerover", () => {
@@ -125,7 +120,6 @@ export default class PauseScene extends Phaser.Scene {
 		this.scene.start("Menu");
 		this.gameMusic.stop();
 	}
-
 	update() {
 		if (Phaser.Input.Keyboard.JustDown(this.resumeKey)) {
 			this.resumeGame();

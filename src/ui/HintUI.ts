@@ -11,8 +11,8 @@ export default class HintUI {
 			.text(scene.cameras.main.width / 2, scene.cameras.main.height / 2, "", {
 				fontFamily: "DynaPuff",
 				fontSize: "24px",
-				color: "#ecd043ff",
-				stroke: "#000000",
+				color: "#ffcc33",
+				stroke: "#162028",
 				strokeThickness: 4,
 			})
 			.setOrigin(0.5)
