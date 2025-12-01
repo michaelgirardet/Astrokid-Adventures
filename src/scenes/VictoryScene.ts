@@ -5,12 +5,20 @@ export default class VictoryScene extends Phaser.Scene {
 
 	create() {
 		const { width, height } = this.scale;
-		this.add.rectangle(0, 0, width, height, 0x000000, 0.55).setOrigin(0);
+
+		// Couleurs de la palette
+		const COLOR_BG = 0x0a0e27;
+		const COLOR_PANEL = 0x1e1b33;
+		const COLOR_ACCENT = 0x00d4ff;
+		const COLOR_TEXT = "#f5f1e8";
+		const COLOR_STROKE = "#0a0e27";
+
+		this.add.rectangle(0, 0, width, height, COLOR_BG, 0.75).setOrigin(0);
 
 		const panel = this.add
-			.rectangle(width / 2, height / 2, 520, 300, 0x1a1a2e, 0.75)
+			.rectangle(width / 2, height / 2, 520, 380, COLOR_PANEL, 0.85)
 			.setOrigin(0.5)
-			.setStrokeStyle(4, 0x00d4ff)
+			.setStrokeStyle(4, COLOR_ACCENT)
 			.setScale(0.8);
 
 		this.tweens.add({
@@ -20,19 +28,18 @@ export default class VictoryScene extends Phaser.Scene {
 			ease: "Back.easeOut",
 		});
 
-		// Texte principal
+		// Titre
 		const title = this.add
-			.text(width / 2, height / 2 - 80, "NIVEAU TERMINÉ !", {
-				fontSize: "60px",
+			.text(width / 2, height / 2 - 140, "NIVEAU TERMINÉ !", {
+				fontSize: "54px",
 				fontFamily: "DynaPuff",
-				color: "#00d4ff",
-				stroke: "#0a0e27",
+				color: COLOR_TEXT,
+				stroke: COLOR_STROKE,
 				strokeThickness: 8,
 			})
 			.setOrigin(0.5)
 			.setAlpha(0);
 
-		// Apparition
 		this.tweens.add({
 			targets: title,
 			alpha: 1,
@@ -40,44 +47,69 @@ export default class VictoryScene extends Phaser.Scene {
 			ease: "Power2",
 		});
 
-		// Légère pulsation
+		// Récupération des stats
+		const score = this.registry.get("lastScore") ?? 0;
+		const stars = this.registry.get("lastStars") ?? 0;
+		const time = this.registry.get("lastTime") ?? 0;
+
+		// Texte de stats
+		const statsText = this.add
+			.text(
+				width / 2,
+				height / 2 - 20,
+				`Score total : ${score}\nÉtoiles récoltées : ${stars}\nTemps : ${time}s`,
+				{
+					fontSize: "30px",
+					fontFamily: "DynaPuff",
+					align: "center",
+					color: COLOR_TEXT,
+					stroke: COLOR_STROKE,
+					strokeThickness: 4,
+				},
+			)
+			.setOrigin(0.5)
+			.setAlpha(0);
+
 		this.tweens.add({
-			targets: title,
-			scale: { from: 1, to: 1.05 },
-			duration: 2000,
-			repeat: -1,
-			yoyo: true,
-			ease: "Sine.easeInOut",
+			targets: statsText,
+			alpha: 1,
+			duration: 600,
+			delay: 300,
 		});
 
-		this.createButton(width / 2, height / 2 + 40, "▶ CONTINUER", () =>
+		// Bouton
+		this.createButton(width / 2, height / 2 + 120, "▶ CONTINUER", () =>
 			this.goToMenu(),
 		);
 
-		this.createParticles();
+		// Particules
+		this.createParticles(COLOR_ACCENT);
 
-		// Fade-in
 		this.cameras.main.fadeIn(400, 0, 0, 0);
 	}
-	createButton(x: number, y: number, label: string, callback: () => void) {
-		const radius = 16;
-		const width = 280;
-		const height = 60;
 
-		// Dessine bouton arrondi
+	createButton(x: number, y: number, label: string, callback: () => void) {
+		const COLOR_ACCENT = 0x00d4ff;
+		const COLOR_STROKE = "#0a0e27";
+
+		const radius = 20;
+		const width = 300;
+		const height = 70;
+
 		const gfx = this.add.graphics();
-		gfx.fillStyle(0x00d4ff, 1);
+		gfx.fillStyle(COLOR_ACCENT, 1);
 		gfx.fillRoundedRect(0, 0, width, height, radius);
 		gfx.generateTexture("victory-btn", width, height);
 		gfx.destroy();
 
 		const button = this.add.image(x, y, "victory-btn").setOrigin(0.5);
+
 		const text = this.add
 			.text(x, y, label, {
-				fontSize: "28px",
+				fontSize: "30px",
 				fontFamily: "DynaPuff",
-				color: "#0a0e27",
-				stroke: "#00eaff",
+				color: COLOR_STROKE,
+				stroke: "#ffffff",
 				strokeThickness: 2,
 			})
 			.setOrigin(0.5);
@@ -85,8 +117,8 @@ export default class VictoryScene extends Phaser.Scene {
 		button.setInteractive({ useHandCursor: true });
 
 		button.on("pointerover", () => {
-			button.setTint(0x00f6ff);
-			this.tweens.add({ targets: [button, text], scale: 1.08, duration: 150 });
+			button.setTint(0x4beaff);
+			this.tweens.add({ targets: [button, text], scale: 1.07, duration: 150 });
 		});
 
 		button.on("pointerout", () => {
@@ -97,20 +129,18 @@ export default class VictoryScene extends Phaser.Scene {
 		button.on("pointerdown", () => callback());
 	}
 
-	createParticles() {
+	createParticles(color: number) {
 		const { width, height } = this.scale;
 
 		for (let i = 0; i < 20; i++) {
 			const x = Phaser.Math.Between(0, width);
 			const y = Phaser.Math.Between(height, height + 200);
-			const size = Phaser.Math.Between(4, 8);
-
-			const p = this.add.circle(x, y, size, 0x00d4ff, 0.3);
+			const p = this.add.circle(x, y, Phaser.Math.Between(4, 8), color, 0.5);
 
 			this.tweens.add({
 				targets: p,
 				y: y - Phaser.Math.Between(300, 600),
-				alpha: { from: 0.5, to: 0 },
+				alpha: { from: 1, to: 0 },
 				duration: Phaser.Math.Between(2500, 4500),
 				delay: Phaser.Math.Between(0, 1500),
 				repeat: -1,
@@ -120,8 +150,8 @@ export default class VictoryScene extends Phaser.Scene {
 	}
 
 	goToMenu() {
-		this.cameras.main.fadeOut(500, 0, 0, 0);
-		this.time.delayedCall(500, () => {
+		this.cameras.main.fadeOut(400, 0, 0, 0);
+		this.time.delayedCall(400, () => {
 			this.scene.start("Menu");
 		});
 	}
