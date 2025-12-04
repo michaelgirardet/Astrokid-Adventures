@@ -9,11 +9,11 @@ export default class PauseScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    this.add.rectangle(0, 0, width, height, 0x000000, 0.55).setOrigin(0);
+    this.add.rectangle(0, 0, width, height, 0x446daa, 0.55).setOrigin(0);
     this.isMuted = localStorage.getItem("soundMuted") === "true";
 
     const panel = this.add
-      .rectangle(width / 2, height / 2, 450, 450, 0x1a1a2e, 0.75)
+      .rectangle(width / 2, height / 2, 450, 450, 0x446daa, 0.75)
       .setOrigin(0.5)
       .setStrokeStyle(4, 0x00d4ff)
       .setScale(0.85);
@@ -97,7 +97,7 @@ export default class PauseScene extends Phaser.Scene {
         fontSize: "26px",
         fontFamily: "DynaPuff",
         color: "#0a0e27",
-        stroke: "#00eaff",
+        stroke: "#162028",
         strokeThickness: 2,
       })
       .setOrigin(0.5);

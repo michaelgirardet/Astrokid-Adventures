@@ -58,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
 		this.disappearSound = this.sound.add("disappear_sound", { volume: 0.2 });
 		this.coinSound = this.sound.add("coin_sound", { volume: 0.2 });
 		this.starSound = this.sound.add("star_sound", { volume: 0.2 });
-		this.levelClear = this.sound.add("level_clear", { volume: 0.1 });
+		this.levelClear = this.sound.add("level_clear", { volume: 0.2 });
 
     // Pause
     this.input.keyboard.on("keydown-ESC", () => {
@@ -469,7 +469,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Stop musique + jouer jingle
     this.gameMusic.stop();
-    this.sound.play("level_clear");
+    this.levelClear.play();
 
     // Petite animation vers le haut
     this.tweens.add({
@@ -492,7 +492,6 @@ export default class GameScene extends Phaser.Scene {
     this.time.delayedCall(1400, () => {
       this.scene.start("Victory");
     });
-
     this.registry.set("lastScore", this.scoreUI.getScore());
     this.registry.set("lastStars", this.starUI.getStars());
     this.registry.set("lastTime", Math.floor(this.time.now / 1000));

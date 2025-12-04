@@ -26,13 +26,13 @@ export default class StarUI {
 		this.text.setDepth(1000);
 	}
 
-	/** 🔥 Appelé lorsque le joueur ramasse une étoile */
+	/** Appelé lorsque le joueur ramasse une étoile */
 	addStar() {
 		this.count += 1;
 		this.text.setText(this.count.toString());
 	}
 
-	/** 🔥 Utilisé par le HUD pour repositionner l’UI */
+	/** Utilisé par le HUD pour repositionner l’UI */
 	setPosition(x: number, y: number) {
 		// Position du groupe (centre)
 		const baseX = x;

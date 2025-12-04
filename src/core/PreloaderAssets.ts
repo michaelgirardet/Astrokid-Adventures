@@ -69,7 +69,6 @@ export function loadAssets(scene: Phaser.Scene) {
   load.audio("jump_sound", "assets/sounds/effects/sfx_jump.ogg");
   load.audio("hit_sound", "assets/sounds/effects/sfx_hurt.ogg");
   load.audio("disappear_sound", "assets/sounds/effects/sfx_disappear.ogg");
-
   load.audio("menu_music", "assets/sounds/music/mainTheme.mp3");
   load.audio("level1", "assets/sounds/music/level1.mp3");
 

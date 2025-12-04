@@ -7,11 +7,11 @@ export default class VictoryScene extends Phaser.Scene {
     const { width, height } = this.scale;
 
     // Couleurs de la palette
-    const COLOR_BG = 0x0a0e27;
-    const COLOR_PANEL = 0x1e1b33;
-    const COLOR_ACCENT = 0x00d4ff;
+    const COLOR_BG = 0x446daa;
+    const COLOR_PANEL = 0x446daa;
+    const COLOR_ACCENT = 0xf5f1e8;
     const COLOR_TEXT = "#f5f1e8";
-    const COLOR_STROKE = "#0a0e27";
+    const COLOR_STROKE = "#162028";
 
     this.add.rectangle(0, 0, width, height, COLOR_BG, 0.75).setOrigin(0);
 
@@ -85,8 +85,8 @@ export default class VictoryScene extends Phaser.Scene {
   }
 
   createButton(x: number, y: number, label: string, callback: () => void) {
-    const COLOR_ACCENT = 0x00d4ff;
-    const COLOR_STROKE = "#0a0e27";
+    const COLOR_ACCENT = 0xffffff;
+    const COLOR_STROKE = "#162028";
 
     const radius = 20;
     const width = 300;
@@ -113,12 +113,10 @@ export default class VictoryScene extends Phaser.Scene {
     button.setInteractive({ useHandCursor: true });
 
     button.on("pointerover", () => {
-      button.setTint(0x4beaff);
       this.tweens.add({ targets: [button, text], scale: 1.07, duration: 150 });
     });
 
     button.on("pointerout", () => {
-      button.clearTint();
       this.tweens.add({ targets: [button, text], scale: 1, duration: 150 });
     });
 

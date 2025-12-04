@@ -4,7 +4,7 @@ export default class Brick extends Phaser.Physics.Arcade.Sprite {
 	public isHeld = false;
 	public holder: Phaser.Physics.Arcade.Sprite | null = null;
 	public lifespan: number;
-	public canBePicked = true; // 🔹 nouveau flag
+	public canBePicked = true;
 
 	constructor(
 		scene: Phaser.Scene,

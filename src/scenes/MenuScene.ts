@@ -30,8 +30,34 @@ export default class MenuScene extends Phaser.Scene {
     const menuY = height * 0.6;
 
     const playButton = this.add
-      .rectangle(width / 2, menuY, 320, 80, 0x446daa, 1)
-      .setOrigin(0.5);
+		.rectangle(width / 2, menuY, 320, 80, 0x8D3B72)
+		.setOrigin(0.5)
+		.setInteractive();
+
+	playButton.on('pointerover', () => {
+	playButton.setScale(1.1);         
+	});
+	playButton.on('pointerout', () => {
+	playButton.setScale(1);             
+	});
+
+	playButton.on('pointerover', () => {
+		this.tweens.add({
+			targets: playButton,
+			scale: 1.1,
+			duration: 120,
+			ease: 'Power2'
+		});
+	});
+
+	playButton.on('pointerout', () => {
+		this.tweens.add({
+			targets: playButton,
+			scale: 1,
+			duration: 120,
+			ease: 'Power2'
+		});
+	});
 
     const playText = this.add
       .text(width / 2, menuY, "▶ Commencer", {

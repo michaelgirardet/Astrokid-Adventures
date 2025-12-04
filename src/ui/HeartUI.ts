@@ -24,14 +24,14 @@ export default class HeartUI {
 		}
 	}
 
-	/** 🔥 Permet au HUD de repositionner tous les cœurs */
+	/** Permet au HUD de repositionner tous les cœurs */
 	setPosition(x: number, y: number) {
 		this.hearts.forEach((heart, i) => {
 			heart.setPosition(x + i * 48, y);
 		});
 	}
 
-	/** 🔥 Remplace plein ↔ vide */
+	/** Remplace plein ↔ vide */
 	setHearts(value: number) {
 		this.currentHearts = value;
 
@@ -40,7 +40,7 @@ export default class HeartUI {
 		}
 	}
 
-	/** 🔥 Baisse la vie d’un cœur */
+	/** Baisse la vie d’un cœur */
 	loseHeart() {
 		this.setHearts(this.currentHearts - 1);
 	}

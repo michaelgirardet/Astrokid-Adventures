@@ -22,7 +22,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   ) {
     super(scene, x, y, skin);
 
-    this.anims.play(skin + "-idle");
+    this.anims.play(`${skin}-idle`);
 
     scene.add.existing(this);
     scene.physics.add.existing(this);

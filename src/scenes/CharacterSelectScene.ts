@@ -7,13 +7,12 @@ export default class CharacterSelectScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-
     // Fond
-    this.add.rectangle(0, 0, width, height, 0x0a0a1a, 1).setOrigin(0);
+    this.add.rectangle(0, 0, width, height, 0x446daa, 1).setOrigin(0);
 
     // Titre
     this.add
-      .text(width / 2, 80, "SELECTION DU HERO", {
+      .text(width / 2, 80, "SELECTION DU PERSONNAGE", {
         fontSize: "48px",
         fontFamily: "DynaPuff",
         color: "#ffffff",
