@@ -2,173 +2,180 @@ import Phaser from "phaser";
 import type Brick from "./Bricks";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-	private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-	private runKey!: Phaser.Input.Keyboard.Key;
-	heldBrick?: Brick;
-	throwKey!: Phaser.Input.Keyboard.Key;
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private runKey!: Phaser.Input.Keyboard.Key;
+  heldBrick?: Brick;
+  throwKey!: Phaser.Input.Keyboard.Key;
 
-	isInvincible = false;
-	invincibleTimer = 0;
-	disableControls = false;
-	isHit = false;
-	isDucking = false;
-	lastAnim?: string;
+  isInvincible = false;
+  invincibleTimer = 0;
+  disableControls = false;
+  isHit = false;
+  isDucking = false;
+  lastAnim?: string;
 
-	constructor(scene: Phaser.Scene, x: number, y: number) {
-		super(scene, x, y, "player_idle");
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    skin: string = "player1"
+  ) {
+    super(scene, x, y, skin);
 
-		scene.add.existing(this);
-		scene.physics.add.existing(this);
+    this.anims.play(skin + "-idle");
 
-		this.setGravityY(300);
-		this.setCollideWorldBounds(true);
+    scene.add.existing(this);
+    scene.physics.add.existing(this);
 
-		(this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(350, 900);
+    this.setGravityY(300);
+    this.setCollideWorldBounds(true);
 
-		// Hitbox standard
-		this.body.setSize(this.width * 0.6, this.height * 0.9);
-		this.body.setOffset(this.width * 0.2, this.height * 0.1);
+    (this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(350, 900);
 
-		// Controls
-		this.cursors = scene.input.keyboard.createCursorKeys();
-		this.runKey = scene.input.keyboard.addKey(
-			Phaser.Input.Keyboard.KeyCodes.SHIFT,
-		);
-		this.throwKey = scene.input.keyboard.addKey(
-			Phaser.Input.Keyboard.KeyCodes.SPACE,
-		);
-	}
+    // Hitbox standard
+    this.body.setSize(this.width * 0.6, this.height * 0.9);
+    this.body.setOffset(this.width * 0.2, this.height * 0.1);
 
-	// --------------------------
-	//  DUCK HANDLERS
-	// --------------------------
-	enterDuck() {
-		console.log("➡️ ENTER DUCK");
-		this.setVelocityX(0);
+    // Controls
+    this.cursors = scene.input.keyboard.createCursorKeys();
+    this.runKey = scene.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SHIFT
+    );
+    this.throwKey = scene.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
+  }
 
-		if (this.lastAnim !== "player-duck") {
-			this.play("player-duck");
-			this.lastAnim = "player-duck";
-		}
+  // --------------------------
+  //  DUCK HANDLERS
+  // --------------------------
+  enterDuck() {
+    console.log("➡️ ENTER DUCK");
+    this.setVelocityX(0);
 
-		const body = this.body as Phaser.Physics.Arcade.Body;
+    if (this.lastAnim !== "player-duck") {
+      this.play("player-duck");
+      this.lastAnim = "player-duck";
+    }
 
-		// La hitbox doit se raccourcir vers le HAUT, pas vers le bas
-		// Donc on modifie la hauteur, mais PAS la position du bas.
+    const body = this.body as Phaser.Physics.Arcade.Body;
 
-		const normalHeight = this.height * 0.9;
-		const duckHeight = this.height * 0.5;
+    // La hitbox doit se raccourcir vers le HAUT, pas vers le bas
+    // Donc on modifie la hauteur, mais PAS la position du bas.
 
-		const heightLoss = normalHeight - duckHeight;
+    const normalHeight = this.height * 0.9;
+    const duckHeight = this.height * 0.5;
 
-		// Nouvelle taille
-		body.setSize(this.width * 0.6, duckHeight);
+    const heightLoss = normalHeight - duckHeight;
 
-		// Décalage vers le HAUT uniquement
-		body.setOffset(this.width * 0.2, this.height * 0.1 + heightLoss);
-	}
+    // Nouvelle taille
+    body.setSize(this.width * 0.6, duckHeight);
 
-	exitDuck() {
-		console.log("⬅️ EXIT DUCK");
+    // Décalage vers le HAUT uniquement
+    body.setOffset(this.width * 0.2, this.height * 0.1 + heightLoss);
+  }
 
-		const body = this.body as Phaser.Physics.Arcade.Body;
+  exitDuck() {
+    console.log("⬅️ EXIT DUCK");
 
-		// Taille normale
-		const normalHeight = this.height * 0.9;
+    const body = this.body as Phaser.Physics.Arcade.Body;
 
-		body.setSize(this.width * 0.6, normalHeight);
+    // Taille normale
+    const normalHeight = this.height * 0.9;
 
-		// Offset normal
-		body.setOffset(this.width * 0.2, this.height * 0.1);
+    body.setSize(this.width * 0.6, normalHeight);
 
-		this.lastAnim = undefined;
-	}
+    // Offset normal
+    body.setOffset(this.width * 0.2, this.height * 0.1);
 
-	update(_time: number, delta: number) {
-		if (this.disableControls) return;
+    this.lastAnim = undefined;
+  }
 
-		if (this.isHit) {
-			this.play("player-hit", true);
-			return;
-		}
+  update(_time: number, delta: number) {
+    if (this.disableControls) return;
 
-		if (this.isInvincible) {
-			this.invincibleTimer -= delta;
-			if (this.invincibleTimer <= 0) {
-				this.isInvincible = false;
-				this.clearTint();
-				this.setAlpha(1);
-			}
-		}
+    if (this.isHit) {
+      this.play("player-hit", true);
+      return;
+    }
 
-		// Lancer brique
-		if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.heldBrick) {
-			this.heldBrick.throw(this.flipX ? -1 : 1);
-			this.heldBrick = undefined;
-		}
+    if (this.isInvincible) {
+      this.invincibleTimer -= delta;
+      if (this.invincibleTimer <= 0) {
+        this.isInvincible = false;
+        this.clearTint();
+        this.setAlpha(1);
+      }
+    }
 
-		const onGround = this.body.blocked.down;
+    // Lancer brique
+    if (Phaser.Input.Keyboard.JustDown(this.throwKey) && this.heldBrick) {
+      this.heldBrick.throw(this.flipX ? -1 : 1);
+      this.heldBrick = undefined;
+    }
 
-		//Duck
-		if (this.cursors.down.isDown && onGround) {
-			if (!this.isDucking) {
-				this.isDucking = true;
-				this.enterDuck();
-			}
-		} else if (this.isDucking) {
-			this.isDucking = false;
-			this.exitDuck();
-		}
+    const onGround = this.body.blocked.down;
 
-		if (this.isDucking) return;
+    //Duck
+    if (this.cursors.down.isDown && onGround) {
+      if (!this.isDucking) {
+        this.isDucking = true;
+        this.enterDuck();
+      }
+    } else if (this.isDucking) {
+      this.isDucking = false;
+      this.exitDuck();
+    }
 
-		// Move
-		const baseSpeed = 200;
-		const runSpeed = 350;
-		const speed = this.runKey.isDown ? runSpeed : baseSpeed;
+    if (this.isDucking) return;
 
-		if (this.cursors.left.isDown) {
-			this.setVelocityX(-speed);
-			this.setFlipX(true);
-		} else if (this.cursors.right.isDown) {
-			this.setVelocityX(speed);
-			this.setFlipX(false);
-		} else {
-			this.setVelocityX(0);
-		}
+    // Move
+    const baseSpeed = 200;
+    const runSpeed = 350;
+    const speed = this.runKey.isDown ? runSpeed : baseSpeed;
 
-		// Jump
-		if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && onGround) {
-			this.setVelocityY(-800);
-			const sc = this.scene as Phaser.Scene & { jumpSound?: { play(): void } };
-			sc.jumpSound?.play();
-		}
+    if (this.cursors.left.isDown) {
+      this.setVelocityX(-speed);
+      this.setFlipX(true);
+    } else if (this.cursors.right.isDown) {
+      this.setVelocityX(speed);
+      this.setFlipX(false);
+    } else {
+      this.setVelocityX(0);
+    }
 
-		// Pick brick
-		if (this.heldBrick) {
-			this.heldBrick.setPosition(this.x, this.y - 40);
-		}
+    // Jump
+    if (Phaser.Input.Keyboard.JustDown(this.cursors.up) && onGround) {
+      this.setVelocityY(-800);
+      const sc = this.scene as Phaser.Scene & { jumpSound?: { play(): void } };
+      sc.jumpSound?.play();
+    }
 
-		// Animate
-		if (!onGround) {
-			if (this.lastAnim !== "player-jump") {
-				this.play("player-jump", true);
-				this.lastAnim = "player-jump";
-			}
-			return;
-		}
+    // Pick brick
+    if (this.heldBrick) {
+      this.heldBrick.setPosition(this.x, this.y - 40);
+    }
 
-		if (this.cursors.left.isDown || this.cursors.right.isDown) {
-			if (this.lastAnim !== "player-walk") {
-				this.play("player-walk");
-				this.lastAnim = "player-walk";
-			}
-			return;
-		}
+    // Animate
+    if (!onGround) {
+      if (this.lastAnim !== "player-jump") {
+        this.play("player-jump", true);
+        this.lastAnim = "player-jump";
+      }
+      return;
+    }
 
-		if (this.lastAnim !== "player-idle") {
-			this.play("player-idle", true);
-			this.lastAnim = "player-idle";
-		}
-	}
+    if (this.cursors.left.isDown || this.cursors.right.isDown) {
+      if (this.lastAnim !== "player-walk") {
+        this.play("player-walk");
+        this.lastAnim = "player-walk";
+      }
+      return;
+    }
+
+    if (this.lastAnim !== "player-idle") {
+      this.play("player-idle", true);
+      this.lastAnim = "player-idle";
+    }
+  }
 }
