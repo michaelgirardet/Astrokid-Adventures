@@ -6,10 +6,9 @@ export default class VictoryScene extends Phaser.Scene {
 	create() {
 		const { width, height } = this.scale;
 
-		// Couleurs de la palette
 		const COLOR_BG = 0x0a0e27;
 		const COLOR_PANEL = 0x1e1b33;
-		const COLOR_ACCENT = 0x00d4ff;
+		const COLOR_ACCENT = 0x00ffff;
 		const COLOR_TEXT = "#f5f1e8";
 		const COLOR_STROKE = "#0a0e27";
 
@@ -81,9 +80,6 @@ export default class VictoryScene extends Phaser.Scene {
 		this.createButton(width / 2, height / 2 + 120, "▶ CONTINUER", () =>
 			this.goToMenu(),
 		);
-
-		// Particules
-		this.createParticles(COLOR_ACCENT);
 
 		this.cameras.main.fadeIn(400, 0, 0, 0);
 	}
