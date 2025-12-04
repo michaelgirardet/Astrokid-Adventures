@@ -28,26 +28,66 @@ export default class CharacterSelectScene extends Phaser.Scene {
       .setScale(2)
       .setInteractive({ useHandCursor: true });
 
+    yellow.on("pointerover", () => {
+      this.tweens.add({
+        targets: yellow,
+        scale: 2.2,
+        angle: 3,
+        duration: 150,
+        ease: "Power2",
+      });
+    });
+    yellow.on("pointerout", () => {
+      this.tweens.add({
+        targets: yellow,
+        scale: 2,
+        angle: 0,
+        duration: 150,
+        ease: "Power2",
+      });
+    });
     yellow.on("pointerdown", () => {
       this.registry.set("selected_character", "yellow");
       this.scene.start("Game");
     });
 
     // Personnage Vert
-    this.add
+    const green = this.add
       .image(width / 2, height / 2, "player2")
       .setScale(2)
       .setTint(0x000000)
       .setAlpha(0.3);
 
-    // Personnage Violet
+    // Ajout du "?" sur l'ombre
     this.add
+      .text(green.x, green.y + 35, "?", {
+        fontSize: "60px",
+        fontFamily: "DynaPuff",
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5);
+
+    // Personnage Violet
+    const purple = this.add
       .image(width / 2 + 200, height / 2, "player3")
       .setScale(2)
       .setTint(0x000000)
       .setAlpha(0.3);
 
-    // --- Bouton retour ---
+    // "?" sur l'ombre
+    this.add
+      .text(purple.x, purple.y + 35, "?", {
+        fontSize: "60px",
+        fontFamily: "DynaPuff",
+        color: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5);
+
+    // Bouton retour
     this.add
       .text(40, 40, "← Retour", {
         fontSize: "28px",

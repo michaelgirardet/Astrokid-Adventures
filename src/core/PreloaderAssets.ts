@@ -57,7 +57,7 @@ export function loadAssets(scene: Phaser.Scene) {
   load.image("bee_rest", "assets/enemies/bee/bee_rest.png");
 
   // Items
-  load.image("Coin", "assets/items/gem_red.png");
+  load.image("Coin", "assets/items/gem_yellow.png");
   load.image("Star", "assets/items/star.png");
   load.image("brick", "assets/items/brick.png");
   load.image("flag", "assets/items/flag_red_a.png");

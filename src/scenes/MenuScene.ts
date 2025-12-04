@@ -24,7 +24,7 @@ export default class MenuScene extends Phaser.Scene {
     this.music.play();
 
     // Overlay sombre
-    this.add.rectangle(0, 0, width, height, 0x444444, 0).setOrigin(0);
+    this.add.rectangle(0, 0, width, height, 0x446daa, 0.4).setOrigin(0);
 
     // Menu container
     const menuY = height * 0.6;
