@@ -1,112 +1,169 @@
-# Phaser 3 + Vite.js Template
-> Make Phaser 3 games with modern frontend tooling.
+# Astrokid Adventure  
 
-![License](https://img.shields.io/badge/license-MIT-green)
+![Fond d'écran de la page d'accueil](public/assets/ui/menubg1.png)
 
-## Prerequisites
+---
 
-You'll need [Node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) installed.
+## Table des matières
 
-It is highly recommended to use [Node Version Manager](https://github.com/nvm-sh/nvm) (nvm) to install Node.js and npm.
+- [À propos du projet](#à-propos-du-projet)
+- [Démo en ligne](#démo-en-ligne)
+- [Gameplay](#gameplay)
+- [Stack technique](#stack-technique)
+- [Qualité & tooling](#qualité--tooling)
+- [Installation & développement](#installation--développement)
+- [Structure du projet](#structure-du-projet)
+- [Direction artistique](#direction-artistique)
+- [Comment contribuer](#comment-contribuer)
+- [Roadmap (MVP → V2)](#roadmap-mvp--v2)
+- [Auteur](#auteur)
+- [Licence](#licence)
 
-For Windows users there is [Node Version Manager for Windows](https://github.com/coreybutler/nvm-windows).
+---
 
-Install Node.js and `npm` with `nvm`:
+## À propos du projet
+
+**Astrokid Adventure** est un platformer 2D mignon et accessible, inspiré du style Kenney.  
+C’est un MVP qui vise à :
+
+- pratiquer **Phaser 3** (architecture, collisions, animations, IA simple…)
+- démontrer mes compétences **techniques & artistiques**
+- nourrir mon **portfolio**
+- me préparer à obtenir une **alternance en développement full-stack**
+
+Le jeu est entièrement jouable dans un navigateur moderne, sans installation.
+
+---
+
+## Démo en ligne
+***https://astrokid-adventure.vercel.app***
+
+---
+
+## Gameplay
+
+- Déplacements : marcher, courir, sauter, s’accroupir  
+- Interactions : ramasser & lancer des briques  
+- Ennemis : blobs, mouches, abeilles, vers  
+- Items : pièces, étoiles, drapeaux de fin de niveau  
+- Collisions avancées : plateformes, écrasement, dégâts, invincibilité  
+- HUD dynamique : vies, score, étoiles  
+- Level design réalisé avec **Tiled**
+
+---
+
+## Stack technique
+
+**Core**
+
+- **Phaser 3.55.2**
+- **TypeScript** (strict)
+- **Vite** (dev server + build)
+- **ES Modules**
+
+## Qualité & tooling**
+
+- **Biome** (lint + format)
+- **ESLint** (complément)
+- Préparation future : **Husky** + **GitHub Actions**
+
+---
+
+## Installation & développement
+
+Cloner le repo :
 
 ```bash
-nvm install node
-
-nvm use node
-```
-
-Replace 'node' with 'latest' for `nvm-windows`.
-
-## Getting Started
-
-You can clone this repository or use [degit](https://github.com/Rich-Harris/degit) to scaffold the project like this:
-
-```bash
-npx degit https://github.com/ourcade/phaser3-vite-template my-folder-name
-cd my-folder-name
-
+git clone https://github.com/<votre-utilisateur>/astrokid-adventure.git
+cd astrokid-adventure
 npm install
+npm run dev
 ```
 
-Start development server:
+Puis ouvrir le jeu dans un navigateur moderne à l’adresse indiquée par Vite
+(par défaut : http://localhost:5173).
 
+## Structure du projet
 ```
-npm run start
-```
-
-To create a production build:
-
-```
-npm run build
-```
-
-Production files will be placed in the `dist` folder. Then upload those files to a web server. 🎉
-
-## Project Structure
-
-```
-    .
-    ├── dist
-    ├── node_modules
-    ├── public
-    ├── src
-    │   ├── HelloWorldScene.js
-    │   ├── main.js
-	├── index.html
-    ├── package.json
+src/
+├── scenes/
+├── entities/
+│   ├── enemies/
+│   ├── player/
+│   └── items/
+├── ui/
+├── world/
+└── utils/
+assets/
+├── enemies/
+├── items/
+├── maps/
+├── player/
+├── sounds/
+├── tiles/
+└── ui/
 ```
 
-JavaScript files are intended for the `src` folder. `main.js` is the entry point referenced by `index.html`.
+## Direction artistique
+Style
+Pixel art mignon & accessible (référence : Kenney)
 
-Other than that there is no opinion on how you should structure your project.
+Sprites isolés (pas de sprite sheets)
 
-There is an example `HelloWorldScene.js` file that can be placed inside a `scenes` folder to organize by type or elsewhere to organize by function. For example, you can keep all files specific to the HelloWorld scene in a `hello-world` folder.
+Grille orthogonale, 64×64 px
 
-It is all up to you!
+Couleurs douces & lisibles
 
-## Static Assets
+**Palette officielle**
+Nom	Hex
+amethyst	#441151
+bubblegum	#f45b69
+ice	#add7f6
+ink	#162028
+smart	#446daa
+white	#ffffff
 
-Any static assets like images or audio files should be placed in the `public` folder. It'll then be served from the root. For example: http://localhost:8000/images/my-image.png
+## Comment contribuer
+Voir le fichier dédié : CONTRIBUTING.md
 
-Example `public` structure:
+Il décrit :
 
-```
-    public
-    ├── images
-    │   ├── my-image.png
-    ├── music
-    │   ├── ...
-    ├── sfx
-    │   ├── ...
-```
+- le workflow Git basé sur la branche dev
 
-They can then be loaded by Phaser with `this.image.load('my-image', 'images/my-image.png')`.
+- les conventions de commits (conventional commits)
 
-# ESLint
+- les guidelines dev : TypeScript strict, classes, pas de any
 
-This template uses a basic `eslint` set up for code linting to help you find and fix common problems in your JavaScript code.
+- les guidelines artistiques : sprites 64×64, PNG, palette, structure des dossiers
 
-It does not aim to be opinionated.
+- les règles des PR : lint Biome obligatoire avant merge
 
-[See here for rules to turn on or off](https://eslint.org/docs/rules/).
+---
+## Roadmap (MVP → V2)
+**MVP (en cours)**
+- Mouvement du joueur
+- Saut / duck
+- Ennemis avec IA simple
+- Sprites 64×64
+- Items (étoiles, gemmes, briques)
+- HUD + systèmes (score, vies)
+- Page de victoire
+- Optimisation collisions & IA
 
-## Dev Server Port
-
-You can change the dev server's port number by modifying the `vite.config.js` file. Look for the `server` section:
-
-```js
-{
-	// ...
-	server: { host: '0.0.0.0', port: 8000 },
-}
-```
-
-Change 8000 to whatever you want.
-
-## License
-
-[MIT License](https://github.com/ourcade/phaser3-vite-template/blob/master/LICENSE)
+**V2 (post-MVP)**
+- Système de particules
+- Tests automatisés
+- Support manette (Gamepad API)
+- SFX dynamiques (occlusion, pitch…)
+- Nouveaux niveaux + biomes
+- Nouveaux ennemis avec patterns variés
+- Animations complexes (chargement, transitions de scènes)
+- Export Mobile
+  --
+## Auteur<br>
+Crée par Michaël, Développeur front & game hobbyist <br>
+À la recherche d’une alternance dans le développement web.<br>
+Portfolio : https://www.michaelgirardet.dev/<br>
+	---
+## Licence
+Projet open-source — licence MIT
