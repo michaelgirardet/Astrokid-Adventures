@@ -1,71 +1,71 @@
-@import url("https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 body {
-  background-color: #162028;
-  font-family: "DynaPuff", sans-serif;
+	background-color: #162028;
+	font-family: "DynaPuff", sans-serif;
 }
 
 #mobile-warning {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  padding: 40px 50px;
-  width: 80%;
-  max-width: 420px;
-  text-align: center;
-  animation: mw-pop 0.5s ease-out;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	padding: 40px 50px;
+	width: 80%;
+	max-width: 420px;
+	text-align: center;
+	animation: mw-pop 0.5s ease-out;
 }
 
 @keyframes mw-pop {
-  0% {
-    transform: translate(-50%, -50%) scale(0.7);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
+	0% {
+		transform: translate(-50%, -50%) scale(0.7);
+		opacity: 0;
+	}
+	100% {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
+	}
 }
 
 #mobile-warning h2 {
-  margin: 0 0 10px;
-  font-size: 28px;
-  letter-spacing: 1px;
-  color: #7cd9ff;
-  text-shadow: 0 0 8px rgba(0, 200, 255, 0.6);
+	margin: 0 0 10px;
+	font-size: 28px;
+	letter-spacing: 1px;
+	color: #7cd9ff;
+	text-shadow: 0 0 8px rgba(0, 200, 255, 0.6);
 }
 
 #mobile-warning p {
-  font-size: 18px;
-  margin: 8px 0;
-  opacity: 0.85;
+	font-size: 18px;
+	margin: 8px 0;
+	opacity: 0.85;
 }
 
 #mobile-warning .hint {
-  font-size: 15px;
-  opacity: 0.7;
+	font-size: 15px;
+	opacity: 0.7;
 }
 
 .mw-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
-  animation: mw-float 2s ease-in-out infinite;
+	font-size: 48px;
+	margin-bottom: 10px;
+	animation: mw-float 2s ease-in-out infinite;
 }
 
 @keyframes mw-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+	0% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-6px);
+	}
+	100% {
+		transform: translateY(0);
+	}
 }

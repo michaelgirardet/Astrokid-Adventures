@@ -1,150 +1,161 @@
+import Phaser from "phaser";
+
 export default class PauseScene extends Phaser.Scene {
-  private resumeKey!: Phaser.Input.Keyboard.Key;
-  private gameMusic!: Phaser.Sound.BaseSound;
-  private isMuted = false;
+	private resumeKey!: Phaser.Input.Keyboard.Key;
+	private isMuted = false;
 
-  constructor() {
-    super("Pause");
-  }
+	constructor() {
+		super("Pause");
+	}
 
-  create() {
-    const { width, height } = this.scale;
-    this.add.rectangle(0, 0, width, height, 0x446daa, 0.55).setOrigin(0);
-    this.isMuted = localStorage.getItem("soundMuted") === "true";
+	create() {
+		const { width, height } = this.scale;
 
-    const panel = this.add
-      .rectangle(width / 2, height / 2, 450, 450, 0x446daa, 0.75)
-      .setOrigin(0.5)
-      .setStrokeStyle(4, 0x00d4ff)
-      .setScale(0.85);
+		this.add
+			.rectangle(0, 0, width, height, 0x162028, 0.55) 
+			.setOrigin(0);
 
-    this.tweens.add({
-      targets: panel,
-      scale: 1,
-      duration: 350,
-      ease: "Back.easeOut",
-    });
+		this.isMuted = localStorage.getItem("soundMuted") === "true";
 
-    // Title
-    this.add
-      .text(width / 2, height / 2 - 115, "PAUSE", {
-        fontSize: "54px",
-        fontFamily: "DynaPuff",
-        color: "#00d4ff",
-        stroke: "#0a0e27",
-        strokeThickness: 8,
-      })
-      .setOrigin(0.5);
+		const panel = this.add
+			.rectangle(width / 2, height / 2, 520, 520, 0x446daa, 0.92) 
+			.setOrigin(0.5)
+			.setStrokeStyle(6, 0xadd7f6) 
+			.setScale(0.7);
 
-    // Buttons
-    this.createRoundedButton(width / 2, height / 2 - 20, "REPRENDRE", () =>
-      this.resumeGame()
-    );
+		// appear animation
+		this.tweens.add({
+			targets: panel,
+			scale: 1,
+			duration: 400,
+			ease: "Back.Out"
+		});
 
-    this.createRoundedButton(width / 2, height / 2 + 60, "RECOMMENCER", () =>
-      this.restartLevel()
-    );
+		// --- TITLE ---
+		this.add
+			.text(width / 2, height / 2 - 180, "PAUSE", {
+				fontSize: "58px",
+				fontFamily: "DynaPuff",
+				color: "#446daa", 
+				stroke: "#162028",
+			})
+			.setOrigin(0.5);
 
-    this.createRoundedButton(width / 2, height / 2 + 140, "QUITTER", () =>
-      this.quitToMenu()
-    );
+		// Buttons
+		this.createButton(width / 2, height / 2 - 40, "REPRENDRE", () =>
+			this.resumeGame()
+		);
 
-    const soundButton = this.add
-      .image(width - 50, height - 50, this.isMuted ? "sound_off" : "sound_on")
-      .setOrigin(1, 1)
-      .setScale(1.25)
-      .setInteractive({ useHandCursor: true });
+		this.createButton(width / 2, height / 2 + 40, "RECOMMENCER", () =>
+			this.restartLevel()
+		);
 
-    soundButton.on("pointerdown", () => {
-      this.isMuted = !this.isMuted;
+		this.createButton(width / 2, height / 2 + 120, "QUITTER", () =>
+			this.quitToMenu()
+		);
 
-      this.sound.mute = this.isMuted;
-      localStorage.setItem("soundMuted", this.isMuted.toString());
-      soundButton.setTexture(this.isMuted ? "sound_off" : "sound_on");
+		// Sound Btn
+		const soundBtn = this.add
+			.image(width - 50, height - 50, this.isMuted ? "sound_off" : "sound_on")
+			.setOrigin(1, 1)
+			.setScale(1.2)
+			.setTint(0xadd7f6) 
+			.setInteractive({ useHandCursor: true });
 
-      // Pause / Reprise de la musique et des sons
-      if (this.isMuted) {
-        this.game.sound.pauseAll();
-      } else {
-        this.game.sound.resumeAll();
-      }
-    });
+		soundBtn.on("pointerdown", () => {
+			this.toggleSound(soundBtn);
+		});
 
-    this.resumeKey = this.input.keyboard.addKey("ESC");
+		// Keyboard
+		this.resumeKey = this.input.keyboard.addKey("ESC");
 
-    this.cameras.main.fadeIn(200, 0, 0, 0);
-  }
-  createRoundedButton(
-    x: number,
-    y: number,
-    label: string,
-    callback: () => void
-  ) {
-    const radius = 18;
-    const width = 300;
-    const height = 60;
+		this.cameras.main.fadeIn(200, 0, 0, 0);
+	}
 
-    const graphics = this.add.graphics();
-    graphics.fillStyle(0x00d4ff, 1);
-    graphics.fillRoundedRect(0, 0, width, height, radius);
-    graphics.generateTexture("rounded-btn", width, height);
-    graphics.destroy();
+	// Factory Btn
+	createButton(x: number, y: number, label: string, callback: () => void) {
+		const width = 320;
+		const height = 70;
+		const radius = 20;
 
-    const button = this.add.image(x, y, "rounded-btn").setOrigin(0.5);
+		// Draw rounded button texture
+		const gfx = this.add.graphics();
+		gfx.fillStyle(0x441151, 1);
+		gfx.fillRoundedRect(0, 0, width, height, radius);
+		gfx.generateTexture("pause-btn", width, height);
+		gfx.destroy();
 
-    const text = this.add
-      .text(x, y, label, {
-        fontSize: "26px",
-        fontFamily: "DynaPuff",
-        color: "#0a0e27",
-        stroke: "#162028",
-        strokeThickness: 2,
-      })
-      .setOrigin(0.5);
+		const btn = this.add.image(x, y, "pause-btn").setOrigin(0.5);
 
-    button.setInteractive({ useHandCursor: true });
+		const txt = this.add
+			.text(x, y, label, {
+				fontFamily: "DynaPuff",
+				fontSize: "28px",
+				color: "#ffffff", 
+				stroke: "#162028",
+				strokeThickness: 4
+			})
+			.setOrigin(0.5);
 
-    button.on("pointerover", () => {
-      this.tweens.add({
-        targets: [button, text],
-        scale: 1.06,
-        duration: 150,
-      });
-      button.setTint(0x00f6ff);
-    });
+		btn.setInteractive({ useHandCursor: true });
 
-    button.on("pointerout", () => {
-      this.tweens.add({
-        targets: [button, text],
-        scale: 1,
-        duration: 150,
-      });
-      button.clearTint();
-    });
+		btn.on("pointerover", () => {
+			btn.setTint(0xadd7f6); // ice
+			this.tweens.add({
+				targets: [btn, txt],
+				scale: 1.07,
+				duration: 140,
+				ease: "Sine.Out"
+			});
+		});
 
-    button.on("pointerdown", () => callback());
-  }
+		btn.on("pointerout", () => {
+			btn.clearTint();
+			this.tweens.add({
+				targets: [btn, txt],
+				scale: 1,
+				duration: 140,
+				ease: "Sine.Out"
+			});
+		});
 
-  resumeGame() {
-    this.cameras.main.fadeOut(200);
-    this.time.delayedCall(200, () => {
-      this.scene.stop();
-      this.scene.resume("Game");
-    });
-  }
+		btn.on("pointerdown", callback);
+	}
 
-  restartLevel() {
-    this.scene.stop("Game");
-    this.scene.start("Game");
-  }
+	// Sound
+	toggleSound(btn: Phaser.GameObjects.Image) {
+		this.isMuted = !this.isMuted;
 
-  quitToMenu() {
-    this.scene.stop("Game");
-    this.scene.start("Menu");
-  }
-  update() {
-    if (Phaser.Input.Keyboard.JustDown(this.resumeKey)) {
-      this.resumeGame();
-    }
-  }
+		this.sound.mute = this.isMuted;
+		localStorage.setItem("soundMuted", this.isMuted.toString());
+		btn.setTexture(this.isMuted ? "sound_off" : "sound_on");
+
+		if (this.isMuted) this.game.sound.pauseAll();
+		else this.game.sound.resumeAll();
+	}
+
+	// Actions
+	resumeGame() {
+		this.cameras.main.fadeOut(200);
+		this.time.delayedCall(200, () => {
+			this.scene.stop();
+			this.scene.resume("Game");
+		});
+	}
+
+	restartLevel() {
+		this.scene.stop("Game");
+		this.scene.start("Game");
+	}
+
+	quitToMenu() {
+		this.scene.stop("Game");
+		this.scene.start("Menu");
+	}
+
+	update() {
+		if (Phaser.Input.Keyboard.JustDown(this.resumeKey)) {
+			this.resumeGame();
+		}
+	}
 }

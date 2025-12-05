@@ -13,7 +13,7 @@ export default class HeartUI {
 	}
 
 	createHearts() {
-		const startX = 80; // déplacé pour laisser la place à l'icône du joueur
+		const startX = 80;
 		const startY = 40;
 
 		for (let i = 0; i < this.maxHearts; i++) {

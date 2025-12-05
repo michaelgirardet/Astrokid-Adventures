@@ -1,99 +1,87 @@
 import Phaser from "phaser";
+import { CHARACTER_STATS } from "../data/characterStats";
+import CharacterInfoCard from "../ui/CharacterInfoCard";
 
 export default class CharacterSelectScene extends Phaser.Scene {
-  constructor() {
-    super("CharacterSelect");
-  }
+	private infoCard!: CharacterInfoCard;
 
-  create() {
-    const { width, height } = this.scale;
-    // Fond
-    this.add.rectangle(0, 0, width, height, 0x446daa, 1).setOrigin(0);
+	constructor() {
+		super("CharacterSelect");
+	}
 
-    // Titre
-    this.add
-      .text(width / 2, 80, "SELECTION DU PERSONNAGE", {
-        fontSize: "48px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 6,
-      })
-      .setOrigin(0.5);
+	create() {
+		const { width, height } = this.scale;
 
-    // Personnage Jaune
-    const yellow = this.add
-      .image(width / 2 - 200, height / 2, "player1")
-      .setScale(2)
-      .setInteractive({ useHandCursor: true });
+		this.add.rectangle(0, 0, width, height, 0x446daa).setOrigin(0);
 
-    yellow.on("pointerover", () => {
-      this.tweens.add({
-        targets: yellow,
-        scale: 2.2,
-        angle: 3,
-        duration: 150,
-        ease: "Power2",
-      });
-    });
-    yellow.on("pointerout", () => {
-      this.tweens.add({
-        targets: yellow,
-        scale: 2,
-        angle: 0,
-        duration: 150,
-        ease: "Power2",
-      });
-    });
-    yellow.on("pointerdown", () => {
-      this.registry.set("selected_character", "yellow");
-      this.scene.start("Game");
-    });
+		this.add.text(width / 2, 80, "SELECTION DU PERSONNAGE", {
+			fontSize: "48px",
+			fontFamily: "DynaPuff",
+			color: "#ffffff",
+			stroke: "#000000",
+			strokeThickness: 6
+		}).setOrigin(0.5);
 
-    // Personnage Vert
-    const green = this.add
-      .image(width / 2, height / 2, "player2")
-      .setScale(2)
-      .setTint(0x000000)
-      .setAlpha(0.3);
+		// 🔥 Ajout du panneau d’info
+		this.infoCard = new CharacterInfoCard(this, width - 260, height / 2);
 
-    // Ajout du "?" sur l'ombre
-    this.add
-      .text(green.x, green.y + 35, "?", {
-        fontSize: "60px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 6,
-      })
-      .setOrigin(0.5);
+		// Utilitaire pour créer un personnage interactif
+		const createCharacter = (
+			x: number,
+			key: string,
+			statsId: keyof typeof CHARACTER_STATS,
+			disabled = false
+		) => {
+			const img = this.add
+				.image(x, height / 2, key)
+				.setScale(2)
+				.setInteractive({ useHandCursor: !disabled });
 
-    // Personnage Violet
-    const purple = this.add
-      .image(width / 2 + 200, height / 2, "player3")
-      .setScale(2)
-      .setTint(0x000000)
-      .setAlpha(0.3);
+			if (disabled) {
+				img.setTint(0x000000).setAlpha(0.3);
+				return img;
+			}
 
-    // "?" sur l'ombre
-    this.add
-      .text(purple.x, purple.y + 35, "?", {
-        fontSize: "60px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 6,
-      })
-      .setOrigin(0.5);
+			img.on("pointerover", () => {
+				this.tweens.add({
+					targets: img,
+					scale: 2.2,
+					angle: 3,
+					duration: 150
+				});
+				this.infoCard.show(CHARACTER_STATS[statsId]);
+			});
 
-    // Bouton retour
-    this.add
-      .text(40, 40, "← Retour", {
-        fontSize: "28px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-      })
-      .setInteractive()
-      .on("pointerdown", () => this.scene.start("Menu"));
-  }
+			img.on("pointerout", () => {
+				this.tweens.add({
+					targets: img,
+					scale: 2,
+					angle: 0,
+					duration: 150
+				});
+				this.infoCard.hide();
+			});
+
+			img.on("pointerdown", () => {
+				this.registry.set("selected_character", statsId);
+				this.scene.start("Game");
+			});
+
+			return img;
+		};
+
+		// Personnages
+		createCharacter(width / 2 - 200, "player1", "yellow");
+		createCharacter(width / 2, "player2", "green", true);
+		createCharacter(width / 2 + 200, "player3", "purple", true);
+
+		// Bouton retour
+		this.add.text(40, 40, "← Retour", {
+			fontSize: "28px",
+			fontFamily: "DynaPuff",
+			color: "#ffffff"
+		})
+			.setInteractive()
+			.on("pointerdown", () => this.scene.start("Menu"));
+	}
 }

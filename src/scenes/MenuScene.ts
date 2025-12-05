@@ -1,140 +1,138 @@
 export default class MenuScene extends Phaser.Scene {
-  private startKey!: Phaser.Input.Keyboard.Key;
-  private music!: Phaser.Sound.BaseSound;
-  private isMuted = false;
+	private startKey!: Phaser.Input.Keyboard.Key;
+	private music!: Phaser.Sound.BaseSound;
+	private isMuted = false;
 
-  constructor() {
-    super("Menu");
-  }
+	constructor() {
+		super("Menu");
+	}
 
-  create() {
-    const { width, height } = this.scale;
-    const bg = this.add
-      .image(0, 0, "menu_bg")
-      .setOrigin(0)
-      .setDisplaySize(width, height);
+	create() {
+		const { width, height } = this.scale;
+		const bg = this.add
+			.image(0, 0, "menu_bg")
+			.setOrigin(0)
+			.setDisplaySize(width, height);
 
-    // Charger depuis local storage
-    this.isMuted = localStorage.getItem("soundMuted") === "true";
+		// Charger depuis local storage
+		this.isMuted = localStorage.getItem("soundMuted") === "true";
 
-    this.music = this.sound.add("menu_music", {
-      volume: 0.05,
-      loop: true,
-    });
-    this.music.play();
-
-    // Overlay sombre
-    this.add.rectangle(0, 0, width, height, 0x446daa, 0.4).setOrigin(0);
-
-    // Menu container
-    const menuY = height * 0.6;
-
-    const playButton = this.add
-		.rectangle(width / 2, menuY, 320, 80, 0x8D3B72)
-		.setOrigin(0.5)
-		.setInteractive();
-
-	playButton.on('pointerover', () => {
-	playButton.setScale(1.1);         
-	});
-	playButton.on('pointerout', () => {
-	playButton.setScale(1);             
-	});
-
-	playButton.on('pointerover', () => {
-		this.tweens.add({
-			targets: playButton,
-			scale: 1.1,
-			duration: 120,
-			ease: 'Power2'
+		this.music = this.sound.add("menu_music", {
+			volume: 0.05,
+			loop: true,
 		});
-	});
+		this.music.play();
 
-	playButton.on('pointerout', () => {
-		this.tweens.add({
-			targets: playButton,
-			scale: 1,
-			duration: 120,
-			ease: 'Power2'
+		// Overlay sombre
+		this.add.rectangle(0, 0, width, height, 0x446daa, 0.15).setOrigin(0);
+
+		// Menu container
+		const menuY = height * 0.6;
+
+		const playButton = this.add
+			.rectangle(width / 2, menuY, 320, 80, 0x441151)
+			.setOrigin(0.5)
+			.setInteractive();
+
+		playButton.on("pointerover", () => {
+			playButton.setScale(1.1);
 		});
-	});
+		playButton.on("pointerout", () => {
+			playButton.setScale(1);
+		});
 
-    const playText = this.add
-      .text(width / 2, menuY, "▶ Commencer", {
-        fontSize: "38px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#ffffff",
-        strokeThickness: 2,
-      })
-      .setOrigin(0.5);
+		playButton.on("pointerover", () => {
+			this.tweens.add({
+				targets: playButton,
+				scale: 1.1,
+				duration: 120,
+				ease: "Power2",
+			});
+		});
 
-    // Bouton son
-    const soundButton = this.add
-      .image(width - 50, 50, this.isMuted ? "sound_off" : "sound_on")
-      .setOrigin(1, 0)
-      .setScale(1.25)
-      .setInteractive({ useHandCursor: true });
+		playButton.on("pointerout", () => {
+			this.tweens.add({
+				targets: playButton,
+				scale: 1,
+				duration: 120,
+				ease: "Power2",
+			});
+		});
 
-    soundButton.on("pointerdown", () => {
-      this.isMuted = !this.isMuted;
-      this.sound.mute = this.isMuted;
+		const playText = this.add
+			.text(width / 2, menuY, "▶ Commencer", {
+				fontSize: "38px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+				stroke: "#ffffff",
+				strokeThickness: 2,
+			})
+			.setOrigin(0.5);
 
-      // Stocker dans local storage
-      localStorage.setItem("soundMuted", this.isMuted.toString());
+		// Bouton son
+		const soundButton = this.add
+			.image(width - 50, 50, this.isMuted ? "sound_off" : "sound_on")
+			.setOrigin(1, 0)
+			.setScale(1.25)
+			.setInteractive({ useHandCursor: true });
 
-      soundButton.setTexture(this.isMuted ? "sound_off" : "sound_on");
+		soundButton.on("pointerdown", () => {
+			this.isMuted = !this.isMuted;
+			this.sound.mute = this.isMuted;
 
-      if (this.isMuted) this.music.pause();
-      else this.music.resume();
-    });
-    // Etat au lancement
-    if (this.isMuted) {
-      this.music.pause();
-    } else {
-      this.music.resume();
-    }
+			// Stocker dans local storage
+			localStorage.setItem("soundMuted", this.isMuted.toString());
 
-    playButton.setInteractive({ useHandCursor: true });
+			soundButton.setTexture(this.isMuted ? "sound_off" : "sound_on");
 
-    playButton.on("pointerdown", () => this.startGame());
+			if (this.isMuted) this.music.pause();
+			else this.music.resume();
+		});
+		// Etat au lancement
+		if (this.isMuted) {
+			this.music.pause();
+		} else {
+			this.music.resume();
+		}
 
-    const instructions = this.add
-      .text(width / 2, height * 0.85, "Appuyez sur ENTRÉE pour commencer", {
-        fontSize: "20px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#162028",
-        strokeThickness: 4,
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.8);
+		playButton.setInteractive({ useHandCursor: true });
 
-    this.tweens.add({
-      targets: instructions,
-      alpha: { from: 0.4, to: 0.9 },
-      duration: 1500,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+		playButton.on("pointerdown", () => this.startGame());
 
-    this.startKey = this.input.keyboard.addKey("ENTER");
+		const instructions = this.add
+			.text(width / 2, height * 0.85, "Appuyez sur ENTRÉE pour commencer", {
+				fontSize: "20px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+			})
+			.setOrigin(0.5)
+			.setAlpha(1);
 
-    this.cameras.main.fadeIn(800, 0, 0, 0);
-  }
+		this.tweens.add({
+			targets: instructions,
+			alpha: { from: 0.4, to: 0.9 },
+			duration: 1500,
+			yoyo: true,
+			repeat: -1,
+			ease: "Sine.easeInOut",
+		});
 
-  update() {
-    if (Phaser.Input.Keyboard.JustDown(this.startKey)) {
-      this.startGame();
-    }
-  }
+		this.startKey = this.input.keyboard.addKey("ENTER");
 
-  startGame() {
-    this.cameras.main.fadeOut(600, 0, 0, 0);
-    this.time.delayedCall(600, () => {
-      this.scene.start("CharacterSelect");
-      this.music.stop();
-    });
-  }
+		this.cameras.main.fadeIn(800, 0, 0, 0);
+	}
+
+	update() {
+		if (Phaser.Input.Keyboard.JustDown(this.startKey)) {
+			this.startGame();
+		}
+	}
+
+	startGame() {
+		this.cameras.main.fadeOut(600, 0, 0, 0);
+		this.time.delayedCall(600, () => {
+			this.scene.start("CharacterSelect");
+			this.music.stop();
+		});
+	}
 }

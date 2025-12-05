@@ -5,7 +5,7 @@ export default class EnemyWorm extends Enemy {
 	private minX: number;
 	private maxX: number;
 
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(scene: Phaser.Scene, x: number, y: number, props: { speed?: number; patrolMinX?: number; patrolMaxX?: number }) {
 		super(scene, x, y, "worm_idle");
 
 		this.speed = props.speed ?? 30;
