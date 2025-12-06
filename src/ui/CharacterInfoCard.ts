@@ -59,7 +59,7 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 	}
 
 	show(data: CharacterStats) {
-		this.title.setText(`👾 ${data.name}`);
+		this.title.setText(`${data.name}`);
 		this.desc.setText(data.description);
 
 		const star = (v: number) => "★".repeat(v) + "☆".repeat(5 - v);

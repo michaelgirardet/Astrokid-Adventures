@@ -26,7 +26,7 @@ if (window.innerWidth < 768) {
 
 		physics: {
 			default: "arcade",
-			arcade: { fps: 60, gravity: { y: 600 }, debug: false },
+			arcade: { fps: 60, gravity: { y: 650 }, debug: false },
 		},
 
 		scene: [
