@@ -20,7 +20,7 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 		this.bg = scene.add
 			.rectangle(0, 0, 420, 360, 0x162028, 0.85)
 			.setOrigin(0.5)
-			.setStrokeStyle(4, 0x446daa);
+			.setStrokeStyle(4, 0x6ec7f7);
 
 		this.title = scene.add
 			.text(0, -150, "", {

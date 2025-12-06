@@ -186,19 +186,29 @@ export default class CollisionManager {
 	// COMBAT : Player ↔ Ennemis
 
 	/**
-	 * Vérifie si le joueur arrive au-dessus d'un ennemi (pour "stomp").
-	 *
-	 * @returns `true` si le joueur est légitimement au-dessus.
+	 * Vérifie si le joueur effectue un stomp légitime sur l'ennemi.
+	 * Prend en compte la vitesse horizontale pour ajuster la tolérance.
 	 */
 	private checkIfAbove(player: Player, enemy: Enemy): boolean {
 		const pb = player.body as Phaser.Physics.Arcade.Body;
 		const eb = enemy.body as Phaser.Physics.Arcade.Body;
 
-		return (
-			pb.velocity.y > 24 &&
-			pb.bottom > eb.top &&
-			pb.bottom - pb.velocity.y <= eb.top
-		);
+		const isFalling = pb.velocity.y > 50;
+
+		// Tolérance dynamique
+		const horizontalSpeed = Math.abs(pb.velocity.x);
+		const tolerance =
+			horizontalSpeed > 250 ? 15 : horizontalSpeed > 150 ? 10 : 6;
+
+		const isAbove = pb.bottom <= eb.top + tolerance;
+
+		// Vérifier que la composante verticale est significative
+		// (évite les collisions purement latérales)
+		const verticalComponent = Math.abs(pb.velocity.y);
+		const horizontalComponent = Math.abs(pb.velocity.x);
+		const hasVerticalMomentum = verticalComponent > horizontalComponent * 0.3;
+
+		return isFalling && isAbove && hasVerticalMomentum;
 	}
 
 	/**
@@ -229,22 +239,7 @@ export default class CollisionManager {
 	 * - mort (game over)
 	 */
 	private hitEnemy(player: Player, enemy: Enemy) {
-		const bodyP = player.body as Phaser.Physics.Arcade.Body;
-		const bodyE = enemy.body as Phaser.Physics.Arcade.Body;
-
-		const isAbove = bodyP.bottom < bodyE.top + 10 && bodyP.velocity.y > 150;
-
-		if (isAbove) {
-			const enemyAny = enemy as Enemy & { squash?: () => void };
-			if (enemyAny.squash) enemyAny.squash();
-			else enemy.destroy();
-
-			this.sound.playSfx("disappear_sound");
-			player.setVelocityY(-500);
-			return;
-		}
-
-		// Le joueur prend des dégâts
+		// Si le joueur est invincible, on ignore
 		if (player.isInvincible) return;
 
 		this.sound.playSfx("hit_sound");
@@ -270,24 +265,13 @@ export default class CollisionManager {
 	}
 
 	private handlePlayerEnemyCollision(player: Player, enemy: Enemy) {
-		const pb = player.body as Phaser.Physics.Arcade.Body;
-		const eb = enemy.body as Phaser.Physics.Arcade.Body;
-
-		// Position du joueur au frame précédent
-		const prevBottom = pb.bottom - pb.velocity.y * (1 / 60);
-
-		const wasAbove = prevBottom <= eb.top;
-		const isAboveNow = pb.bottom >= eb.top;
-
-		const isFalling = pb.velocity.y > 0;
-
-		const isStomp = wasAbove && isAboveNow && isFalling;
-
-		if (isStomp) {
+		// Si le joueur arrive vraiment par au-dessus → stomp
+		if (this.checkIfAbove(player, enemy)) {
 			this.hitEnemyFromAbove(player, enemy);
 			return;
 		}
 
+		// Sinon → le joueur prend des dégâts
 		this.hitEnemy(player, enemy);
 	}
 

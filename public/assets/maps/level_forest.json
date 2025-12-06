@@ -65,7 +65,7 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":900
+                         "value":964
                         }, 
                         {
                          "name":"patrolMinX",
@@ -97,7 +97,7 @@
                         {
                          "name":"patrolMaxX",
                          "type":"float",
-                         "value":1300
+                         "value":1332
                         }, 
                         {
                          "name":"patrolMinX",
@@ -310,7 +310,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -399,7 +399,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -662,7 +662,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1107,7 +1107,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -1180,7 +1180,7 @@
                 }],
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 

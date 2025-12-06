@@ -32,11 +32,10 @@ export default class VictoryScene extends Phaser.Scene {
 	create() {
 		const { width, height } = this.scale;
 
-		const COLOR_BG = 0x446daa;
-		const COLOR_PANEL = 0x446daa;
+		const COLOR_BG = 0x1a1e42;
+		const COLOR_PANEL = 0x1a1e42;
 		const COLOR_TEXT = "#f5f1e8";
 
-		// Fond principal
 		this.add.rectangle(0, 0, width, height, COLOR_BG, 1).setOrigin(0);
 
 		// Panneau central
@@ -114,8 +113,8 @@ export default class VictoryScene extends Phaser.Scene {
 	 * @param callback - Fonction exécutée lors du clic
 	 */
 	createButton(x: number, y: number, label: string, callback: () => void) {
-		const COLOR_ACCENT = 0x162028;
-		const COLOR_STROKE = "#ffffff";
+		const COLOR_ACCENT = 0x6ec7f7;
+		const COLOR_STROKE = "#162028";
 
 		const radius = 20;
 		const width = 300;
@@ -135,8 +134,6 @@ export default class VictoryScene extends Phaser.Scene {
 				fontSize: "30px",
 				fontFamily: "DynaPuff",
 				color: COLOR_STROKE,
-				stroke: "#ffffff",
-				strokeThickness: 2,
 			})
 			.setOrigin(0.5);
 

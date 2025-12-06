@@ -35,7 +35,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
 	create() {
 		const { width, height } = this.scale;
 
-		this.add.rectangle(0, 0, width, height, 0x446daa).setOrigin(0);
+		this.add.rectangle(0, 0, width, height, 0x1a1e42).setOrigin(0);
 
 		this.add
 			.text(width / 2, 80, "SELECTION DU PERSONNAGE", {

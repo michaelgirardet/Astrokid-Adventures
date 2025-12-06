@@ -41,9 +41,9 @@ export default class PauseScene extends Phaser.Scene {
 		this.isMuted = localStorage.getItem("soundMuted") === "true";
 
 		const panel = this.add
-			.rectangle(width / 2, height / 2, 520, 520, 0x446daa, 0.92)
+			.rectangle(width / 2, height / 2, 520, 520, 0x1a1e42, 0.92)
 			.setOrigin(0.5)
-			.setStrokeStyle(6, 0xadd7f6)
+			.setStrokeStyle(6, 0x6ec7f7)
 			.setScale(0.7);
 
 		// Animation d’apparition
@@ -107,7 +107,7 @@ export default class PauseScene extends Phaser.Scene {
 
 		// Texture du bouton (carré arrondi)
 		const gfx = this.add.graphics();
-		gfx.fillStyle(0xffffff, 1);
+		gfx.fillStyle(0x6ec7f7, 1);
 		gfx.fillRoundedRect(0, 0, width, height, radius);
 		gfx.generateTexture("pause-btn", width, height);
 		gfx.destroy();

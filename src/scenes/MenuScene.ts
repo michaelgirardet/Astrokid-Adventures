@@ -51,7 +51,7 @@ export default class MenuScene extends Phaser.Scene {
 		const menuY = height * 0.6;
 
 		const playButton = this.add
-			.rectangle(width / 2, menuY, 320, 80, 0x162028)
+			.rectangle(width / 2, menuY, 320, 80, 0x6ec7f7)
 			.setOrigin(0.5)
 			.setInteractive({ useHandCursor: true });
 
@@ -79,9 +79,7 @@ export default class MenuScene extends Phaser.Scene {
 			.text(width / 2, menuY, "▶ Commencer", {
 				fontSize: "38px",
 				fontFamily: "DynaPuff",
-				color: "#ffffff",
-				stroke: "#ffffff",
-				strokeThickness: 2,
+				color: "#162028",
 			})
 			.setOrigin(0.5);
 
