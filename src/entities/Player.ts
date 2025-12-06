@@ -14,11 +14,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 	isDucking = false;
 	lastAnim?: string;
 
+	// Inertie lors de la course
+	private acceleration = 2000;
+	private deceleration = 1200;
+	private maxSpeed = 200;
+	private maxRunSpeed = 350;
+
 	constructor(
 		scene: Phaser.Scene,
 		x: number,
 		y: number,
-		skin: string = "player1"
+		skin: string = "player1",
 	) {
 		super(scene, x, y, skin);
 
@@ -65,9 +71,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.lastAnim = undefined;
 	}
 
-	// -------------------------
-	// UPDATE LOOP
-	// -------------------------
 	update(_time: number, delta: number) {
 		if (this.disableControls) return;
 
@@ -107,20 +110,43 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 		if (this.isDucking) return;
 
-		// Movement
-		const baseSpeed = 200;
-		const runSpeed = 350;
-		const speed = this.controls.isRunning() ? runSpeed : baseSpeed;
+		// Mouvement
+		const body = this.body as Phaser.Physics.Arcade.Body;
+
+		const isRunning = this.controls.isRunning();
+		const targetSpeed = isRunning ? this.maxRunSpeed : this.maxSpeed;
 
 		if (this.controls.isLeft()) {
-			this.setVelocityX(-speed);
+			// Boost au changement de direction
+			const turningBoost = body.velocity.x > 10 ? 1.5 : 1;
+			body.setAccelerationX(-this.acceleration * turningBoost);
 			this.setFlipX(true);
 		} else if (this.controls.isRight()) {
-			this.setVelocityX(speed);
+			// Boost au changement de direction
+			const turningBoost = body.velocity.x < -10 ? 1.5 : 1;
+			body.setAccelerationX(this.acceleration * turningBoost);
 			this.setFlipX(false);
 		} else {
-			this.setVelocityX(0);
+			// Friction proportionnelle à la vitesse pour un arrêt plus naturel
+			const frictionForce = this.deceleration + Math.abs(body.velocity.x) * 1.5;
+
+			if (body.velocity.x > 0) {
+				body.setAccelerationX(-frictionForce);
+			} else if (body.velocity.x < 0) {
+				body.setAccelerationX(frictionForce);
+			}
+
+			// Arrêt complet si vitesse très faible (évite micro-mouvements)
+			if (Math.abs(body.velocity.x) < 10) {
+				body.setAccelerationX(0);
+				body.setVelocityX(0);
+			}
 		}
+
+		if (body.velocity.x > targetSpeed)
+			// Limite la vitesse max selon run / walk
+			body.setVelocityX(targetSpeed);
+		if (body.velocity.x < -targetSpeed) body.setVelocityX(-targetSpeed);
 
 		// Jump
 		if (this.controls.isJumpPressed() && onGround) {
