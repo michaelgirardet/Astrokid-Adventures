@@ -1,13 +1,38 @@
+/**
+ * Scène d'arrêt temporaire du jeu ("Pause").
+ *
+ * @description
+ * Cette scène s'affiche lorsque le joueur presse ESC depuis GameScene.
+ * Elle suspend la logique de jeu et présente :
+ * - un panneau central,
+ * - des boutons pour reprendre, recommencer ou quitter,
+ * - un contrôle du son (mute/unmute).
+ *
+ * @remarks
+ * La scène sous-jacente ("Game") est mise en pause via `scene.pause()`
+ * et reprend via `scene.resume()`.
+ */
 import Phaser from "phaser";
 
 export default class PauseScene extends Phaser.Scene {
+	/** Touche permettant de fermer la pause par clavier (ESC). */
 	private resumeKey!: Phaser.Input.Keyboard.Key;
+
+	/** Indique si le son global du jeu est coupé. */
 	private isMuted = false;
 
 	constructor() {
 		super("Pause");
 	}
 
+	/**
+	 * Construit l'overlay de pause :
+	 * - fond semi-transparent,
+	 * - panneau animé,
+	 * - 3 boutons d'action,
+	 * - bouton de gestion du son,
+	 * - écoute de la touche ESC.
+	 */
 	create() {
 		const { width, height } = this.scale;
 
@@ -21,7 +46,7 @@ export default class PauseScene extends Phaser.Scene {
 			.setStrokeStyle(6, 0xadd7f6)
 			.setScale(0.7);
 
-		// appear animation
+		// Animation d’apparition
 		this.tweens.add({
 			targets: panel,
 			scale: 1,
@@ -29,7 +54,6 @@ export default class PauseScene extends Phaser.Scene {
 			ease: "Back.Out",
 		});
 
-		// --- TITLE ---
 		this.add
 			.text(width / 2, height / 2 - 180, "PAUSE", {
 				fontSize: "58px",
@@ -38,7 +62,7 @@ export default class PauseScene extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
-		// Buttons
+		// Boutons
 		this.createButton(width / 2, height / 2 - 40, "REPRENDRE", () =>
 			this.resumeGame(),
 		);
@@ -51,7 +75,7 @@ export default class PauseScene extends Phaser.Scene {
 			this.quitToMenu(),
 		);
 
-		// Sound Btn
+		// Bouton Son
 		const soundBtn = this.add
 			.image(width - 50, height - 50, this.isMuted ? "sound_off" : "sound_on")
 			.setOrigin(1, 1)
@@ -63,19 +87,25 @@ export default class PauseScene extends Phaser.Scene {
 			this.toggleSound(soundBtn);
 		});
 
-		// Keyboard
 		this.resumeKey = this.input.keyboard.addKey("ESC");
 
 		this.cameras.main.fadeIn(200, 0, 0, 0);
 	}
 
-	// Factory Btn
+	/**
+	 * Crée un bouton interactif avec animation de survol.
+	 *
+	 * @param x - Position X du bouton
+	 * @param y - Position Y du bouton
+	 * @param label - Texte affiché
+	 * @param callback - Fonction exécutée lors du clic
+	 */
 	createButton(x: number, y: number, label: string, callback: () => void) {
 		const width = 320;
 		const height = 70;
 		const radius = 20;
 
-		// Draw rounded button texture
+		// Texture du bouton (carré arrondi)
 		const gfx = this.add.graphics();
 		gfx.fillStyle(0xffffff, 1);
 		gfx.fillRoundedRect(0, 0, width, height, radius);
@@ -117,19 +147,26 @@ export default class PauseScene extends Phaser.Scene {
 		btn.on("pointerdown", callback);
 	}
 
-	// Sound
+	/**
+	 * Active ou désactive le son global du jeu.
+	 *
+	 * @param btn - Le bouton dont l'icône doit être mise à jour.
+	 */
 	toggleSound(btn: Phaser.GameObjects.Image) {
 		this.isMuted = !this.isMuted;
 
 		this.sound.mute = this.isMuted;
 		localStorage.setItem("soundMuted", this.isMuted.toString());
+
 		btn.setTexture(this.isMuted ? "sound_off" : "sound_on");
 
 		if (this.isMuted) this.game.sound.pauseAll();
 		else this.game.sound.resumeAll();
 	}
 
-	// Actions
+	/**
+	 * Ferme la scène Pause et reprend GameScene.
+	 */
 	resumeGame() {
 		this.cameras.main.fadeOut(200);
 		this.time.delayedCall(200, () => {
@@ -138,6 +175,10 @@ export default class PauseScene extends Phaser.Scene {
 		});
 	}
 
+	/**
+	 * Redémarre complètement le niveau.
+	 * Arrête la musique du GameScene pour éviter tout doublon.
+	 */
 	restartLevel() {
 		this.scene.stop("Game");
 		this.scene.start("Game");
@@ -149,6 +190,10 @@ export default class PauseScene extends Phaser.Scene {
 		}
 	}
 
+	/**
+	 * Quitte vers le menu principal.
+	 * Le GameScene est stoppé ainsi que tous les sons.
+	 */
 	quitToMenu() {
 		this.scene.stop("Game");
 		this.scene.start("Menu");
@@ -161,6 +206,9 @@ export default class PauseScene extends Phaser.Scene {
 		}
 	}
 
+	/**
+	 * Vérifie si ESC est pressé pour fermer rapidement la pause.
+	 */
 	update() {
 		if (Phaser.Input.Keyboard.JustDown(this.resumeKey)) {
 			this.resumeGame();
