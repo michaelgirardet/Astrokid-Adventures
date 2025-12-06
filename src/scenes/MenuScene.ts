@@ -1,140 +1,149 @@
+/**
+ * Scene du menu principal du jeu.
+ *
+ * Gère :
+ * - l'affichage du fond et du panneau principal
+ * - le bouton pour démarrer la partie
+ * - le bouton de gestion du son (mute / unmute)
+ * - la musique du menu
+ * - la transition vers la scène de sélection des personnages
+ *
+ * @extends Phaser.Scene
+ */
+
 export default class MenuScene extends Phaser.Scene {
-  private startKey!: Phaser.Input.Keyboard.Key;
-  private music!: Phaser.Sound.BaseSound;
-  private isMuted = false;
+	/** Touche permettant de démarrer le jeu (ENTER). */
+	private startKey!: Phaser.Input.Keyboard.Key;
 
-  constructor() {
-    super("Menu");
-  }
+	/** Musique du menu (boucle à faible volume). */
+	private music!: Phaser.Sound.BaseSound;
 
-  create() {
-    const { width, height } = this.scale;
-    const bg = this.add
-      .image(0, 0, "menu_bg")
-      .setOrigin(0)
-      .setDisplaySize(width, height);
+	/** État du son (muté ou non), stocké dans localStorage. */
+	private isMuted = false;
 
-    // Charger depuis local storage
-    this.isMuted = localStorage.getItem("soundMuted") === "true";
+	constructor() {
+		super("Menu");
+	}
 
-    this.music = this.sound.add("menu_music", {
-      volume: 0.05,
-      loop: true,
-    });
-    this.music.play();
+	/**
+	 * Initialise et affiche le menu.
+	 *
+	 * - Charge la préférence utilisateur (mute)
+	 * - Lance la musique
+	 * - Crée le bouton "Commencer"
+	 * - Crée le bouton sonore
+	 * - Ajoute un message invitant à appuyer sur Entrée
+	 * - Met en place un fondu d'entrée de la caméra
+	 */
+	create() {
+		const { width, height } = this.scale;
 
-    // Overlay sombre
-    this.add.rectangle(0, 0, width, height, 0x446daa, 0.4).setOrigin(0);
+		this.add.image(0, 0, "menu_bg").setOrigin(0).setDisplaySize(width, height);
 
-    // Menu container
-    const menuY = height * 0.6;
+		this.isMuted = localStorage.getItem("soundMuted") === "true";
 
-    const playButton = this.add
-		.rectangle(width / 2, menuY, 320, 80, 0x8D3B72)
-		.setOrigin(0.5)
-		.setInteractive();
+		this.music = this.sound.add("menu_music", { volume: 0.05, loop: true });
+		this.music.play();
+		if (this.isMuted) this.music.pause();
 
-	playButton.on('pointerover', () => {
-	playButton.setScale(1.1);         
-	});
-	playButton.on('pointerout', () => {
-	playButton.setScale(1);             
-	});
+		this.add.rectangle(0, 0, width, height, 0x446daa, 0.15).setOrigin(0);
 
-	playButton.on('pointerover', () => {
-		this.tweens.add({
-			targets: playButton,
-			scale: 1.1,
-			duration: 120,
-			ease: 'Power2'
+		const menuY = height * 0.6;
+
+		const playButton = this.add
+			.rectangle(width / 2, menuY, 320, 80, 0x162028)
+			.setOrigin(0.5)
+			.setInteractive({ useHandCursor: true });
+
+		playButton.on("pointerover", () => {
+			this.tweens.add({
+				targets: playButton,
+				scale: 1.1,
+				duration: 120,
+				ease: "Power2",
+			});
 		});
-	});
 
-	playButton.on('pointerout', () => {
-		this.tweens.add({
-			targets: playButton,
-			scale: 1,
-			duration: 120,
-			ease: 'Power2'
+		playButton.on("pointerout", () => {
+			this.tweens.add({
+				targets: playButton,
+				scale: 1,
+				duration: 120,
+				ease: "Power2",
+			});
 		});
-	});
 
-    const playText = this.add
-      .text(width / 2, menuY, "▶ Commencer", {
-        fontSize: "38px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#ffffff",
-        strokeThickness: 2,
-      })
-      .setOrigin(0.5);
+		playButton.on("pointerdown", () => this.startGame());
 
-    // Bouton son
-    const soundButton = this.add
-      .image(width - 50, 50, this.isMuted ? "sound_off" : "sound_on")
-      .setOrigin(1, 0)
-      .setScale(1.25)
-      .setInteractive({ useHandCursor: true });
+		this.add
+			.text(width / 2, menuY, "▶ Commencer", {
+				fontSize: "38px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+				stroke: "#ffffff",
+				strokeThickness: 2,
+			})
+			.setOrigin(0.5);
 
-    soundButton.on("pointerdown", () => {
-      this.isMuted = !this.isMuted;
-      this.sound.mute = this.isMuted;
+		const soundButton = this.add
+			.image(width - 50, 50, this.isMuted ? "sound_off" : "sound_on")
+			.setOrigin(1, 0)
+			.setScale(1.25)
+			.setInteractive({ useHandCursor: true });
 
-      // Stocker dans local storage
-      localStorage.setItem("soundMuted", this.isMuted.toString());
+		soundButton.on("pointerdown", () => {
+			this.isMuted = !this.isMuted;
+			this.sound.mute = this.isMuted;
 
-      soundButton.setTexture(this.isMuted ? "sound_off" : "sound_on");
+			localStorage.setItem("soundMuted", this.isMuted.toString());
+			soundButton.setTexture(this.isMuted ? "sound_off" : "sound_on");
 
-      if (this.isMuted) this.music.pause();
-      else this.music.resume();
-    });
-    // Etat au lancement
-    if (this.isMuted) {
-      this.music.pause();
-    } else {
-      this.music.resume();
-    }
+			if (this.isMuted) this.music.pause();
+			else this.music.resume();
+		});
 
-    playButton.setInteractive({ useHandCursor: true });
+		const instructions = this.add
+			.text(width / 2, height * 0.85, "Appuyez sur ENTRÉE pour commencer", {
+				fontSize: "20px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+			})
+			.setOrigin(0.5);
 
-    playButton.on("pointerdown", () => this.startGame());
+		this.tweens.add({
+			targets: instructions,
+			alpha: { from: 0.4, to: 0.9 },
+			duration: 1500,
+			yoyo: true,
+			repeat: -1,
+			ease: "Sine.easeInOut",
+		});
 
-    const instructions = this.add
-      .text(width / 2, height * 0.85, "Appuyez sur ENTRÉE pour commencer", {
-        fontSize: "20px",
-        fontFamily: "DynaPuff",
-        color: "#ffffff",
-        stroke: "#162028",
-        strokeThickness: 4,
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.8);
+		this.startKey = this.input.keyboard.addKey("ENTER");
 
-    this.tweens.add({
-      targets: instructions,
-      alpha: { from: 0.4, to: 0.9 },
-      duration: 1500,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+		this.cameras.main.fadeIn(800, 0, 0, 0);
+	}
 
-    this.startKey = this.input.keyboard.addKey("ENTER");
+	/**
+	 * Boucle frame-par-frame du menu.
+	 * Détecte la pression de la touche ENTER pour lancer le jeu.
+	 */
+	update() {
+		if (Phaser.Input.Keyboard.JustDown(this.startKey)) {
+			this.startGame();
+		}
+	}
 
-    this.cameras.main.fadeIn(800, 0, 0, 0);
-  }
+	/**
+	 * Transition vers l'écran de sélection du personnage.
+	 * Effet de fondu + arrêt de la musique.
+	 */
+	startGame() {
+		this.cameras.main.fadeOut(600, 0, 0, 0);
 
-  update() {
-    if (Phaser.Input.Keyboard.JustDown(this.startKey)) {
-      this.startGame();
-    }
-  }
-
-  startGame() {
-    this.cameras.main.fadeOut(600, 0, 0, 0);
-    this.time.delayedCall(600, () => {
-      this.scene.start("CharacterSelect");
-      this.music.stop();
-    });
-  }
+		this.time.delayedCall(600, () => {
+			this.music.stop();
+			this.scene.start("CharacterSelect");
+		});
+	}
 }

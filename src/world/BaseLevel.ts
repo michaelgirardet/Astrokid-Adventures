@@ -92,11 +92,13 @@ export abstract class BaseLevel {
 						.rectangle(obj.x, obj.y, obj.width, obj.height)
 						.setOrigin(0, 0);
 					this.scene.physics.add.existing(zone, true);
-					this.voidZones.push(zone as any);
+					this.voidZones.push(
+						zone as Phaser.GameObjects.Rectangle &
+							Phaser.Types.Physics.Arcade.GameObjectWithBody,
+					);
 				}
 			});
 		}
-
 		this.scene.physics.world.setBounds(
 			0,
 			0,
