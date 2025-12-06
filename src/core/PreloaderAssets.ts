@@ -16,6 +16,7 @@
  *
  * @param scene - La scène Phaser utilisée pour charger les assets.
  */
+
 export function loadAssets(scene: Phaser.Scene) {
 	const load = scene.load;
 

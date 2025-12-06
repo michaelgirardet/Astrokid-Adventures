@@ -84,11 +84,15 @@ export default class CollisionManager {
 	setup() {
 		const physics = this.scene.physics;
 
-		// --- Player / Environnement ---
+		// Player / Environnement
 		physics.add.collider(this.player, this.level.groundLayer);
 		physics.add.collider(this.player, this.level.blocksLayer);
 
-		// --- Player / Ennemis ---
+		// Enemies / Environnement
+		physics.add.collider(this.level.enemies, this.level.groundLayer);
+		physics.add.collider(this.level.enemies, this.level.blocksLayer);
+
+		// Player / Ennemis
 		physics.add.collider(
 			this.player,
 			this.level.enemies,
@@ -114,7 +118,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / Stars ---
+		// Player / Stars
 		physics.add.overlap(
 			this.player,
 			this.stars,
@@ -123,7 +127,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / Flag (fin de niveau) ---
+		// Player / Flag (fin de niveau)
 		physics.add.overlap(
 			this.player,
 			this.level.flag,
@@ -132,12 +136,12 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / Void ---
+		// Player / Void
 		this.level.voidZones.forEach((zone) => {
 			physics.add.overlap(this.player, zone, this.fallToDeath, undefined, this);
 		});
 
-		// --- Ennemis / Void ---
+		// Ennemis / Void
 		this.level.voidZones.forEach((zone) => {
 			physics.add.overlap(
 				zone,
@@ -148,7 +152,7 @@ export default class CollisionManager {
 			);
 		});
 
-		// --- Player / Bricks ---
+		// Player / Bricks
 		physics.add.overlap(
 			this.player,
 			this.level.bricks,
@@ -157,7 +161,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Brick / Ennemis ---
+		// Brick / Ennemis
 		physics.add.collider(
 			this.level.bricks,
 			this.level.enemies,
@@ -171,9 +175,7 @@ export default class CollisionManager {
 		physics.add.collider(this.level.bricks, this.level.blocksLayer);
 	}
 
-	// ---------------------------------------------------------------------
-	// ⭐ COLLECTIBLES
-	// ---------------------------------------------------------------------
+	// COLLECTIBLES
 
 	/** Collecte d'une étoile. */
 	private collectStar(_player: Player, star: Star) {
@@ -190,9 +192,7 @@ export default class CollisionManager {
 		this.sound.playSfx("coin_sound");
 	}
 
-	// ---------------------------------------------------------------------
-	// ⭐ COMBAT : Player ↔ Ennemis
-	// ---------------------------------------------------------------------
+	// COMBAT : Player ↔ Ennemis
 
 	/**
 	 * Vérifie si le joueur arrive au-dessus d'un ennemi (pour "stomp").
@@ -253,7 +253,7 @@ export default class CollisionManager {
 			return;
 		}
 
-		// --- Le joueur prend des dégâts ---
+		// Le joueur prend des dégâts
 		if (player.isInvincible) return;
 
 		this.sound.playSfx("hit_sound");
