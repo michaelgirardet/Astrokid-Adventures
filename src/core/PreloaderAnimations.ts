@@ -1,81 +1,77 @@
+/**
+ * @function createAnimations
+ * @description
+ * Déclare toutes les animations du jeu dans l'AnimationManager de Phaser.
+ *
+ * Cette fonction centralise :
+ * - les animations du joueur
+ * - celles des ennemis (Blob, Fly, Worm, Bee)
+ *
+ * @remarks
+ * Les animations sont enregistrées une fois au démarrage (Preloader),
+ * puis réutilisées dans toutes les scènes.
+ *
+ * La fonction ignore automatiquement les animations déjà existantes
+ * pour éviter les erreurs lorsque la scène est recréée.
+ *
+ * @param scene - La scène Phaser depuis laquelle les animations sont enregistrées.
+ */
+
 export function createAnimations(scene: Phaser.Scene) {
 	const anims = scene.anims;
 
-	// Player
-	anims.create({
-		key: "player-idle",
-		frames: [{ key: "player_idle" }],
-		frameRate: 1,
-		repeat: -1,
-	});
-	anims.create({
-		key: "player-walk",
-		frames: [{ key: "player_walk_a" }, { key: "player_walk_b" }],
-		frameRate: 8,
-		repeat: -1,
-	});
-	anims.create({
-		key: "player-duck",
-		frames: [{ key: "player_duck" }],
-		frameRate: 1,
-		repeat: -1,
-	});
-	anims.create({
-		key: "player-jump",
-		frames: [{ key: "player_jump" }],
-		frameRate: 1,
-		repeat: 0,
-	});
-	anims.create({
-		key: "player-hit",
-		frames: [{ key: "player_hit" }],
-		frameRate: 1,
-		repeat: 0,
-	});
+	/**
+	 * Petite fonction utilitaire permettant :
+	 * - de ne créer une animation que si elle n'existe pas déjà
+	 * - de réduire la répétition dans le fichier
+	 */
+	const add = (
+		key: string,
+		frames: { key: string }[],
+		frameRate: number,
+		repeat: number | -1 = -1,
+	) => {
+		if (anims.exists(key)) return; // évite les duplicatas
+
+		anims.create({
+			key,
+			frames,
+			frameRate,
+			repeat,
+		});
+	};
+
+	// PLAYER
+	add("player-idle", [{ key: "player_idle" }], 1, -1);
+
+	add(
+		"player-walk",
+		[{ key: "player_walk_a" }, { key: "player_walk_b" }],
+		8,
+		-1,
+	);
+
+	add("player-duck", [{ key: "player_duck" }], 1, -1);
+
+	add("player-jump", [{ key: "player_jump" }], 1, 0);
+
+	add("player-hit", [{ key: "player_hit" }], 1, 0);
+
+	// ENEMIES
 
 	// Blob
-	anims.create({
-		key: "blob-walk",
-		frames: [{ key: "blob_walk_a" }, { key: "blob_walk_b" }],
-		frameRate: 4,
-		repeat: -1,
-	});
+	add("blob-walk", [{ key: "blob_walk_a" }, { key: "blob_walk_b" }], 4, -1);
 
 	// Fly
-	anims.create({
-		key: "fly-walk",
-		frames: [{ key: "fly_a" }, { key: "fly_b" }],
-		frameRate: 6,
-		repeat: -1,
-	});
+	add("fly-walk", [{ key: "fly_a" }, { key: "fly_b" }], 6, -1);
 
-	anims.create({
-		key: "fly-rest",
-		frames: [{ key: "fly_rest" }],
-		frameRate: 1,
-		repeat: -1,
-	});
+	add("fly-rest", [{ key: "fly_rest" }], 1, -1);
 
 	// Worm
-	anims.create({
-		key: "worm-walk",
-		frames: [{ key: "worm_walk_a" }, { key: "worm_walk_b" }],
-		frameRate: 4,
-		repeat: -1,
-	});
+	add("worm-walk", [{ key: "worm_walk_a" }, { key: "worm_walk_b" }], 4, -1);
 
-	anims.create({
-		key: "worm-flat",
-		frames: [{ key: "worm_flat" }],
-		frameRate: 1,
-		repeat: 0,
-	});
+	add("worm-flat", [{ key: "worm_flat" }], 1, 0);
 
 	// Bee
-	anims.create({
-		key: "bee-fly",
-		frames: [{ key: "bee_a" }, { key: "bee_b" }],
-		frameRate: 8,
-		repeat: -1,
-	});
+	add("bee-fly", [{ key: "bee_a" }, { key: "bee_b" }], 8, -1);
 }

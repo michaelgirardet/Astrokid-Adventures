@@ -1,3 +1,26 @@
+/**
+ * @class CollisionManager
+ * @classdesc
+ * Gestion centralisée de **toutes les collisions et overlaps** de la scène de jeu.
+ *
+ * **Responsabilités principales :**
+ * - Configurer les collisions Player ↔ Environnement
+ * - Gérer Player ↔ Ennemis (dommages, stomp, invincibilité)
+ * - Gérer Player ↔ Collectibles (coins, stars)
+ * - Gérer Player ↔ Void (mort instantanée)
+ * - Gérer Player ↔ Brick + Brick ↔ Ennemis
+ * - Gérer Player ↔ Flag (fin de niveau)
+ *
+ * @remarks
+ * Cette classe ne doit contenir **aucune logique de gameplay externe** :
+ * - elle ne déplace pas les ennemis,
+ * - ne met pas à jour l'UI,
+ * - ne modifie pas la physique du joueur (sauf impact direct des collisions).
+ *
+ * Son rôle est uniquement de **connecter** les bons callbacks et événements
+ * entre Player, Level, UIManager, SoundManager et les groupes Phaser.
+ */
+
 import type { BaseLevel } from "../world/BaseLevel";
 import type Player from "../entities/Player";
 import type Brick from "../entities/Bricks";
@@ -15,8 +38,20 @@ export default class CollisionManager {
 	private stars: Phaser.Physics.Arcade.Group;
 	private ui: UIManager;
 	private sound: SoundManager;
+
+	/** Empêche les triggers multiples (mort, fin de niveau). */
 	private levelEnding = false;
 
+	/**
+	 * Crée un gestionnaire de collisions pour la scène.
+	 *
+	 * @param scene - La scène Phaser active
+	 * @param player - Le joueur principal
+	 * @param level - Le level chargé (layers + objets)
+	 * @param stars - Groupe des étoiles du niveau
+	 * @param ui - UI manager pour score, cœurs, étoiles, messages
+	 * @param sound - Gestionnaire de sons
+	 */
 	constructor(
 		scene: Phaser.Scene,
 		player: Player,
@@ -33,14 +68,27 @@ export default class CollisionManager {
 		this.sound = sound;
 	}
 
+	/**
+	 * Configure **toutes** les collisions du jeu :
+	 *
+	 * - Player ↔ Sol / Blocks
+	 * - Player ↔ Ennemis
+	 * - Player ↔ Collectibles (coins, stars)
+	 * - Player ↔ Void
+	 * - Player ↔ Flag
+	 * - Player ↔ Brick, Brick ↔ Ennemis
+	 *
+	 * @remarks
+	 * Cette méthode doit être appelée **une seule fois**, dans `GameScene.create()`.
+	 */
 	setup() {
 		const physics = this.scene.physics;
 
-		// --- Player / environnement ---
+		// --- Player / Environnement ---
 		physics.add.collider(this.player, this.level.groundLayer);
 		physics.add.collider(this.player, this.level.blocksLayer);
 
-		// --- Player / ennemis ---
+		// --- Player / Ennemis ---
 		physics.add.collider(
 			this.player,
 			this.level.enemies,
@@ -57,7 +105,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / coins ---
+		// --- Player / Coins ---
 		physics.add.overlap(
 			this.player,
 			this.level.coins,
@@ -66,7 +114,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / stars ---
+		// --- Player / Stars ---
 		physics.add.overlap(
 			this.player,
 			this.stars,
@@ -75,7 +123,7 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / flag ---
+		// --- Player / Flag (fin de niveau) ---
 		physics.add.overlap(
 			this.player,
 			this.level.flag,
@@ -84,12 +132,12 @@ export default class CollisionManager {
 			this,
 		);
 
-		// --- Player / void ---
+		// --- Player / Void ---
 		this.level.voidZones.forEach((zone) => {
 			physics.add.overlap(this.player, zone, this.fallToDeath, undefined, this);
 		});
 
-		// --- Ennemis / void ---
+		// --- Ennemis / Void ---
 		this.level.voidZones.forEach((zone) => {
 			physics.add.overlap(
 				zone,
@@ -100,7 +148,7 @@ export default class CollisionManager {
 			);
 		});
 
-		// --- Bricks / player & ennemis ---
+		// --- Player / Bricks ---
 		physics.add.overlap(
 			this.player,
 			this.level.bricks,
@@ -109,6 +157,7 @@ export default class CollisionManager {
 			this,
 		);
 
+		// --- Brick / Ennemis ---
 		physics.add.collider(
 			this.level.bricks,
 			this.level.enemies,
@@ -117,27 +166,39 @@ export default class CollisionManager {
 			this,
 		);
 
+		// Bricks ↔ Environnement
 		physics.add.collider(this.level.bricks, this.level.groundLayer);
 		physics.add.collider(this.level.bricks, this.level.blocksLayer);
 	}
 
-	// ---------- Collectes ----------
+	// ---------------------------------------------------------------------
+	// ⭐ COLLECTIBLES
+	// ---------------------------------------------------------------------
 
+	/** Collecte d'une étoile. */
 	private collectStar(_player: Player, star: Star) {
 		star.disableBody(true, true);
 		this.ui.stars.addStar();
-		this.sound.playSfx("star_sound");
 		this.ui.score.add(1000);
+		this.sound.playSfx("star_sound");
 	}
 
+	/** Collecte d'une pièce. */
 	private collectCoin(_player: Player, coin: Coin) {
 		coin.destroy();
 		this.ui.score.add(100);
 		this.sound.playSfx("coin_sound");
 	}
 
-	// ---------- Ennemis / Player ----------
+	// ---------------------------------------------------------------------
+	// ⭐ COMBAT : Player ↔ Ennemis
+	// ---------------------------------------------------------------------
 
+	/**
+	 * Vérifie si le joueur arrive au-dessus d'un ennemi (pour "stomp").
+	 *
+	 * @returns `true` si le joueur est légitimement au-dessus.
+	 */
 	private checkIfAbove(player: Player, enemy: Enemy): boolean {
 		const pb = player.body as Phaser.Physics.Arcade.Body;
 		const eb = enemy.body as Phaser.Physics.Arcade.Body;
@@ -149,14 +210,14 @@ export default class CollisionManager {
 		);
 	}
 
+	/**
+	 * Stomp de l'ennemi lorsque le joueur arrive au-dessus.
+	 */
 	private hitEnemyFromAbove(player: Player, enemy: Enemy) {
 		const enemyAny = enemy as Enemy & { squash?: () => void };
 
-		if (enemyAny.squash) {
-			enemyAny.squash();
-		} else {
-			enemy.destroy();
-		}
+		if (enemyAny.squash) enemyAny.squash();
+		else enemy.destroy();
 
 		this.sound.playSfx("disappear_sound");
 
@@ -168,15 +229,19 @@ export default class CollisionManager {
 		player.setVelocityY(-350);
 	}
 
+	/**
+	 * Collision directe : le joueur touche un ennemi **sans** être au-dessus.
+	 * Gère :
+	 * - dégâts
+	 * - invincibilité
+	 * - perte de cœurs
+	 * - mort (game over)
+	 */
 	private hitEnemy(player: Player, enemy: Enemy) {
 		const bodyP = player.body as Phaser.Physics.Arcade.Body;
 		const bodyE = enemy.body as Phaser.Physics.Arcade.Body;
 
-		const playerBottom = bodyP.bottom;
-		const enemyTop = bodyE.top;
-		const comingDownFast = bodyP.velocity.y > 150;
-
-		const isAbove = playerBottom < enemyTop + 10 && comingDownFast;
+		const isAbove = bodyP.bottom < bodyE.top + 10 && bodyP.velocity.y > 150;
 
 		if (isAbove) {
 			const enemyAny = enemy as Enemy & { squash?: () => void };
@@ -188,7 +253,7 @@ export default class CollisionManager {
 			return;
 		}
 
-		// Dégâts joueur
+		// --- Le joueur prend des dégâts ---
 		if (player.isInvincible) return;
 
 		this.sound.playSfx("hit_sound");
@@ -213,18 +278,9 @@ export default class CollisionManager {
 		}
 	}
 
-	// ---------- Bricks ----------
-
+	/** Ramassage d’une brique par le joueur. */
 	private pickBrick(player: Player, brick: Brick) {
-		if (player.heldBrick) {
-			return;
-		}
-		if (!brick.canBePicked) {
-			return;
-		}
-		if (brick.isHeld) {
-			return;
-		}
+		if (player.heldBrick || !brick.canBePicked || brick.isHeld) return;
 
 		brick.isHeld = true;
 		brick.holder = player;
@@ -239,6 +295,7 @@ export default class CollisionManager {
 		this.ui.hint.show("Appuyez sur ESPACE pour lancer la brique");
 	}
 
+	/** La brique lancée frappe un ennemi. */
 	private brickHitEnemy(
 		brickObj: Phaser.GameObjects.GameObject,
 		enemyObj: Phaser.GameObjects.GameObject,
@@ -246,36 +303,24 @@ export default class CollisionManager {
 		const brick = brickObj as Brick;
 		const enemy = enemyObj as Enemy;
 
-		if (typeof (brick as Brick & { hit?: () => void }).hit !== "function") {
-			return;
-		}
-
-		if (brick.isHeld) {
-			return;
-		}
+		if (!(brick as any).hit || brick.isHeld) return;
 
 		const body = brick.body as Phaser.Physics.Arcade.Body;
 		const speed = Math.abs(body.velocity.x) + Math.abs(body.velocity.y);
-
-		if (speed < 80) {
-			return;
-		}
+		if (speed < 80) return;
 
 		const enemyAny = enemy as Enemy & { squash?: () => void };
-
-		if (enemyAny.squash) {
-			enemyAny.squash();
-		} else {
-			enemy.destroy();
-		}
+		if (enemyAny.squash) enemyAny.squash();
+		else enemy.destroy();
 
 		brick.hit();
 		this.sound.playSfx("disappear_sound");
 		this.ui.score.add(200);
 	}
 
-	// ---------- Void / mort ----------
-
+	/**
+	 * Mort du joueur en tombant dans le vide.
+	 */
 	private fallToDeath() {
 		if (this.levelEnding) return;
 		this.levelEnding = true;
@@ -321,26 +366,31 @@ export default class CollisionManager {
 		});
 	}
 
+	/** Ennemi tombant dans le vide. */
 	private enemyFallToDeath(_zone: Phaser.GameObjects.GameObject, enemy: Enemy) {
 		const enemyAny = enemy as Enemy & { squash?: () => void };
-		if (enemyAny.squash) {
-			enemyAny.squash();
-		} else {
-			enemy.destroy();
-		}
+		if (enemyAny.squash) enemyAny.squash();
+		else enemy.destroy();
 	}
 
-	// ---------- Fin de niveau ----------
-
+	/**
+	 * Trigger de fin de niveau lorsque le joueur atteint le drapeau.
+	 *
+	 * - joue la musique de victoire
+	 * - bloque le joueur
+	 * - anime la sortie
+	 * - enregistre les stats
+	 * - charge VictoryScene
+	 */
 	private endLevel(player: Player, _flag: Flag) {
 		if (this.levelEnding) return;
 		this.levelEnding = true;
 
 		const body = player.body as Phaser.Physics.Arcade.Body;
 
+		player.disableControls = true;
 		player.setVelocity(0, 0);
 		body.allowGravity = false;
-		player.disableControls = true;
 
 		this.sound.stopMusic();
 		this.sound.playSfx("level_clear");
@@ -355,12 +405,11 @@ export default class CollisionManager {
 		this.scene.tweens.add({
 			targets: player,
 			alpha: 0,
-			duration: 900,
 			delay: 400,
+			duration: 900,
 			ease: "Quad.easeIn",
 		});
 
-		// Sauvegarde des stats pour la scène Victory
 		this.scene.time.delayedCall(1400, () => {
 			this.scene.registry.set("lastScore", this.ui.score.getScore());
 			this.scene.registry.set("lastStars", this.ui.stars.getStars());
