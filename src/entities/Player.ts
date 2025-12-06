@@ -62,10 +62,7 @@ export default abstract class Player extends Phaser.Physics.Arcade.Sprite {
 		this.controls = new InputManager(scene);
 	}
 
-	// ===========================
 	// LOGIQUE PARTAGÉE
-	// ===========================
-
 	enterDuck() {
 		this.setVelocityX(0);
 
@@ -131,10 +128,7 @@ export default abstract class Player extends Phaser.Physics.Arcade.Sprite {
 
 		if (this.isDucking) return;
 
-		// -------------------
 		// MOUVEMENT
-		// -------------------
-
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
 		const isRunning = this.controls.isRunning();
@@ -176,10 +170,7 @@ export default abstract class Player extends Phaser.Physics.Arcade.Sprite {
 			this.heldBrick.setPosition(this.x, this.y - 40);
 		}
 
-		// -------------------
 		// ANIMATIONS
-		// -------------------
-
 		if (!onGround) {
 			if (this.lastAnim !== "player-jump") {
 				this.play("player-jump", true);

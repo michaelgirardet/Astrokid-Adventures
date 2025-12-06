@@ -77,6 +77,7 @@ export default class GameScene extends Phaser.Scene {
 	 * Aucun système n'est géré directement dans GameScene :
 	 * tout est délégué à des classes spécialisées.
 	 */
+
 	create() {
 		this.sounds = new SoundManager(this);
 		this.ui = new UIManager(this);
