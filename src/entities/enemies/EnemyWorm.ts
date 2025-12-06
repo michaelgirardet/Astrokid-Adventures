@@ -37,14 +37,21 @@ export default class EnemyWorm extends Enemy {
 	) {
 		super(scene, x, y, "worm_idle");
 
+		scene.events.once("update", () => {
+			const body = this.body as Phaser.Physics.Arcade.Body;
+
+			body.setSize(this.width * 0.8, this.height * 0.4);
+			body.setOffset(this.width * 0.1, this.height * 0.6);
+		});
+
 		this.speed = props.speed ?? 30;
 		this.minX = props.patrolMinX ?? x - 40;
 		this.maxX = props.patrolMaxX ?? x + 40;
 
 		// --- Hitbox affinée (petite créature au ras du sol)
 		const body = this.body as Phaser.Physics.Arcade.Body;
-		body.setSize(this.width * 0.8, this.height * 0.55);
-		body.setOffset(this.width * 0.1, this.height * 0.45);
+		body.setSize(this.width * 0.8, this.height * 0.35);
+		body.setOffset(this.width * 0.1, this.height * 0.65);
 
 		// --- Initialisation physique après la première frame (sécurité Phaser)
 		scene.events.once("update", () => {

@@ -33,7 +33,8 @@ export default class Coin extends Phaser.Physics.Arcade.Sprite {
 		body.setAllowGravity(false);
 
 		// Hitbox circulaire (meilleur feeling)
-		this.setCircle(10);
+		const radius = 10;
+		this.setCircle(radius, this.width / 2 - radius, this.height / 2 - radius);
 		this.setOrigin(0.5, 0.5);
 
 		// Facultatif : petit idle animation (léger rebond)

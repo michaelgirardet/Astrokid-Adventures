@@ -235,7 +235,7 @@
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"worm"
+                         "value":"blob"
                         }],
                  "rotation":0,
                  "type":"",

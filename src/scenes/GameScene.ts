@@ -1,11 +1,12 @@
 import type { BaseLevel } from "../world/BaseLevel";
-import LevelLoader from "../core/LevelLoader";
-import EnemyManager from "../core/EnemyManager";
 import CollisionManager from "../core/CollisionManager";
+import { createPlayer } from "../core/PlayerFactory";
+import EnemyManager from "../core/EnemyManager";
+import LevelLoader from "../core/LevelLoader";
 import SoundManager from "../core/SoundManager";
 import UIManager from "../core/UIManager";
 
-import Player from "../entities/Player";
+import type Player from "../entities/Player";
 import Star from "../entities/Star";
 
 /**
@@ -102,10 +103,10 @@ export default class GameScene extends Phaser.Scene {
 		}
 
 		const chosen =
-			(this.registry.get("selectedCharacter") as string | undefined) ||
-			"player1";
+			(this.registry.get("selected_character") as string | undefined) ||
+			"yellow";
 
-		this.player = new Player(this, spawn.x, spawn.y, chosen);
+		this.player = createPlayer(this, spawn.x, spawn.y, chosen);
 
 		this.enemyManager = new EnemyManager(this, this.level);
 		this.enemyManager.spawnFromMap();

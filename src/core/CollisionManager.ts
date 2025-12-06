@@ -96,19 +96,10 @@ export default class CollisionManager {
 		physics.add.collider(
 			this.player,
 			this.level.enemies,
-			this.hitEnemy,
+			this.handlePlayerEnemyCollision,
 			undefined,
 			this,
 		);
-
-		physics.add.overlap(
-			this.player,
-			this.level.enemies,
-			this.hitEnemyFromAbove,
-			this.checkIfAbove,
-			this,
-		);
-
 		// --- Player / Coins ---
 		physics.add.overlap(
 			this.player,
@@ -276,6 +267,28 @@ export default class CollisionManager {
 			this.sound.stopMusic();
 			this.scene.scene.restart();
 		}
+	}
+
+	private handlePlayerEnemyCollision(player: Player, enemy: Enemy) {
+		const pb = player.body as Phaser.Physics.Arcade.Body;
+		const eb = enemy.body as Phaser.Physics.Arcade.Body;
+
+		// Position du joueur au frame précédent
+		const prevBottom = pb.bottom - pb.velocity.y * (1 / 60);
+
+		const wasAbove = prevBottom <= eb.top;
+		const isAboveNow = pb.bottom >= eb.top;
+
+		const isFalling = pb.velocity.y > 0;
+
+		const isStomp = wasAbove && isAboveNow && isFalling;
+
+		if (isStomp) {
+			this.hitEnemyFromAbove(player, enemy);
+			return;
+		}
+
+		this.hitEnemy(player, enemy);
 	}
 
 	/** Ramassage d’une brique par le joueur. */

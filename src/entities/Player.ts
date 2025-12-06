@@ -3,72 +3,46 @@ import InputManager from "../core/InputManager";
 import type Brick from "./Bricks";
 
 /**
- * Représente le joueur contrôlable.
- *
- * Gère :
- * - le mouvement (avec inertie façon Mario)
- * - le saut / duck
- * - les collisions / dégâts
- * - le ramassage et le lancer de briques
- * - les animations
- * - l'état d'invincibilité
+ * Classe de base abstraite pour tous les joueurs.
  *
  * @remarks
- * Cette classe ne connaît pas la logique du niveau ni l’UI :
- * elle gère uniquement la physique et l’animation du personnage.
+ * Contient toute la physique, mouvements, collisions, animations génériques.
+ * Les classes enfants doivent simplement définir :
+ * - getSkinKey()
+ * - éventuellement overrides pour stats (speed, jumpForce…)
  */
-export default class Player extends Phaser.Physics.Arcade.Sprite {
-	private controls: InputManager;
+export default abstract class Player extends Phaser.Physics.Arcade.Sprite {
+	protected controls: InputManager;
 
-	/** Brique actuellement tenue par le joueur (si existante). */
 	heldBrick?: Brick;
 
-	/** Le joueur ne peut pas être touché tant que ce timer n’est pas écoulé. */
 	isInvincible = false;
 	invincibleTimer = 0;
 
-	/** Désactive temporairement toutes les entrées (ex : mort, fin de niveau). */
 	disableControls = false;
-
-	/** Le joueur vient de se faire toucher. */
 	isHit = false;
-
-	/** Indique si le joueur est actuellement accroupi. */
 	isDucking = false;
 
-	/** Dernière animation jouée (pour éviter les redondances). */
 	lastAnim?: string;
 
-	// ---------- Paramètres d’inertie / mouvement ----------
-	/** Accélération horizontale (plus haut = plus nerveux). */
-	private acceleration = 2000;
-
-	/** Décélération lorsque le joueur relâche les touches. */
-	private deceleration = 1200;
-
-	/** Vitesse max en marche simple. */
-	private maxSpeed = 200;
-
-	/** Vitesse max en course (touche Shift). */
-	private maxRunSpeed = 350;
+	// ---- Stats modifiables par les classes enfants ----
+	protected acceleration = 2000;
+	protected deceleration = 1200;
+	protected maxSpeed = 200;
+	protected maxRunSpeed = 350;
+	protected jumpForce = 800;
 
 	/**
-	 * Crée une instance du joueur.
-	 *
-	 * @param scene - Scène Phaser d’attache
-	 * @param x - Position X initiale
-	 * @param y - Position Y initiale
-	 * @param skin - Identifiant du spritesheet (ex : "player1")
+	 * Les classes enfants doivent retourner le nom du spritesheet.
+	 * ex: "player1", "player_yellow", etc.
 	 */
-	constructor(
-		scene: Phaser.Scene,
-		x: number,
-		y: number,
-		skin: string = "player1",
-	) {
-		super(scene, x, y, skin);
+	protected abstract getSkinKey(): string;
 
-		this.anims.play(`${skin}-idle`);
+	constructor(scene: Phaser.Scene, x: number, y: number) {
+		super(scene, x, y, "");
+
+		const skin = this.getSkinKey();
+		this.setTexture(skin);
 
 		scene.add.existing(this);
 		scene.physics.add.existing(this);
@@ -76,19 +50,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.setGravityY(300);
 		this.setCollideWorldBounds(true);
 
-		(this.body as Phaser.Physics.Arcade.Body).setMaxVelocity(350, 900);
+		scene.events.once("update", () => {
+			const body = this.body as Phaser.Physics.Arcade.Body;
 
-		// Hitbox réduite pour des collisions plus naturelles
-		this.body.setSize(this.width * 0.6, this.height * 0.9);
-		this.body.setOffset(this.width * 0.2, this.height * 0.1);
+			body.setSize(this.width * 0.6, this.height * 0.9);
+			body.setOffset(this.width * 0.2, this.height * 0.1);
+
+			body.setMaxVelocity(350, 900);
+		});
 
 		this.controls = new InputManager(scene);
 	}
 
-	/**
-	 * Passe en mode "accroupi" :
-	 * réduit la hitbox + joue l'animation.
-	 */
+	// ===========================
+	// LOGIQUE PARTAGÉE
+	// ===========================
+
 	enterDuck() {
 		this.setVelocityX(0);
 
@@ -107,7 +84,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		body.setOffset(this.width * 0.2, this.height * 0.1 + heightLoss);
 	}
 
-	/** Sort de l’état accroupi et restaure la hitbox. */
 	exitDuck() {
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
@@ -117,20 +93,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 		this.lastAnim = undefined;
 	}
 
-	/**
-	 * Logique principale du joueur.
-	 * Appelée automatiquement chaque frame par GameScene.
-	 */
 	update(_time: number, delta: number) {
 		if (this.disableControls) return;
 
-		// État touché
 		if (this.isHit) {
 			this.play("player-hit", true);
 			return;
 		}
 
-		// Invincibilité temporaire après coup reçu
 		if (this.isInvincible) {
 			this.invincibleTimer -= delta;
 			if (this.invincibleTimer <= 0) {
@@ -161,14 +131,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
 		if (this.isDucking) return;
 
-		// Mouvement avec inertie
+		// -------------------
+		// MOUVEMENT
+		// -------------------
+
 		const body = this.body as Phaser.Physics.Arcade.Body;
 
 		const isRunning = this.controls.isRunning();
 		const targetSpeed = isRunning ? this.maxRunSpeed : this.maxSpeed;
 
 		if (this.controls.isLeft()) {
-			// Boost au changement de direction
 			const turningBoost = body.velocity.x > 10 ? 1.5 : 1;
 			body.setAccelerationX(-this.acceleration * turningBoost);
 			this.setFlipX(true);
@@ -177,38 +149,37 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 			body.setAccelerationX(this.acceleration * turningBoost);
 			this.setFlipX(false);
 		} else {
-			// Décélération progressive
 			const frictionForce = this.deceleration + Math.abs(body.velocity.x) * 1.5;
 
 			if (body.velocity.x > 0) body.setAccelerationX(-frictionForce);
 			else if (body.velocity.x < 0) body.setAccelerationX(frictionForce);
 
-			// Évite les déplacements résiduels
 			if (Math.abs(body.velocity.x) < 10) {
 				body.setAccelerationX(0);
 				body.setVelocityX(0);
 			}
 		}
 
-		// Limite la vitesse max
+		// Limite
 		if (body.velocity.x > targetSpeed) body.setVelocityX(targetSpeed);
 		if (body.velocity.x < -targetSpeed) body.setVelocityX(-targetSpeed);
 
 		// Saut
 		if (this.controls.isJumpPressed() && onGround) {
-			this.setVelocityY(-800);
+			this.setVelocityY(-this.jumpForce);
 
-			// Support optionnel du jumpSound
 			const sc = this.scene as Phaser.Scene & { jumpSound?: { play(): void } };
 			sc.jumpSound?.play();
 		}
 
-		// Brique tenue
 		if (this.heldBrick) {
 			this.heldBrick.setPosition(this.x, this.y - 40);
 		}
 
-		// Animations
+		// -------------------
+		// ANIMATIONS
+		// -------------------
+
 		if (!onGround) {
 			if (this.lastAnim !== "player-jump") {
 				this.play("player-jump", true);

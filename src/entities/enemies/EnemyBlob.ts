@@ -17,6 +17,7 @@ import Enemy from "../Enemy";
  * // Dans Tiled, un objet "blob" peut avoir :
  * // { "type": "blob", "speed": 60, "patrolMinX": 400, "patrolMaxX": 620 }
  */
+
 export default class EnemyBlob extends Enemy {
 	private speed: number;
 	private minX: number;
@@ -33,6 +34,14 @@ export default class EnemyBlob extends Enemy {
 	 */
 	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
 		super(scene, x, y, "blob_idle");
+
+		scene.events.once("update", () => {
+			const body = this.body as Phaser.Physics.Arcade.Body;
+
+			// --- Hitbox spécifique pour le blob ---
+			body.setSize(this.width * 0.6, this.height * 0.6);
+			body.setOffset(this.width * 0.2, this.height * 0.4);
+		});
 
 		// --- Lecture des propriétés ---
 		this.speed = props.speed ?? 40;
@@ -108,6 +117,9 @@ export default class EnemyBlob extends Enemy {
 
 		this.setTexture("blob_flat");
 		this.setScale(1.1, 0.7);
+
+		body.setSize(this.width * 0.6, this.height * 0.4);
+		body.setOffset(this.width * 0.2, this.height * 0.6);
 
 		this.scene.time.delayedCall(250, () => {
 			this.destroy();
