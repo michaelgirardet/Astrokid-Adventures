@@ -34,7 +34,17 @@ export default class EnemyBee extends Enemy {
 	 * @param y - Position Y initiale.
 	 * @param props - Propriétés fournies par Tiled (speed, direction, patrol…).
 	 */
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(
+		scene: Phaser.Scene,
+		x: number,
+		y: number,
+		props: {
+			speed?: number;
+			patrolMinX?: number;
+			patrolMaxX?: number;
+			direction?: string;
+		},
+	) {
 		super(scene, x, y, "bee_a");
 
 		this.speed = props.speed ?? 80;

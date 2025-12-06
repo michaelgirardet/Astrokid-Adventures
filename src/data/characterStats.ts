@@ -22,7 +22,7 @@ export const CHARACTER_STATS: Record<string, CharacterStats> = {
 		abilityName: "Rebond maîtrisé",
 		abilityDesc:
 			"Rebond légèrement plus haut (+10%) sur les ennemis, idéal pour gagner de la hauteur.",
-		style: "Polyvalent, recommandée pour débuter."
+		style: "Polyvalent, recommandée pour débuter.",
 	},
 
 	green: {
@@ -36,7 +36,7 @@ export const CHARACTER_STATS: Record<string, CharacterStats> = {
 		abilityName: "Gelée Aérienne",
 		abilityDesc:
 			"Gravité réduite : permet de corriger facilement sa trajectoire en l’air.",
-		style: "Idéal pour explorer les zones difficiles d’accès."
+		style: "Idéal pour explorer les zones difficiles d’accès.",
 	},
 
 	purple: {
@@ -48,8 +48,7 @@ export const CHARACTER_STATS: Record<string, CharacterStats> = {
 		attack: 5,
 		hearts: 3,
 		abilityName: "Turbo-lancer",
-		abilityDesc:
-			"Projette les briques 40% plus loin et vite.",
-		style: "Pour les joueurs qui aiment éliminer les ennemis à distance."
-	}
+		abilityDesc: "Projette les briques 40% plus loin et vite.",
+		style: "Pour les joueurs qui aiment éliminer les ennemis à distance.",
+	},
 };

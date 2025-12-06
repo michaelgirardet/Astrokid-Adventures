@@ -32,7 +32,17 @@ export default class EnemyBlob extends Enemy {
 	 * @param y - Position Y initiale.
 	 * @param props - Propriétés provenant de Tiled (speed, patrolMinX…).
 	 */
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(
+		scene: Phaser.Scene,
+		x: number,
+		y: number,
+		props: {
+			speed?: number;
+			patrolMinX?: number;
+			patrolMaxX?: number;
+			direction?: string;
+		},
+	) {
 		super(scene, x, y, "blob_idle");
 
 		scene.events.once("update", () => {

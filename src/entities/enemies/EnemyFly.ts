@@ -1,5 +1,11 @@
 import Enemy from "../Enemy";
 
+interface EnemyFlyProps {
+	speed?: number;
+	patrolMinX?: number;
+	patrolMaxX?: number;
+}
+
 /**
  * Ennemi "Fly" — vol horizontal simple avec patrouille.
  *
@@ -33,7 +39,7 @@ export default class EnemyFly extends Enemy {
 	 * @param y - Position Y initiale.
 	 * @param props - Propriétés JSON de Tiled (speed, patrolMinX, patrolMaxX…).
 	 */
-	constructor(scene: Phaser.Scene, x: number, y: number, props: any) {
+	constructor(scene: Phaser.Scene, x: number, y: number, props: EnemyFlyProps) {
 		super(scene, x, y, "fly_a");
 
 		this.speed = props.speed ?? 100;

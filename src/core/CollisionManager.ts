@@ -195,7 +195,7 @@ export default class CollisionManager {
 		const eb = enemy.body as Phaser.Physics.Arcade.Body;
 
 		return (
-			pb.velocity.y > 0 &&
+			pb.velocity.y > 24 &&
 			pb.bottom > eb.top &&
 			pb.bottom - pb.velocity.y <= eb.top
 		);
@@ -316,7 +316,8 @@ export default class CollisionManager {
 		const brick = brickObj as Brick;
 		const enemy = enemyObj as Enemy;
 
-		if (!(brick as any).hit || brick.isHeld) return;
+		const brickAny = brick as Brick & { hit?: () => void };
+		if (!brickAny.hit || brick.isHeld) return;
 
 		const body = brick.body as Phaser.Physics.Arcade.Body;
 		const speed = Math.abs(body.velocity.x) + Math.abs(body.velocity.y);

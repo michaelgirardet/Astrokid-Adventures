@@ -22,40 +22,57 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 			.setOrigin(0.5)
 			.setStrokeStyle(4, 0x446daa);
 
-		this.title = scene.add.text(0, -150, "", {
-			fontFamily: "DynaPuff",
-			fontSize: "32px",
-			color: "#ffffff"
-		}).setOrigin(0.5);
+		this.title = scene.add
+			.text(0, -150, "", {
+				fontFamily: "DynaPuff",
+				fontSize: "32px",
+				color: "#ffffff",
+			})
+			.setOrigin(0.5);
 
-		this.desc = scene.add.text(0, -80, "", {
-			fontFamily: "Open Sans",
-			fontSize: "16px",
-			color: "#ffffff",
-			wordWrap: { width: 380 }
-		}).setOrigin(0.5);
+		this.desc = scene.add
+			.text(0, -80, "", {
+				fontFamily: "Open Sans",
+				fontSize: "16px",
+				color: "#ffffff",
+				wordWrap: { width: 380 },
+			})
+			.setOrigin(0.5);
 
-		this.stats = scene.add.text(0, 20, "", {
-			fontFamily: "DynaPuff",
-			fontSize: "18px",
-			color: "#ffffff"
-		}).setOrigin(0.5);
+		this.stats = scene.add
+			.text(0, 20, "", {
+				fontFamily: "DynaPuff",
+				fontSize: "18px",
+				color: "#ffffff",
+			})
+			.setOrigin(0.5);
 
-		this.ability = scene.add.text(0, 90, "", {
-			fontFamily: "Open Sans",
-			fontSize: "14px",
-			color: "#add7f6",
-			wordWrap: { width: 380 }
-		}).setOrigin(0.5);
+		this.ability = scene.add
+			.text(0, 90, "", {
+				fontFamily: "Open Sans",
+				fontSize: "14px",
+				color: "#add7f6",
+				wordWrap: { width: 380 },
+			})
+			.setOrigin(0.5);
 
-		this.style = scene.add.text(0, 150, "", {
-			fontFamily: "DynaPuff",
-			fontSize: "16px",
-			color: "#ffffff",
-			wordWrap: { width: 380 }
-		}).setOrigin(0.5);
+		this.style = scene.add
+			.text(0, 150, "", {
+				fontFamily: "DynaPuff",
+				fontSize: "16px",
+				color: "#ffffff",
+				wordWrap: { width: 380 },
+			})
+			.setOrigin(0.5);
 
-		this.add([this.bg, this.title, this.desc, this.stats, this.ability, this.style]);
+		this.add([
+			this.bg,
+			this.title,
+			this.desc,
+			this.stats,
+			this.ability,
+			this.style,
+		]);
 	}
 
 	show(data: CharacterStats) {
@@ -65,7 +82,7 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 		const star = (v: number) => "★".repeat(v) + "☆".repeat(5 - v);
 
 		this.stats.setText(
-			`Vitesse : ${star(data.speed)}\nSaut : ${star(data.jump)}\nAttaque : ${star(data.attack)}\nCœurs : ${data.hearts}`
+			`Vitesse : ${star(data.speed)}\nSaut : ${star(data.jump)}\nAttaque : ${star(data.attack)}\nCœurs : ${data.hearts}`,
 		);
 
 		this.ability.setText(`${data.abilityDesc}`);
@@ -76,7 +93,7 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 		this.scene.tweens.add({
 			targets: this,
 			alpha: 1,
-			duration: 150
+			duration: 150,
 		});
 	}
 
@@ -85,7 +102,7 @@ export default class CharacterInfoCard extends Phaser.GameObjects.Container {
 			targets: this,
 			alpha: 0,
 			duration: 150,
-			onComplete: () => this.setVisible(false)
+			onComplete: () => this.setVisible(false),
 		});
 	}
 }
