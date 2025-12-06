@@ -16,7 +16,7 @@ export default class Star extends Phaser.Physics.Arcade.Sprite {
 			ease: "Sine.easeInOut",
 		});
 
-		this.setOrigin(0, 1);
+		this.setOrigin(0);
 		this.setPosition(x, y);
 	}
 }

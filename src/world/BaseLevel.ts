@@ -96,7 +96,6 @@ export abstract class BaseLevel {
 				}
 			});
 		}
-
 		this.scene.physics.world.setBounds(
 			0,
 			0,
