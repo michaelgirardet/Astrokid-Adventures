@@ -14,7 +14,7 @@ if (window.innerWidth < 768) {
 		width: 1440,
 		height: 800,
 		pixelArt: true,
-		backgroundColor: "#1a1a1a",
+		backgroundColor: "#1a1e42",
 
 		scale: {
 			mode: Phaser.Scale.FIT,
@@ -26,7 +26,7 @@ if (window.innerWidth < 768) {
 
 		physics: {
 			default: "arcade",
-			arcade: { fps: 60, gravity: { y: 650 }, debug: true },
+			arcade: { fps: 60, gravity: { y: 650 }, debug: false },
 		},
 
 		scene: [
