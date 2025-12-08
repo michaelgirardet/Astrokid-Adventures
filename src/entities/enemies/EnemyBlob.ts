@@ -49,8 +49,8 @@ export default class EnemyBlob extends Enemy {
 			const body = this.body as Phaser.Physics.Arcade.Body;
 
 			// --- Hitbox spécifique pour le blob ---
-			body.setSize(this.width * 0.6, this.height * 0.6);
-			body.setOffset(this.width * 0.2, this.height * 0.4);
+			body.setSize(this.width * 0.7, this.height * 0.45);
+			body.setOffset(this.width * 0.15, this.height * 0.55);
 		});
 
 		// --- Lecture des propriétés ---

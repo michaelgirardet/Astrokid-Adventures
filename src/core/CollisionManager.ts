@@ -193,14 +193,16 @@ export default class CollisionManager {
 		const pb = player.body as Phaser.Physics.Arcade.Body;
 		const eb = enemy.body as Phaser.Physics.Arcade.Body;
 
+		// Si l’ennemi monte et que le joueur descend → stomp automatique
+		if (eb.velocity.y < 0 && pb.velocity.y > 0) {
+			return true;
+		}
+
 		const isFalling = pb.velocity.y > 50;
 
-		// Tolérance dynamique
-		const horizontalSpeed = Math.abs(pb.velocity.x);
-		const tolerance =
-			horizontalSpeed > 250 ? 15 : horizontalSpeed > 150 ? 10 : 6;
+		//
 
-		const isAbove = pb.bottom <= eb.top + tolerance;
+		const isAbove = pb.bottom <= eb.center.y;
 
 		// Vérifier que la composante verticale est significative
 		// (évite les collisions purement latérales)
