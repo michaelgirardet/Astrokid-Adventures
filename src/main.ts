@@ -1,6 +1,7 @@
 import "./global.css";
 import CharacterSelectScene from "./scenes/CharacterSelectScene";
 import GameScene from "./scenes/GameScene";
+import LevelSelectScene from "./scenes/LevelSelectScene";
 import MenuScene from "./scenes/MenuScene";
 import PauseScene from "./scenes/PauseScene";
 import { Preloader } from "./scenes/Preloader";
@@ -32,6 +33,7 @@ if (window.innerWidth < 768) {
 		scene: [
 			Preloader,
 			CharacterSelectScene,
+			LevelSelectScene,
 			GameScene,
 			MenuScene,
 			PauseScene,

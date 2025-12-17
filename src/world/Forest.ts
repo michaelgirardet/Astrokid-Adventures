@@ -1,8 +1,16 @@
 import { BaseLevel } from "./BaseLevel";
 
 export default class Forest extends BaseLevel {
-	getMapKey() {
-		return "forest_level";
+	/** Clé Phaser de la map Tiled à charger */
+	private mapKey: string;
+
+	constructor(scene: Phaser.Scene, mapKey = "forest_level") {
+		super(scene);
+		this.mapKey = mapKey;
+	}
+
+	getMapKey(): string {
+		return this.mapKey;
 	}
 
 	getTileset() {

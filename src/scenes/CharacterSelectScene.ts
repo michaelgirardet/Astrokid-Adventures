@@ -3,12 +3,13 @@
  *
  * Affiche les différentes options jouables, leurs stats détaillées
  * (via CharacterInfoCard) et permet au joueur de choisir son avatar
- * avant le lancement du niveau.
+ * avant la sélection du niveau.
  *
  * @remarks
  * - Les personnages non disponibles apparaissent en grisé.
  * - Le panneau latéral affiche les statistiques du personnage survolé.
  * - Le choix est stocké dans le registry sous la clé `selected_character`.
+ * - Une fois le personnage sélectionné, la scène de sélection de niveau est lancée.
  *
  * @extends Phaser.Scene
  */
@@ -35,8 +36,10 @@ export default class CharacterSelectScene extends Phaser.Scene {
 	create() {
 		const { width, height } = this.scale;
 
+		// Fond
 		this.add.rectangle(0, 0, width, height, 0x1a1e42).setOrigin(0);
 
+		// Titre
 		this.add
 			.text(width / 2, 80, "SELECTION DU PERSONNAGE", {
 				fontSize: "48px",
@@ -47,6 +50,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
 			})
 			.setOrigin(0.5);
 
+		// Carte d'information
 		this.infoCard = new CharacterInfoCard(this, width - 260, height / 2);
 
 		/**
@@ -58,7 +62,6 @@ export default class CharacterSelectScene extends Phaser.Scene {
 		 * @param disabled Si le personnage est non sélectionnable
 		 * @returns L'image du personnage créée
 		 */
-
 		const createCharacter = (
 			x: number,
 			key: string,
@@ -76,7 +79,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
 				return img;
 			}
 
-			// Hover → agrandissement + Affiche la carte info
+			// Hover → agrandissement + affichage des stats
 			img.on("pointerover", () => {
 				this.tweens.add({
 					targets: img,
@@ -87,7 +90,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
 				this.infoCard.show(CHARACTER_STATS[statsId]);
 			});
 
-			// Sortie du hover → reset + cache la carte
+			// Sortie du hover → reset + masquage des stats
 			img.on("pointerout", () => {
 				this.tweens.add({
 					targets: img,
@@ -98,20 +101,21 @@ export default class CharacterSelectScene extends Phaser.Scene {
 				this.infoCard.hide();
 			});
 
-			// Sélection → Charge le jeu avec ce personnage
+			// Sélection → stocke le personnage et passe à la sélection du niveau
 			img.on("pointerdown", () => {
 				this.registry.set("selected_character", statsId);
-				this.scene.start("Game");
+				this.scene.start("LevelSelect");
 			});
 
 			return img;
 		};
 
-		// Personnages
+		// Personnages disponibles
 		createCharacter(width / 2 - 200, "player1", "yellow");
 		createCharacter(width / 2, "player2", "green", true);
 		createCharacter(width / 2 + 200, "player3", "purple", true);
 
+		// Bouton retour
 		this.add
 			.text(40, 40, "← Retour", {
 				fontSize: "28px",

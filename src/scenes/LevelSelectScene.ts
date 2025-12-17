@@ -1,124 +1,103 @@
 /**
- * Scène de sélection des personnages.
+ * Scène de sélection des niveaux.
  *
- * Affiche les différentes options jouables, leurs stats détaillées
- * (via CharacterInfoCard) et permet au joueur de choisir son avatar
- * avant le lancement du niveau.
+ * Affiche la liste des niveaux disponibles et permet au joueur
+ * de choisir celui à lancer après avoir sélectionné son personnage.
  *
  * @remarks
- * - Les personnages non disponibles apparaissent en grisé.
- * - Le panneau latéral affiche les statistiques du personnage survolé.
- * - Le choix est stocké dans le registry sous la clé `selected_character`.
+ * - Les niveaux verrouillés apparaissent grisés et ne sont pas sélectionnables.
+ * - Le niveau sélectionné est stocké dans le registry sous la clé `selected_level`.
+ * - Cette scène est accessible après la sélection du personnage.
  *
  * @extends Phaser.Scene
  */
 
 import Phaser from "phaser";
-import { CHARACTER_STATS } from "../data/characterStats";
-import CharacterInfoCard from "../ui/CharacterInfoCard";
+import { LEVELS } from "../data/levelData";
 
-export default class CharacterSelectScene extends Phaser.Scene {
-    /** Carte d'information affichant les stats du personnage survolé. */
-    private infoCard!: CharacterInfoCard;
+export default class LevelSelectScene extends Phaser.Scene {
+	constructor() {
+		super("LevelSelect");
+	}
 
-    constructor() {
-        super("CharacterSelect");
-    }
+	/**
+	 * Initialise la scène :
+	 * - Affichage du fond et du titre
+	 * - Génération dynamique des cartes de niveaux
+	 * - Gestion des interactions (hover, sélection)
+	 * - Gestion du bouton retour vers la sélection de personnage
+	 */
+	create() {
+		const { width, height } = this.scale;
 
-    /**
-     * Initialise la scène :
-     * - Affichage du fond et du titre
-     * - Création de la carte d'information
-     * - Instanciation des personnages interactifs
-     * - Gestion du bouton retour
-     */
-    create() {
-        const { width, height } = this.scale;
+		// Fond
+		this.add.rectangle(0, 0, width, height, 0x1a1e42).setOrigin(0);
 
-        this.add.rectangle(0, 0, width, height, 0x1a1e42).setOrigin(0);
+		// Titre
+		this.add
+			.text(width / 2, 80, "SELECTION DU NIVEAU", {
+				fontSize: "48px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+				stroke: "#000000",
+				strokeThickness: 6,
+			})
+			.setOrigin(0.5);
 
-        this.add
-            .text(width / 2, 80, "SELECTION DU PERSONNAGE", {
-                fontSize: "48px",
-                fontFamily: "DynaPuff",
-                color: "#ffffff",
-                stroke: "#000000",
-                strokeThickness: 6,
-            })
-            .setOrigin(0.5);
+		// Calcul du point de départ pour centrer les cartes
+		const startX = width / 2 - ((LEVELS.length - 1) * 180) / 2;
 
-        this.infoCard = new CharacterInfoCard(this, width - 260, height / 2);
+		// Création des cartes de niveaux
+		LEVELS.forEach((level, index) => {
+			const x = startX + index * 180;
+			const y = height / 2;
 
-        /**
-         * Crée un sprite interactif représentant un personnage.
-         *
-         * @param x Position horizontale du sprite
-         * @param key Clé de la texture du sprite
-         * @param statsId Identifiant des stats dans CHARACTER_STATS
-         * @param disabled Si le personnage est non sélectionnable
-         * @returns L'image du personnage créée
-         */
+			const card = this.add
+				.rectangle(x, y, 160, 120, 0x2e3266)
+				.setStrokeStyle(4, 0xffffff)
+				.setInteractive({ useHandCursor: !level.locked });
 
-        const createCharacter = (
-            x: number,
-            key: string,
-            statsId: keyof typeof CHARACTER_STATS,
-            disabled = false,
-        ) => {
-            const img = this.add
-                .image(x, height / 2, key)
-                .setScale(2)
-                .setInteractive({ useHandCursor: !disabled });
+			const label = this.add
+				.text(x, y - 10, level.name, {
+					fontSize: "20px",
+					fontFamily: "DynaPuff",
+					color: "#ffffff",
+					align: "center",
+					wordWrap: { width: 140 },
+				})
+				.setOrigin(0.5);
 
-            // Personnage verrouillé
-            if (disabled) {
-                img.setTint(0x000000).setAlpha(0.3);
-                return img;
-            }
+			// Niveau verrouillé
+			if (level.locked) {
+				card.setFillStyle(0x000000, 0.4);
+				label.setAlpha(0.4);
+				return;
+			}
 
-            // Hover → agrandissement + Affiche la carte info
-            img.on("pointerover", () => {
-                this.tweens.add({
-                    targets: img,
-                    scale: 2.2,
-                    angle: 3,
-                    duration: 150,
-                });
-                this.infoCard.show(CHARACTER_STATS[statsId]);
-            });
+			// Hover → mise en avant visuelle
+			card.on("pointerover", () => {
+				card.setScale(1.05);
+			});
 
-            // Sortie du hover → reset + cache la carte
-            img.on("pointerout", () => {
-                this.tweens.add({
-                    targets: img,
-                    scale: 2,
-                    angle: 0,
-                    duration: 150,
-                });
-                this.infoCard.hide();
-            });
+			card.on("pointerout", () => {
+				card.setScale(1);
+			});
 
-            // Sélection → Charge le jeu avec ce personnage
-            img.on("pointerdown", () => {
-                this.registry.set("selected_character", statsId);
-                this.scene.start("Game");
-            });
+			// Sélection du niveau → lancement du jeu
+			card.on("pointerdown", () => {
+				this.registry.set("selected_level", level);
+				this.scene.start("Game");
+			});
+		});
 
-            return img;
-        };
-
-        // Personnages
-        createCharacter(width / 2 - 200, "player1", "yellow");
-        createCharacter(width / 2, "player2", "green", true);
-        createCharacter(width / 2 + 200, "player3", "purple", true);
-
-        this.add
-            .text(40, 40, "← Retour", {
-                fontSize: "28px",
-                fontFamily: "DynaPuff",
-                color: "#ffffff",
-            })
-            .setInteractive()
-            .on("pointerdown", () => this.scene.start("Menu"));
-    }
+		// Bouton retour vers la sélection du personnage
+		this.add
+			.text(40, 40, "← Retour", {
+				fontSize: "28px",
+				fontFamily: "DynaPuff",
+				color: "#ffffff",
+			})
+			.setInteractive()
+			.on("pointerdown", () => this.scene.start("CharacterSelect"));
+	}
 }
