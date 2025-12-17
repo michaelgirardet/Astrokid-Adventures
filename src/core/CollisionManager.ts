@@ -38,6 +38,7 @@ export default class CollisionManager {
 	private stars: Phaser.Physics.Arcade.Group;
 	private ui: UIManager;
 	private sound: SoundManager;
+	private platform: Phaser.Physics.Arcade.Group;
 
 	/** Empêche les triggers multiples (mort, fin de niveau). */
 	private levelEnding = false;
@@ -59,6 +60,7 @@ export default class CollisionManager {
 		stars: Phaser.Physics.Arcade.Group,
 		ui: UIManager,
 		sound: SoundManager,
+		platforms: Phaser.Physics.Arcade.Group,
 	) {
 		this.scene = scene;
 		this.player = player;
@@ -66,6 +68,7 @@ export default class CollisionManager {
 		this.stars = stars;
 		this.ui = ui;
 		this.sound = sound;
+		this.platform = platforms;
 	}
 
 	/**
@@ -164,6 +167,14 @@ export default class CollisionManager {
 		// Bricks ↔ Environnement
 		physics.add.collider(this.level.bricks, this.level.groundLayer);
 		physics.add.collider(this.level.bricks, this.level.blocksLayer);
+
+		physics.add.collider(
+			this.player,
+			this.platform,
+			this.onPlatform,
+			undefined,
+			this,
+		);
 	}
 
 	// COLLECTIBLES
@@ -240,7 +251,7 @@ export default class CollisionManager {
 	 * - perte de cœurs
 	 * - mort (game over)
 	 */
-	private hitEnemy(player: Player, enemy: Enemy) {
+	private hitEnemy(player: Player, _enemy: Enemy) {
 		// Si le joueur est invincible, on ignore
 		if (player.isInvincible) return;
 
@@ -371,6 +382,18 @@ export default class CollisionManager {
 		const enemyAny = enemy as Enemy & { squash?: () => void };
 		if (enemyAny.squash) enemyAny.squash();
 		else enemy.destroy();
+	}
+
+	/** Joueur sur la plateforme */
+	private onPlatform(player: Player, platform: Phaser.GameObjects.GameObject) {
+		const pb = player.body as Phaser.Physics.Arcade.Body;
+		const platBody = platform.body as Phaser.Physics.Arcade.Body;
+
+		// Le joueur doit être au-dessus de la plateforme (limite de tolérance)
+		if (pb.bottom <= platBody.top + 5) {
+			// Le joueur suit le déplacement horizontal
+			player.x += platBody.velocity.x * (this.scene.game.loop.delta / 1000);
+		}
 	}
 
 	/**

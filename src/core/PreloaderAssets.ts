@@ -26,8 +26,8 @@ export function loadAssets(scene: Phaser.Scene) {
 	load.image("Background", "assets/tiles/background_color_trees.png");
 	load.image("Tiles", "assets/tiles/tiles.webp");
 	load.image("Water", "assets/tiles/water.png");
-
 	load.image("menu_bg", "assets/ui/menubg1.png");
+	load.image("platform", "assets/tiles/platform.png");
 
 	// UI / HUD
 	load.image("heart_full", "assets/ui/heart_full.png");

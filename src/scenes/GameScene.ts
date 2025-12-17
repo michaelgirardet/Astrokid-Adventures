@@ -1,13 +1,13 @@
-import type { BaseLevel } from "../world/BaseLevel";
 import CollisionManager from "../core/CollisionManager";
 import { createPlayer } from "../core/PlayerFactory";
 import EnemyManager from "../core/EnemyManager";
 import LevelLoader from "../core/LevelLoader";
-import SoundManager from "../core/SoundManager";
-import UIManager from "../core/UIManager";
-
 import type Player from "../entities/Player";
+import SoundManager from "../core/SoundManager";
 import Star from "../entities/Star";
+import UIManager from "../core/UIManager";
+import type { BaseLevel } from "../world/BaseLevel";
+
 
 /**
  * Scene principale du jeu.
@@ -58,6 +58,8 @@ export default class GameScene extends Phaser.Scene {
 	/** Gestion centralisée de toutes les collisions. */
 	private collisionManager!: CollisionManager;
 
+	private platforms!: Phaser.Physics.Arcade.Group;
+
 	constructor() {
 		super("Game");
 	}
@@ -83,7 +85,18 @@ export default class GameScene extends Phaser.Scene {
 		this.ui = new UIManager(this);
 
 		const loader = new LevelLoader(this);
+
+	const selectedLevel = this.registry.get("selected_level") as
+		| { mapKey: string }
+		| undefined;
+
+	// Fallback sécurité (utile en dev)
+	if (!selectedLevel) {
+		console.warn("No level selected, loading default level");
 		this.level = loader.load();
+	} else {
+		this.level = loader.load(selectedLevel.mapKey);
+	}
 
 		this.physics.world.TILE_BIAS = 60;
 
@@ -118,6 +131,8 @@ export default class GameScene extends Phaser.Scene {
 			this.stars.add(new Star(this, obj.x, obj.y));
 		});
 
+		this.platforms = this.level.platforms;
+
 		this.collisionManager = new CollisionManager(
 			this,
 			this.player,
@@ -125,6 +140,7 @@ export default class GameScene extends Phaser.Scene {
 			this.stars,
 			this.ui,
 			this.sounds,
+			this.platforms,
 		);
 		this.collisionManager.setup();
 

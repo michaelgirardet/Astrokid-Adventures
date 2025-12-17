@@ -8,7 +8,7 @@
  *
  * **Responsabilités :**
  * - Instancier la bonne classe de niveau (Forest, Desert, etc.)
- * - Appeler la méthode `load()` du niveau pour créer les layers, objets et colliders
+ * - Fournir la clé de la map à charger
  * - Retourner une instance prête à l’emploi pour `GameScene`
  *
  * **Ce que cette classe NE fait pas :**
@@ -38,19 +38,19 @@ export default class LevelLoader {
 	}
 
 	/**
-	 * Charge et initialise le niveau courant.
+	 * Charge et initialise le niveau demandé.
 	 *
+	 * @param mapKey - Clé Phaser de la map Tiled à charger.
 	 * @remarks
-	 * Pour le MVP, ce loader renvoie toujours le niveau `Forest`.
-	 * Dans une version étendue, cette méthode pourrait :
-	 * - charger différents niveaux selon la progression du joueur
-	 * - lire un fichier JSON de campagne
-	 * - récupérer un "levelId" depuis `registry`
+	 * - Si aucune clé n’est fournie, le niveau par défaut est chargé.
+	 * - Cette méthode est appelée par `GameScene`.
 	 *
 	 * @returns Une instance de `BaseLevel` prête à être utilisée.
 	 */
-	load(): BaseLevel {
-		const level = new Forest(this.scene);
+	load(mapKey?: string): BaseLevel {
+		// Pour l’instant, un seul type de niveau existe : Forest
+		// mapKey est transmis au niveau pour qu’il charge la bonne map
+		const level = new Forest(this.scene, mapKey);
 		level.load();
 		return level;
 	}
