@@ -18,19 +18,48 @@ export abstract class BaseLevel {
 	constructor(public scene: Phaser.Scene) {}
 
 	abstract getMapKey(): string;
-	abstract getTileset(): { tiles: string; background: string };
+	abstract getTileset(): {
+		tiles: string;
+		background: string;
+	};
 
 	load() {
+		const key = this.getMapKey();
+		console.log("[BaseLevel] mapKey =", key);
+
+		const inCache = this.scene.cache.tilemap.has(key);
+		console.log("[BaseLevel] tilemap in cache =", inCache);
+
+		this.map = this.scene.make.tilemap({ key });
+
+		console.log("[BaseLevel] map object =", this.map);
+		console.log("Map:", this.getMapKey());
+		console.log(
+			"Tilesets:",
+			this.map.tilesets.map((t) => t.name),
+		);
+		console.log(
+			"Layers:",
+			this.map.layers.map((l) => l.name),
+		);
+
 		this.map = this.scene.make.tilemap({ key: this.getMapKey() });
 
 		const { tiles, background } = this.getTileset();
-		const bg = this.map.addTilesetImage(background, background);
+
 		const tl = this.map.addTilesetImage(tiles, tiles);
+		if (!tl)
+			throw new Error(`Tileset "${tiles}" missing in ${this.getMapKey()}`);
+
+		const bg = this.map.addTilesetImage(background, background);
+		if (!bg)
+			throw new Error(
+				`Background "${background}" missing in ${this.getMapKey()}`,
+			);
 
 		this.backgroundLayer = this.map.createLayer("Background", bg, 0, 0);
 		this.groundLayer = this.map.createLayer("Ground", tl, 0, 0);
 		this.blocksLayer = this.map.createLayer("Blocks", tl, 0, 0);
-
 		this.groundLayer.setCollisionByProperty({ collides: true });
 		this.blocksLayer.setCollisionByProperty({ collides: true });
 
@@ -85,42 +114,41 @@ export abstract class BaseLevel {
 		}
 
 		// Plateformes mobiles
-const objectsLayer = this.map.getObjectLayer("Objects_Blocks");
+		const objectsLayer = this.map.getObjectLayer("Objects_Blocks");
 
-this.platforms = this.scene.physics.add.group({
-	classType: MovingPlatformHorizontal,
-	runChildUpdate: true,
-	immovable: true,
-	allowGravity: false,
-});
+		this.platforms = this.scene.physics.add.group({
+			classType: MovingPlatformHorizontal,
+			runChildUpdate: true,
+			immovable: true,
+			allowGravity: false,
+		});
 
-if (objectsLayer) {
-	for (const obj of objectsLayer.objects) {
-		const props: Record<string, unknown> = {};
-		for (const p of obj.properties ?? []) props[p.name] = p.value;
+		if (objectsLayer) {
+			for (const obj of objectsLayer.objects) {
+				const props: Record<string, unknown> = {};
+				for (const p of obj.properties ?? []) props[p.name] = p.value;
 
-		if (props.type !== "horizontal_platform") continue;
+				if (props.type !== "horizontal_platform") continue;
 
-		const x = obj.x + (obj.width ?? 32) / 2;
-		const y = obj.y + (obj.height ?? 32) / 2;
+				const x = obj.x + (obj.width ?? 32) / 2;
+				const y = obj.y + (obj.height ?? 32) / 2;
 
-		const speed = Number(props.speed ?? 80);
-		const minX = Number(props.minX ?? x - 100);
-		const maxX = Number(props.maxX ?? x + 100);
+				const speed = Number(props.speed ?? 80);
+				const minX = Number(props.minX ?? x - 100);
+				const maxX = Number(props.maxX ?? x + 100);
 
-		// ⚠️ on "create" via le group
-		const platform = this.platforms.get(x, y) as MovingPlatformHorizontal;
-		platform.setActive(true).setVisible(true);
+				// ⚠️ on "create" via le group
+				const platform = this.platforms.get(x, y) as MovingPlatformHorizontal;
+				platform.setActive(true).setVisible(true);
 
-		// on passe les params (voir change ci-dessous)
-		platform.init({ speed, minX, maxX });
-	}
-}
+				// on passe les params (voir change ci-dessous)
+				platform.init({ speed, minX, maxX });
+			}
+		}
 
-console.log("Platform group created", this.platforms.getLength());
+		console.log("Platform group created", this.platforms.getLength());
 
-
-console.log("Platform group created", this.platforms.getLength());
+		console.log("Platform group created", this.platforms.getLength());
 
 		const voidLayer = this.map.getObjectLayer("Void");
 		if (voidLayer) {

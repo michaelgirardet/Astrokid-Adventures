@@ -1,10 +1,9 @@
 import { BaseLevel } from "./BaseLevel";
 
-export default class Forest extends BaseLevel {
-	/** Clé Phaser de la map Tiled à charger */
+export default class Mushrooms extends BaseLevel {
 	private mapKey: string;
 
-	constructor(scene: Phaser.Scene, mapKey = "forest_level") {
+	constructor(scene: Phaser.Scene, mapKey = "level_mushrooms") {
 		super(scene);
 		this.mapKey = mapKey;
 	}
@@ -16,7 +15,7 @@ export default class Forest extends BaseLevel {
 	getTileset() {
 		return {
 			tiles: "Tiles",
-			background: "Forest",
+			background: "Mushrooms",
 		};
 	}
 }

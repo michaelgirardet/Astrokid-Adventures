@@ -23,6 +23,7 @@
 
 import type { BaseLevel } from "../world/BaseLevel";
 import Forest from "../world/Forest";
+import Mushrooms from "../world/Mushrooms";
 
 export default class LevelLoader {
 	/** Référence à la scène Phaser qui accueillera le niveau. */
@@ -47,11 +48,20 @@ export default class LevelLoader {
 	 *
 	 * @returns Une instance de `BaseLevel` prête à être utilisée.
 	 */
-	load(mapKey?: string): BaseLevel {
-		// Pour l’instant, un seul type de niveau existe : Forest
-		// mapKey est transmis au niveau pour qu’il charge la bonne map
-		const level = new Forest(this.scene, mapKey);
+	load(mapKey = "forest_level"): BaseLevel {
+		let level: BaseLevel;
+
+		switch (mapKey) {
+			case "level_mushrooms":
+				level = new Mushrooms(this.scene, mapKey);
+				break;
+			default:
+				level = new Forest(this.scene, mapKey);
+				break;
+		}
+
 		level.load();
 		return level;
 	}
 }
+

@@ -22,8 +22,10 @@ export function loadAssets(scene: Phaser.Scene) {
 
 	// MAPS & TILESETS
 	load.tilemapTiledJSON("forest_level", "assets/maps/level_forest.json");
+	load.tilemapTiledJSON("level_mushrooms", "assets/maps/level_mushrooms.json");
 
-	load.image("Background", "assets/tiles/background_color_trees.png");
+	load.image("Forest", "assets/tiles/background_color_trees.png")
+	load.image("Mushrooms", "assets/tiles/background_color_mushrooms.png")
 	load.image("Tiles", "assets/tiles/tiles.webp");
 	load.image("Water", "assets/tiles/water.png");
 	load.image("menu_bg", "assets/ui/menubg1.png");

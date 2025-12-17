@@ -46,14 +46,14 @@ export default class MenuScene extends Phaser.Scene {
 		this.music.play();
 		if (this.isMuted) this.music.pause();
 
-		this.add.rectangle(0, 0, width, height, 0x446daa, 0.15).setOrigin(0);
+		this.add.rectangle(0, 0, width, height, 0x1d1f21, 0.55).setOrigin(0);
 
 		const menuY = height * 0.6;
 
 		const playButton = this.add
-			.rectangle(width / 2, menuY, 320, 80, 0x6ec7f7)
+			.rectangle(width / 2, menuY, 320, 80, 0x8a2be2)
 			.setOrigin(0.5)
-			.setInteractive({ useHandCursor: true });
+			.setInteractive({ useHandCursor: true })
 
 		playButton.on("pointerover", () => {
 			this.tweens.add({
@@ -77,9 +77,7 @@ export default class MenuScene extends Phaser.Scene {
 
 		this.add
 			.text(width / 2, menuY, "▶ Commencer", {
-				fontSize: "38px",
-				fontFamily: "DynaPuff",
-				color: "#162028",
+				font: '600 34px DynaPuff'
 			})
 			.setOrigin(0.5);
 

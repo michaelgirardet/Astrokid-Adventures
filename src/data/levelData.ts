@@ -8,18 +8,19 @@ export interface LevelData {
 export const LEVELS: LevelData[] = [
 	{
 		id: "level1",
-		name: "Forêt verdoyante",
+		name: "Chemin des mousses",
 		mapKey: "forest_level",
+		locked: false,
 	},
 	{
 		id: "level2",
-		name: "Grottes humides",
-		mapKey: "cave_level",
-		locked: true,
+		name: "Plateau mycélien",
+		mapKey: "level_mushrooms",
+		locked: false,
 	},
 	{
 		id: "level3",
-		name: "Montagnes gelées",
+		name: "Route des mirages",
 		mapKey: "ice_level",
 		locked: true,
 	},

@@ -44,9 +44,8 @@ export default class CharacterSelectScene extends Phaser.Scene {
 			.text(width / 2, 80, "SELECTION DU PERSONNAGE", {
 				fontSize: "48px",
 				fontFamily: "DynaPuff",
-				color: "#ffffff",
-				stroke: "#000000",
-				strokeThickness: 6,
+				color: "#fff",
+		
 			})
 			.setOrigin(0.5);
 
@@ -75,7 +74,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
 
 			// Personnage verrouillé
 			if (disabled) {
-				img.setTint(0x000000).setAlpha(0.3);
+				img.setTint(0x080705).setAlpha(0.3);
 				return img;
 			}
 

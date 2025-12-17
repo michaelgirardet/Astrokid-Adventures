@@ -113,8 +113,7 @@ export default class VictoryScene extends Phaser.Scene {
 	 * @param callback - Fonction exécutée lors du clic
 	 */
 	createButton(x: number, y: number, label: string, callback: () => void) {
-		const COLOR_ACCENT = 0x6ec7f7;
-		const COLOR_STROKE = "#162028";
+		const COLOR_ACCENT = 0x296ed5;
 
 		const radius = 20;
 		const width = 300;
@@ -132,8 +131,8 @@ export default class VictoryScene extends Phaser.Scene {
 		const text = this.add
 			.text(x, y, label, {
 				fontSize: "30px",
-				fontFamily: "DynaPuff",
-				color: COLOR_STROKE,
+				fontFamily: "Open Sans",
+				color: "#ffffff"
 			})
 			.setOrigin(0.5);
 

@@ -39,7 +39,7 @@ export default class LevelSelectScene extends Phaser.Scene {
 				fontSize: "48px",
 				fontFamily: "DynaPuff",
 				color: "#ffffff",
-				stroke: "#000000",
+				stroke: "#080705",
 				strokeThickness: 6,
 			})
 			.setOrigin(0.5);
@@ -69,7 +69,7 @@ export default class LevelSelectScene extends Phaser.Scene {
 
 			// Niveau verrouillé
 			if (level.locked) {
-				card.setFillStyle(0x000000, 0.4);
+				card.setFillStyle(0x080705, 0.4);
 				label.setAlpha(0.4);
 				return;
 			}
