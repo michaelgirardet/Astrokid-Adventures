@@ -8,6 +8,7 @@ import UIManager from "../core/UIManager";
 
 import type Player from "../entities/Player";
 import Star from "../entities/Star";
+import MovingPlatformHorizontal from "../entities/MovingPlatformHorizontal";
 
 /**
  * Scene principale du jeu.
@@ -57,6 +58,8 @@ export default class GameScene extends Phaser.Scene {
 
 	/** Gestion centralisée de toutes les collisions. */
 	private collisionManager!: CollisionManager;
+
+	private platforms!: Phaser.Physics.Arcade.Group;
 
 	constructor() {
 		super("Game");
@@ -118,6 +121,8 @@ export default class GameScene extends Phaser.Scene {
 			this.stars.add(new Star(this, obj.x, obj.y));
 		});
 
+		this.platforms = this.level.platforms;
+
 		this.collisionManager = new CollisionManager(
 			this,
 			this.player,
@@ -125,6 +130,7 @@ export default class GameScene extends Phaser.Scene {
 			this.stars,
 			this.ui,
 			this.sounds,
+			this.platforms,
 		);
 		this.collisionManager.setup();
 

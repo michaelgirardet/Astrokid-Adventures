@@ -1,5 +1,6 @@
 import Brick from "../entities/Bricks";
 import Coin from "../entities/Coin";
+import MovingPlatformHorizontal from "../entities/MovingPlatformHorizontal";
 
 export abstract class BaseLevel {
 	public backgroundLayer!: Phaser.Tilemaps.TilemapLayer;
@@ -12,6 +13,7 @@ export abstract class BaseLevel {
 	public voidZones: (Phaser.GameObjects.Rectangle &
 		Phaser.Types.Physics.Arcade.GameObjectWithBody)[] = [];
 	public bricks!: Phaser.Physics.Arcade.Group;
+	public platforms!: Phaser.Physics.Arcade.Group;
 
 	constructor(public scene: Phaser.Scene) {}
 
@@ -81,6 +83,44 @@ export abstract class BaseLevel {
 				this.coins.add(new Coin(this.scene, x, y));
 			});
 		}
+
+		// Plateformes mobiles
+const objectsLayer = this.map.getObjectLayer("Objects_Blocks");
+
+this.platforms = this.scene.physics.add.group({
+	classType: MovingPlatformHorizontal,
+	runChildUpdate: true,
+	immovable: true,
+	allowGravity: false,
+});
+
+if (objectsLayer) {
+	for (const obj of objectsLayer.objects) {
+		const props: Record<string, unknown> = {};
+		for (const p of obj.properties ?? []) props[p.name] = p.value;
+
+		if (props.type !== "horizontal_platform") continue;
+
+		const x = obj.x + (obj.width ?? 32) / 2;
+		const y = obj.y + (obj.height ?? 32) / 2;
+
+		const speed = Number(props.speed ?? 80);
+		const minX = Number(props.minX ?? x - 100);
+		const maxX = Number(props.maxX ?? x + 100);
+
+		// ⚠️ on "create" via le group
+		const platform = this.platforms.get(x, y) as MovingPlatformHorizontal;
+		platform.setActive(true).setVisible(true);
+
+		// on passe les params (voir change ci-dessous)
+		platform.init({ speed, minX, maxX });
+	}
+}
+
+console.log("Platform group created", this.platforms.getLength());
+
+
+console.log("Platform group created", this.platforms.getLength());
 
 		const voidLayer = this.map.getObjectLayer("Void");
 		if (voidLayer) {
